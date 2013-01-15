@@ -11,7 +11,6 @@ import net.shard.lote.util.HashmapLoader;
 import net.shard.lote.world.Region;
 import net.shard.lote.world.World;
 import net.shard.lote.world.entity.Entity;
-import net.shard.lote.world.entity.EntityPlayer;
 
 public class Save {
 	

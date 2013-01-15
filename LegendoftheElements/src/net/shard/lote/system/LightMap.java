@@ -14,14 +14,12 @@ import org.lwjgl.opengl.GL12;
 import org.newdawn.slick.Color;
 
 public class LightMap {
-	private boolean enabled;
 	private int vbID,cbID,ibID;
 	public int resx,resy;
 	public int gw,gh;
 	public Color ambLight,ambLightT;
 	private ArrayList<Light> lights;
 	public LightMap(boolean enabled,int resx, int resy) {
-		this.enabled = enabled;
 		resx+=2;
 		resy+=2;
 		this.resx=resx;

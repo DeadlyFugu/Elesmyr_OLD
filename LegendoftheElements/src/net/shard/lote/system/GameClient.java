@@ -3,23 +3,18 @@ package net.shard.lote.system;
 
 import java.io.IOException;
 import java.net.InetAddress;
-import java.util.ArrayList;
 import java.util.LinkedList;
-import java.util.concurrent.ConcurrentLinkedQueue;
 
-import net.shard.lote.GameElement;
 import net.shard.lote.Message;
 import net.shard.lote.MessageReceiver;
 import net.shard.lote.MessageSystem;
 import net.shard.lote.Save;
 import net.shard.lote.ScriptObject;
-import net.shard.lote.ScriptRunner;
 import net.shard.lote.ui.HUDUI;
 import net.shard.lote.ui.InventoryUI;
 import net.shard.lote.ui.UserInterface;
 import net.shard.lote.world.Region;
 import net.shard.lote.world.World;
-import net.shard.lote.world.entity.EntityPlayer;
 import net.shard.lote.world.item.ItemFactory;
 
 import org.newdawn.slick.Color;
@@ -341,7 +336,7 @@ public class GameClient extends BasicGameState implements MessageReceiver {
 				client.start();
 				client.connect(5000, "localhost", 37020,37021);
 				client.getKryo().register(Message.class);
-				client.addListener(new ClientListener(this));
+				client.addListener(new ClientListener());
 			}
 		} catch (IOException ioe) {
 			ioe.printStackTrace();
@@ -356,10 +351,6 @@ public class GameClient extends BasicGameState implements MessageReceiver {
 	}
 
 	private class ClientListener extends Listener {
-		GameClient gameplayState;
-		public ClientListener(GameClient gameplayState) {
-			this.gameplayState=gameplayState;
-		}
 
 		public void received (Connection connection, Object object) {
 			//if (! (object instanceof Message) || !((Message) object).getName().equals("move"))
@@ -384,7 +375,7 @@ public class GameClient extends BasicGameState implements MessageReceiver {
 		client.start();
 		client.connect(5000,hostaddr, 37020, 37021);
 		client.getKryo().register(Message.class);
-		client.addListener(new ClientListener(this));
+		client.addListener(new ClientListener());
 		MessageSystem.initialise(this, null);
 	}
 

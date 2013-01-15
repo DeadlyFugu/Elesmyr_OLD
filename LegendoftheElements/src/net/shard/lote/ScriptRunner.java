@@ -13,7 +13,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import net.shard.lote.system.GameClient;
-import net.shard.lote.system.GameServer;
 
 import com.esotericsoftware.minlog.Log;
 
