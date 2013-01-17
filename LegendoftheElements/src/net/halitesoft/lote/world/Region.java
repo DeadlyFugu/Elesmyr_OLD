@@ -105,7 +105,7 @@ public class Region implements GameElement {
 		}
 		for (Entity e : entities.values()) {
 			e.update(this,receiver);
-			if (sendEntities == 1 && e.constantUpdate) {
+			if ((e instanceof EntityPlayer) || (sendEntities == 1 && e.constantUpdate)) {
 				MessageSystem.sendClient(this, (ArrayList<Connection>) connections.clone(), new Message(name+"."+e.name+".move",e.x+","+e.y), true);
 			}
 		}

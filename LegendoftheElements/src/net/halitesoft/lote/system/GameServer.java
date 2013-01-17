@@ -119,7 +119,7 @@ public class GameServer extends Server implements MessageReceiver {
 				}
 				
 				//Send time packet
-				c.sendUDP(new Message("CLIENT.time",String.valueOf(time)));
+				MessageSystem.sendClient(null,c,new Message("CLIENT.time",String.valueOf(time)),true);
 			}
 		} else {
 			timeCheck--;
@@ -142,8 +142,8 @@ public class GameServer extends Server implements MessageReceiver {
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
-				connection.sendTCP(new Message("CLIENT.chat","Internal error occured processing "+object.toString()));
-				connection.sendTCP(new Message("CLIENT.chat","Error: "+e.toString()));
+				MessageSystem.sendClient(null,connection,new Message("CLIENT.chat","Internal error occured processing "+object.toString()),false);
+				MessageSystem.sendClient(null,connection,new Message("CLIENT.chat","Error: "+e.toString()),false);
 			}
 		}
 	}
@@ -159,7 +159,7 @@ public class GameServer extends Server implements MessageReceiver {
 				Log.info("wantPlayer "+uname+" from "+connection.toString());
 				if (pass.containsKey(uname)) {
 					if (!pass.get(uname).equals(upass) && !uname.equals(hostUName)) {
-						connection.sendTCP(new Message("CLIENT.error","Password incorrect!"));
+						MessageSystem.sendClient(null,connection,new Message("CLIENT.error","Password incorrect!"),false);
 						connection.close();
 						return false;
 					}
@@ -169,14 +169,14 @@ public class GameServer extends Server implements MessageReceiver {
 				}
 				//String uname = data;
 				if (playerEnt.containsKey(uname)) {
-					connection.sendTCP(new Message("CLIENT.error","There is already a player called "+uname+" on that server!"));
+					MessageSystem.sendClient(null,connection,new Message("CLIENT.error","There is already a player called "+uname+" on that server!"),false);
 				} else {
 					players.put(connection,uname);
 					String pInfo = save.get("players."+uname);
 					if (pInfo != null) {
-						connection.sendTCP(new Message("PLAYER.playerInfo",pInfo));
+						MessageSystem.sendClient(null,connection,new Message("PLAYER.playerInfo",pInfo),false);
 					} else {
-						connection.sendTCP(new Message("PLAYER.playerInfo",save.get("players.new")));
+						MessageSystem.sendClient(null,connection,new Message("PLAYER.playerInfo",save.get("players.new")),false);
 					}
 				}
 				sendChat("SERVER: "+uname+" joined the game.");
@@ -188,11 +188,11 @@ public class GameServer extends Server implements MessageReceiver {
 				world.getRegion(data).connections.add(connection); //Add the connection to the region
 				String rEntD = world.getRegion(data).getEntityString(); //Get the region's entity string
 				if (rEntD.length()<2800) //If the string is smaller than 2800 chars, send it
-					connection.sendTCP(new Message("CLIENT.setRegion",data+":"+rEntD));
+					MessageSystem.sendClient(null,connection,new Message("CLIENT.setRegion",data+":"+rEntD),false);
 				else {
-					connection.sendTCP(new Message("CLIENT.setRegion",data+":"));
+					MessageSystem.sendClient(null,connection,new Message("CLIENT.setRegion",data+":"),false);
 					for (Entity e : world.getRegion(data).entities.values()) {
-						connection.sendTCP(new Message(data+".addEnt",e.toString()));
+						MessageSystem.sendClient(null,connection,new Message(data+".addEnt",e.toString()),false);
 					}
 				}
 				int entid = world.getRegion(data).addEntityServer("EntityPlayer,"+x+","+y+","+players.get(connection)); //Add a player entity
@@ -203,8 +203,9 @@ public class GameServer extends Server implements MessageReceiver {
 					pdat.addConnection(connection); //Set the connection
 				((EntityPlayer) world.getRegion(data).entities.get(entid)).setSERVDAT(connection, pdat); //Tell the player entity about the PlayerData object
 				playerEnt.put(players.get(connection),data+"."+entid); //Put the entities name into playerEnt
-				connection.sendTCP(new Message("PLAYER.setID",""+entid)); //Send a message to the client notifying it of its entity's ID.
-				connection.sendTCP(new Message("PLAYER.setPDAT",pdat.toString())); //Send client PDAT
+				MessageSystem.sendClient(null,connection,new Message("PLAYER.setID",""+entid),false); //Send a message to the client notifying it of its entity's ID.
+				MessageSystem.sendClient(null,connection,new Message("PLAYER.setPDAT",pdat.toString()),false); //Send client PDAT
+				MessageSystem.sendClient(null,connection,new Message("CLIENT.time",String.valueOf(time)),false); //Send the client the time
 			} else if (name.equals("changeRegion")) {
 				int x = Integer.parseInt(data.split(",")[1]);
 				int y = Integer.parseInt(data.split(",")[2]);
@@ -216,12 +217,13 @@ public class GameServer extends Server implements MessageReceiver {
 				}
 				world.touchRegion(data);
 				world.getRegion(data).connections.add(connection);
-				connection.sendTCP(new Message("CLIENT.setRegion",data+":"+world.getRegion(data).getEntityString()));
+				MessageSystem.sendClient(null,connection,new Message("CLIENT.setRegion",data+":"+world.getRegion(data).getEntityString()),false);
 				int entid = world.getRegion(data).addEntityServer("EntityPlayer,"+x+","+y+","+players.get(connection));
 				PlayerData pdat = playerDat.get(players.get(connection));
 				((EntityPlayer) world.getRegion(data).entities.get(entid)).setSERVDAT(connection, pdat);
 				playerEnt.put(players.get(connection),data+"."+entid);
-				connection.sendTCP(new Message("PLAYER.setID",""+entid));
+				MessageSystem.sendClient(null,connection,new Message("PLAYER.setID",""+entid),false);
+				MessageSystem.sendClient(null,connection,new Message("CLIENT.time",String.valueOf(time)),false);
 			} else if (name.equals("close")) {
 				sendChat("SERVER: "+players.get(connection)+" left the game.");
 				save.putPlayer(players.get(connection), playerEnt.get(players.get(connection)),world);

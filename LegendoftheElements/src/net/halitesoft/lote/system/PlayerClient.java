@@ -26,7 +26,6 @@ public class PlayerClient implements GameElement {
 	private String regionName;
 	public Region region;
 	public int entid = -1;
-	private int updateTimer=10;
 	private int caxis_x=0;
 	private int caxis_y=1;
 	private boolean controller;
@@ -201,14 +200,9 @@ public class PlayerClient implements GameElement {
 
 	private void posUpdate() {
 		//Send player position to server
-		if (updateTimer==0) {
-			updateTimer=2;
-			if (entid != -1) {
-				MessageSystem.sendServer(this,new Message(regionName+"."+entid+".move",x+","+y),true);
-				MessageSystem.sendServer(this,new Message(regionName+".pickupAt",x+","+y),true);
-			}
-		} else {
-			updateTimer--;
+		if (entid != -1) {
+			MessageSystem.sendServer(this,new Message(regionName+"."+entid+".move",x+","+y),true);
+			MessageSystem.sendServer(this,new Message(regionName+".pickupAt",x+","+y),true);
 		}
 		world.receiveMessage(new Message(regionName+"."+entid+".moveClient",x+","+y),gs);
 		if (pdat!=null && ((EntityPlayer) region.entities.get(entid))!=null) {

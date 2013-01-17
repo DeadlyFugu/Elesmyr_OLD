@@ -28,7 +28,7 @@ public class EntitySpawner extends Entity {
 			for (Entity e : region.entities.values())
 				if (e.getClass().getSimpleName().equals(extd.split(",",2)[0]))
 					se++;
-			//if (se<24)
+			if (se<24)
 				region.addEntityServer(extd.split(",",2)[0]+","+x+","+y+","+extd.split(",",2)[1]);
 		}
 	}
