@@ -122,9 +122,8 @@ public class LightMap {
 						//float atn = 1-(float) (Math.hypot(xs-cx,ys-cy)/dists);
 						
 						//INVERSE QUADRATRIC
-						//float atn = (float) Math.max(0,1-Math.hypot(xs-cx,ys-cy)/dists);
+						//float atn = (float) Math.max(0,1-Math.hypot(xf-cx,yf-cy)/dists);
 						//atn=atn*atn;
-						
 						//REAL
 						float att_s = 16;
 						float atn = (float) (Math.pow(Math.hypot(xf-cx,yf-cy),2)/(dists*dists));
@@ -160,7 +159,7 @@ public class LightMap {
 		} else if (timeh<6) { //Sunrise to day
 			setAmbColInterp(0.4f,0.2f,0.1f,0.5f,0,0,0,0,(timeh%0.5f)*2);
 		} else if (timeh<18) { //Day
-			setAmbCol(0,0,0,0);
+			setAmbCol(0,0,0,0); //(0.197f,0.198f,0.1f,0.1f)-Looks nicer (0.37f,0.38f,0.4f,0.9f)-Fog
 		} else if (timeh<18.5f) { //Day to Sunset
 			setAmbColInterp(0,0,0,0,0.4f,0.2f,0.1f,0.5f,(timeh%0.5f)*2);
 		} else if (timeh<19.5) { //Sunset to Night

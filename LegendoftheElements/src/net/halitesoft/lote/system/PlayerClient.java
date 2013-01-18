@@ -100,9 +100,9 @@ public class PlayerClient implements GameElement {
 					else if (db=='R')
 						while (smx>0)
 							smx-=mvspd;
-					gs.cam.x=this.x=smx;
-					gs.cam.y=this.y=smy;
+					gs.cam.setPosition(this.x=smx,this.y=smy,this);
 					gs.regionLoaded=false;
+					this.entid=-1;
 					gs.sendMessage("SERVER.changeRegion",twd+","+x+","+y);
 				}
 			} else {

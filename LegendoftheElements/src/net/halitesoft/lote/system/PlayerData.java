@@ -4,6 +4,7 @@ package net.halitesoft.lote.system;
 import java.util.ArrayList;
 
 import net.halitesoft.lote.Message;
+import net.halitesoft.lote.MessageSystem;
 import net.halitesoft.lote.world.item.Item;
 import net.halitesoft.lote.world.item.ItemFactory;
 
@@ -47,6 +48,7 @@ public class PlayerData {
 	private String name;
 	private Connection connection;
 	public ArrayList<InventoryEntry> inventory;
+	public int health;
 	public PlayerData(String name, Connection connection) {
 		this.name=name;
 		this.connection=connection;
@@ -59,7 +61,7 @@ public class PlayerData {
 	
 	public void updated() {
 		if (connection != null)
-			connection.sendTCP(new Message("PLAYER.setPDAT",this.toString()));
+			MessageSystem.sendClient(null,connection,new Message("PLAYER.setPDAT",this.toString()),false);
 	}
 	
 	@Override
@@ -68,17 +70,18 @@ public class PlayerData {
 		for (InventoryEntry ie : inventory)
 			inv=inv+"\\"+ie.count+","+ie.item.name+","+ie.extd;
 		if (inv.length()>1)
-			return name+","+inv.substring(1);
+			return name+","+health+","+inv.substring(1);
 		else
-			return name+",";
+			return name+","+health+",";
 	}
 	
 	public void fromString(String str) {
-		String[] parts = str.split(",",2);
+		String[] parts = str.split(",",3);
 		name=parts[0];
+		health=Integer.parseInt(parts[1]);
 		inventory.clear();
-		if (!parts[1].equals(""))
-			for (String is : parts[1].split("\\\\")) {
+		if (!parts[2].equals(""))
+			for (String is : parts[2].split("\\\\")) {
 				inventory.add(new InventoryEntry(ItemFactory.getItem(is.split(",",3)[1]),is.split(",",3)[2],Integer.parseInt(is.split(",",3)[0])));
 			}
 	}
@@ -103,5 +106,9 @@ public class PlayerData {
 			ret=ret.concat(ie.toString()+"\n");
 		}
 		return ret;
+	}
+	
+	public String getName() {
+		return name;
 	}
 }

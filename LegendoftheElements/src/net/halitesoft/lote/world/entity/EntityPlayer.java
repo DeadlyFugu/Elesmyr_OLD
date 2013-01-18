@@ -9,6 +9,7 @@ import net.halitesoft.lote.system.GameServer;
 import net.halitesoft.lote.system.Light;
 import net.halitesoft.lote.system.Main;
 import net.halitesoft.lote.system.PlayerData;
+import net.halitesoft.lote.world.Region;
 import net.halitesoft.lote.world.item.Item;
 import net.halitesoft.lote.world.item.ItemFactory;
 
@@ -38,6 +39,8 @@ public class EntityPlayer extends Entity {
 
 	public EntityPlayer() {
 		constantUpdate = true;
+		cx1=cy1=-16;
+		cx2=cy2=16;
 	}
 	
 	public void setSERVDAT(Connection connection, PlayerData pdat) {
@@ -149,6 +152,17 @@ public class EntityPlayer extends Entity {
 	
 	public String getName() {
 		return extd.split(",")[0];
+	}
+	
+	@Override
+	public void hurt(Region region, int damage, MessageReceiver receiver) {
+		System.out.println("Player hit!");
+		pdat.health -=damage;
+		pdat.updated();
+		if (pdat.health<=0) { //TODO: Proper player kill code
+			//this.drop(region);
+			//region.receiveMessage(new Message(region.name+".killSERV",this.name), receiver );
+		}
 	}
 	
 	@Override

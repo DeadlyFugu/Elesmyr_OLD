@@ -43,7 +43,7 @@ public class Light {
 	public void randomize() {
 		Random rand = new Random();
 		dist=bdist+16-rand.nextInt(8);
-		//x+=1-rand.nextInt(3);
-		//y+=1-rand.nextInt(3);
+		x+=1-rand.nextInt(3);
+		y+=1-rand.nextInt(3);
 	}
 }

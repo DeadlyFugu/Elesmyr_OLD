@@ -44,4 +44,21 @@ public class Camera {
 	public int getYOff() {
 		return yoff;
 	}
+
+	public void setPosition(int x, int y, PlayerClient player) {
+		this.x=tx=x;
+		this.y=tx=y;
+		/*if (this.x<Main.INTERNAL_RESX/2) //Uncommenting this will removes the camera sliding-y
+			this.x=Main.INTERNAL_RESX/2;   //thing when the camera moves between regions
+		if (this.y<Main.INTERNAL_RESY/2)
+			this.y=Main.INTERNAL_RESY/2;
+		Region pr = player.getRegion();
+		if (pr != null) {
+			TiledMap map = pr.map;
+			if (this.x>map.getWidth()*32-Main.INTERNAL_RESX/2)
+				this.x=map.getWidth()*32-Main.INTERNAL_RESX/2;
+			if (this.y>map.getHeight()*32-Main.INTERNAL_RESY/2)
+				this.y=map.getHeight()*32-Main.INTERNAL_RESY/2;
+		}*/
+	}
 }

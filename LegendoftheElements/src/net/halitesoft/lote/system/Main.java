@@ -38,7 +38,7 @@ public class Main extends StateBasedGame {
 	public static SpriteSheetFont font;
 	
 	public static HashMap<String,String> globals;
-	public static String version = "PRE-ALPHA 0.1.6"; //0.0.1 = DEC 16
+	public static String version = "PRE-ALPHA 0.1.7"; //0.0.1 = DEC 16
 
 	public Main() {
 		super("LotE");

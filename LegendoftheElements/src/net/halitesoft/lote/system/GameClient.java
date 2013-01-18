@@ -51,8 +51,8 @@ public class GameClient extends BasicGameState implements MessageReceiver {
 	Camera cam;
 	public LightMap lm;
 	
-	private float time=-1; //in-game time in minutes
-	private float servtime=-1; //time according to server
+	private float time=-20; //in-game time in minutes
+	private float servtime=-20; //time according to server
 	
 	private LinkedList<String> chat;
 	private TextField textField;
@@ -76,8 +76,8 @@ public class GameClient extends BasicGameState implements MessageReceiver {
 		regionLoaded = false;
 		error = null;
 		chatso = new ScriptObject("ccmd","NAME="+Main.globals.get("name"),this);
-		time=-1;
-		servtime=-1;
+		time=-20;
+		servtime=-20;
 		//msgList = new ConcurrentLinkedQueue<Message>();
 		chat = new LinkedList<String>();
 		ui = new LinkedList<UserInterface>();
@@ -91,7 +91,7 @@ public class GameClient extends BasicGameState implements MessageReceiver {
 		lm = new LightMap(true,(int) (MainMenuState.lres*Main.INTERNAL_ASPECT),MainMenuState.lres);
 		System.gc();
 
-		textField = new TextField(gc, Main.font, 10,Main.INTERNAL_RESY-20,530,16);
+		textField = new TextField(gc, Main.font, 10,Main.INTERNAL_RESY-84,530,16);
 		textField.setBorderColor(null);
 		textField.setBackgroundColor(new Color(0,0,0,0.2f));
 		textField.setTextColor(Color.white);
@@ -122,7 +122,7 @@ public class GameClient extends BasicGameState implements MessageReceiver {
 			g.popTransform();
 			int i = 1;
 			for (String s : ((LinkedList<String>) chat.clone())) {
-				Main.font.drawString(10,Main.INTERNAL_RESY-25-i*18, s);
+				Main.font.drawString(10,Main.INTERNAL_RESY-89-i*18, s);
 				i++;
 			}
 			for (UserInterface uii : ui) {
@@ -190,7 +190,7 @@ public class GameClient extends BasicGameState implements MessageReceiver {
 			} else {
 				if (CLIENT) {
 					if (!SERVER)
-						client.sendTCP(new Message("SERVER.close",""));
+						MessageSystem.sendServer(null,new Message("SERVER.close",""),false);
 					client.close();
 				}
 				if (SERVER) {
@@ -213,7 +213,7 @@ public class GameClient extends BasicGameState implements MessageReceiver {
 					if (textField.getText().startsWith("<")
 							&& textField.getText().contains(":")
 							&& textField.getText().split(":",2)[0].contains(".")) {
-						client.sendTCP(new Message(textField.getText().split(":",2)[0].substring(1),textField.getText().split(":",2)[1]));
+						MessageSystem.sendServer(null,new Message(textField.getText().split(":",2)[0].substring(1),textField.getText().split(":",2)[1]),false);
 					} else if (textField.getText().startsWith("/def ")) {
 						if (textField.getText().contains("="))
 							chatso.putVariable(textField.getText().substring(5).trim());
@@ -299,10 +299,10 @@ public class GameClient extends BasicGameState implements MessageReceiver {
 			} else if (name.equals("time")) {
 				float oltime = servtime;
 				servtime = Float.parseFloat(msg.getData());
-				if (servtime>oltime+5 || servtime<oltime-5) {
+				if (servtime>oltime+10 || servtime<oltime-10) {
+					Log.info("Time skip");
 					lm.skipFade(servtime/60f);
 					time=servtime;
-					System.out.println("time skip");
 				}
 			} else {
 				Log.warn("CLIENT: Ignored message - unrecognised name: "+msg.toString());
@@ -346,7 +346,7 @@ public class GameClient extends BasicGameState implements MessageReceiver {
 		if (SERVER)
 			server.load();
 		if (CLIENT) {
-			client.sendTCP(new Message("SERVER.wantPlayer",Main.globals.get("name")+","+Integer.toHexString("".hashCode())));
+			MessageSystem.sendServer(null,new Message("SERVER.wantPlayer",Main.globals.get("name")+","+Integer.toHexString("".hashCode())),false);
 		}
 	}
 
@@ -380,11 +380,11 @@ public class GameClient extends BasicGameState implements MessageReceiver {
 	}
 
 	public void sendMessage(String name, String data) {
-		client.sendTCP(new Message(name,data));
+		MessageSystem.sendServer(null,new Message(name,data),false);
 	}
 
 	public void login(String name, String pass) {
-		client.sendTCP(new Message("SERVER.wantPlayer",name+","+pass));
+		MessageSystem.sendServer(null,new Message("SERVER.wantPlayer",name+","+pass),false);
 	}
 
 	public GameServer getServer() {

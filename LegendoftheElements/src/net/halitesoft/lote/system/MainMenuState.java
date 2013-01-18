@@ -166,7 +166,7 @@ public class MainMenuState extends BasicGameState {
 		textField.setBackgroundColor(null);
 		textField.setTextColor(Color.white);
 		textField.setAcceptingInput(false);
-		textField.setMaxLength(16);
+		textField.setMaxLength(15);
 	}
 
 	public void render(GameContainer gc, StateBasedGame sbg, Graphics g) throws SlickException {
