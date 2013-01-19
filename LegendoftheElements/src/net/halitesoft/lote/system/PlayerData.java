@@ -63,9 +63,7 @@ public class PlayerData {
 	public void updated(Region r, String entRName) {
 		if (connection != null)
 			MessageSystem.sendClient(null,connection,new Message("PLAYER.setPDAT",this.toString()),false);
-		System.out.println(r.connections);
 		for (Connection c : r.connections) {
-			System.out.println(c);
 			if (c!=connection)
 				MessageSystem.sendClient(null,c,new Message(entRName+".setPDAT",this.toStringBlinded()),false);
 		}
