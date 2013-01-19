@@ -132,8 +132,6 @@ public class GameServer extends Server implements MessageReceiver {
 
 		public void received (Connection connection, Object object) {
 			try {
-				if (!(object instanceof Message) || !((Message) object).getName().equals("move"))
-					Log.info("Server received: "+object.toString());
 				if (object instanceof Message) {
 					((Message) object).addConnection(connection);
 					MessageSystem.receiveServer((Message) object);
@@ -171,6 +169,7 @@ public class GameServer extends Server implements MessageReceiver {
 				if (playerEnt.containsKey(uname)) {
 					MessageSystem.sendClient(null,connection,new Message("CLIENT.error","There is already a player called "+uname+" on that server!"),false);
 				} else {
+					sendChat("SERVER: "+uname+" joined the game.");
 					players.put(connection,uname);
 					String pInfo = save.get("players."+uname);
 					if (pInfo != null) {
@@ -179,53 +178,22 @@ public class GameServer extends Server implements MessageReceiver {
 						MessageSystem.sendClient(null,connection,new Message("PLAYER.playerInfo",save.get("players.new")),false);
 					}
 				}
-				sendChat("SERVER: "+uname+" joined the game.");
 			} else if (name.equals("getRegion")) {
 				int x = Integer.parseInt(data.split(",")[1]);
 				int y = Integer.parseInt(data.split(",")[2]);
 				data = data.split(",")[0];
-				world.touchRegion(data); //Load region if unloaded
-				world.getRegion(data).connections.add(connection); //Add the connection to the region
-				String rEntD = world.getRegion(data).getEntityString(); //Get the region's entity string
-				if (rEntD.length()<2800) //If the string is smaller than 2800 chars, send it
-					MessageSystem.sendClient(null,connection,new Message("CLIENT.setRegion",data+":"+rEntD),false);
-				else {
-					MessageSystem.sendClient(null,connection,new Message("CLIENT.setRegion",data+":"),false);
-					for (Entity e : world.getRegion(data).entities.values()) {
-						MessageSystem.sendClient(null,connection,new Message(data+".addEnt",e.toString()),false);
-					}
-				}
-				int entid = world.getRegion(data).addEntityServer("EntityPlayer,"+x+","+y+","+players.get(connection)); //Add a player entity
-				PlayerData pdat = playerDat.get(players.get(connection)); //Get the PlayerData object for this player
-				if (pdat==null) //If there is no PlayerData object for this player, make one.
-					playerDat.put(players.get(connection),pdat = new PlayerData(players.get(connection),connection));
-				else
-					pdat.addConnection(connection); //Set the connection
-				((EntityPlayer) world.getRegion(data).entities.get(entid)).setSERVDAT(connection, pdat); //Tell the player entity about the PlayerData object
-				playerEnt.put(players.get(connection),data+"."+entid); //Put the entities name into playerEnt
-				MessageSystem.sendClient(null,connection,new Message("PLAYER.setID",""+entid),false); //Send a message to the client notifying it of its entity's ID.
-				MessageSystem.sendClient(null,connection,new Message("PLAYER.setPDAT",pdat.toString()),false); //Send client PDAT
-				MessageSystem.sendClient(null,connection,new Message("CLIENT.time",String.valueOf(time)),false); //Send the client the time
+				changePlayerRegion(data,x,y,connection,false);
 			} else if (name.equals("changeRegion")) {
 				int x = Integer.parseInt(data.split(",")[1]);
 				int y = Integer.parseInt(data.split(",")[2]);
 				data = data.split(",")[0];
-				world.receiveMessage(new Message(playerEnt.get(players.get(connection)).split("\\.",2)[0]+".killSERV",
-						playerEnt.get(players.get(connection)).split("\\.",2)[1]),this);
-				for (Region r : world.regions.values()) {
-					r.connections.remove(connection);
-				}
-				world.touchRegion(data);
-				world.getRegion(data).connections.add(connection);
-				MessageSystem.sendClient(null,connection,new Message("CLIENT.setRegion",data+":"+world.getRegion(data).getEntityString()),false);
-				int entid = world.getRegion(data).addEntityServer("EntityPlayer,"+x+","+y+","+players.get(connection));
-				PlayerData pdat = playerDat.get(players.get(connection));
-				((EntityPlayer) world.getRegion(data).entities.get(entid)).setSERVDAT(connection, pdat);
-				playerEnt.put(players.get(connection),data+"."+entid);
-				MessageSystem.sendClient(null,connection,new Message("PLAYER.setID",""+entid),false);
-				MessageSystem.sendClient(null,connection,new Message("CLIENT.time",String.valueOf(time)),false);
+				changePlayerRegion(data,x,y,connection,true);
 			} else if (name.equals("close")) {
 				sendChat("SERVER: "+players.get(connection)+" left the game.");
+				if (players.get(connection)==null || playerEnt.get(players.get(connection))==null) {
+					Log.info("Close message from non-player");
+					return false;
+				}
 				save.putPlayer(players.get(connection), playerEnt.get(players.get(connection)),world);
 				world.receiveMessage(new Message(playerEnt.get(players.get(connection)).split("\\.",2)[0]+".killSERV",
 						playerEnt.get(players.get(connection)).split("\\.",2)[1]),this);
@@ -246,6 +214,42 @@ public class GameServer extends Server implements MessageReceiver {
 			world.receiveMessage(msg,this);
 		}
 		return false;
+	}
+
+	public void changePlayerRegion(String data, int x, int y, Connection connection, boolean killOld) {
+		if (killOld) {
+			world.receiveMessage(new Message(playerEnt.get(players.get(connection)).split("\\.",2)[0]+".killSERV",
+					playerEnt.get(players.get(connection)).split("\\.",2)[1]),this);
+			for (Region r : world.regions.values()) {
+				r.connections.remove(connection);
+			}
+		}
+		world.touchRegion(data); //Load region if unloaded
+		world.getRegion(data).connections.add(connection); //Add the connection to the region
+		String rEntD = world.getRegion(data).getEntityString(); //Get the region's entity string
+		if (rEntD.length()<2800) //If the string is smaller than 2800 chars, send it
+			MessageSystem.sendClient(null,connection,new Message("CLIENT.setRegion",data+":"+rEntD),false);
+		else {
+			MessageSystem.sendClient(null,connection,new Message("CLIENT.setRegion",data+":"),false);
+			for (Entity e : world.getRegion(data).entities.values()) {
+				MessageSystem.sendClient(null,connection,new Message(data+".addEnt",e.toString()),false);
+			}
+		}
+		int entid = world.getRegion(data).addEntityServer("EntityPlayer,"+x+","+y+","+players.get(connection)); //Add a player entity
+		PlayerData pdat = playerDat.get(players.get(connection)); //Get the PlayerData object for this player
+		if (pdat==null) //If there is no PlayerData object for this player, make one.
+			playerDat.put(players.get(connection),pdat = new PlayerData(players.get(connection),connection));
+		else
+			pdat.addConnection(connection); //Set the connection
+		((EntityPlayer) world.getRegion(data).entities.get(entid)).setSERVDAT(connection, pdat); //Tell the player entity about the PlayerData object
+		playerEnt.put(players.get(connection),data+"."+entid); //Put the entities name into playerEnt
+		MessageSystem.sendClient(null,connection,new Message("PLAYER.setID",""+entid),false); //Send a message to the client notifying it of its entity's ID.
+		MessageSystem.sendClient(null,connection,new Message("PLAYER.setPDAT",pdat.toString()),false); //Send client PDAT
+		MessageSystem.sendClient(null,connection,new Message("CLIENT.time",String.valueOf(time)),false); //Send the client the time
+		for (Entity e : world.getRegion(data).entities.values()) {
+			if (e instanceof EntityPlayer)
+				((EntityPlayer) e).pdat.updated(world.getRegion(data), e.getReceiverName());
+		}
 	}
 
 	public void sendChat(String msg) {

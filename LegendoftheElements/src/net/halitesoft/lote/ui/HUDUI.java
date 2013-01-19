@@ -40,7 +40,10 @@ public class HUDUI implements UserInterface {
 			int dy = Main.INTERNAL_RESY-64;
 			playerInfo.draw(dx,dy);
 			Main.font.drawString(dx+13,dy+6,ep.getName());
-			Main.font.drawString(dx+30,dy+18,"HP:"+ep.pdat.health);
+			//System.out.println(ep);
+			//System.out.println(ep.pdat);
+			if (ep.pdat!=null)
+				Main.font.drawString(dx+30,dy+18,"HP:"+ep.pdat.health);
 			i++;
 		}
 		//playerInfo.draw(Main.INTERNAL_RESX*0.5f-80,Main.INTERNAL_RESY-64);
@@ -50,6 +53,8 @@ public class HUDUI implements UserInterface {
 	public void update(GameContainer gc, StateBasedGame sbg, GameClient receiver) {
 		if (updtimer==0) { //Calculate nearest players
 			updtimer=60;
+			if (receiver.player.region==null)
+				return; //Do nothing if the PlayerClient.region is null.
 			EntityPlayer player = ((EntityPlayer) receiver.player.region.entities.get(receiver.player.entid));
 			if (player==null)
 				return; //Do nothing if the player is null. The player temp. goes null when switching regions.

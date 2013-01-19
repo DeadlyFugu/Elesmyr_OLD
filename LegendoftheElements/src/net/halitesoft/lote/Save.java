@@ -60,7 +60,9 @@ public class Save {
 	}
 
 	public void putPlayer(String name, String data, World world) {
-		Entity player = world.getRegion(data.split("\\.")[0]).entities.get(Integer.parseInt(data.split("\\.",2)[1]));
+		if (data==null)
+			return;
+		Entity player = world.getRegion(data.split("\\.")[0]).entities.get(Integer.parseInt(data.split("\\.",2)[1])); //Can sometimes cause null pointer.
 		put("players."+name,data.split("\\.")[0]+","+player.x+","+player.y);
 	}
 

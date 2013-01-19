@@ -102,6 +102,7 @@ public class PlayerClient implements GameElement {
 							smx-=mvspd;
 					gs.cam.setPosition(this.x=smx,this.y=smy,this);
 					gs.regionLoaded=false;
+					this.region=null;
 					this.entid=-1;
 					gs.sendMessage("SERVER.changeRegion",twd+","+x+","+y);
 				}
@@ -275,7 +276,7 @@ public class PlayerClient implements GameElement {
 		} else if (name.equals("setID")) {
 			this.entid = Integer.parseInt(msg.getData());
 		} else if (name.equals("setPDAT")) {
-			if (region != null && ((EntityPlayer) region.entities.get(entid))!=null)
+			if (entid != -1 && region != null && region.entities.get(entid)!=null && (region.entities.get(entid) instanceof EntityPlayer))
 				((EntityPlayer) region.entities.get(entid)).setPDat(msg.getData());
 			pdat=msg.getData();
 		} else {

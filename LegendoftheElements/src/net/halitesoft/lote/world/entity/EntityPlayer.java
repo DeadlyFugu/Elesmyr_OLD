@@ -3,6 +3,7 @@ package net.halitesoft.lote.world.entity;
 
 import net.halitesoft.lote.Message;
 import net.halitesoft.lote.MessageReceiver;
+import net.halitesoft.lote.MessageSystem;
 import net.halitesoft.lote.system.Camera;
 import net.halitesoft.lote.system.GameClient;
 import net.halitesoft.lote.system.GameServer;
@@ -144,7 +145,12 @@ public class EntityPlayer extends Entity {
 			this.cy=Integer.parseInt(msg.getData().split(",")[1]);
 			this.isUser = true;
 		} else if (msg.getName().equals("putItem")) {
-			pdat.put(ItemFactory.getItem(msg.getData().split(",",2)[0]), msg.getData().split(",",2)[1]);
+			pdat.put(ItemFactory.getItem(msg.getData().split(",",2)[0]), msg.getData().split(",",2)[1],region,receiverName);
+		} else if (msg.getName().equals("setPDAT")) {
+			System.out.println("player ent received setPDAT "+msg);
+			if (pdat==null)
+				pdat=new PlayerData(extd,msg.getConnection());
+			pdat.fromString(msg.getData());
 		} else {
 			Log.info("ENTITYPLAYER: Ignored message "+msg.toString());
 		}
@@ -155,14 +161,16 @@ public class EntityPlayer extends Entity {
 	}
 	
 	@Override
-	public void hurt(Region region, int damage, MessageReceiver receiver) {
-		System.out.println("Player hit!");
-		pdat.health -=damage;
-		pdat.updated();
+	public void hurt(Region region, Entity entity, MessageReceiver receiver) {
+		pdat.health -=1;
 		if (pdat.health<=0) { //TODO: Proper player kill code
 			//this.drop(region);
-			//region.receiveMessage(new Message(region.name+".killSERV",this.name), receiver );
+			region.receiveMessage(new Message(region.name+".killSERV",this.name), receiver );
+			//((GameServer) receiver).changePlayerRegion("start", 800, 532, connection, true);
+			MessageSystem.sendClient(this, connection, new Message("PLAYER.playerInfo","start,800,532"), false);
+			pdat.health=60;
 		}
+		pdat.updated(region,receiverName);
 	}
 	
 	@Override
@@ -201,7 +209,7 @@ public class EntityPlayer extends Entity {
 	 * @return true if successful
 	 */
 	public boolean putItem(Item item, String extd) {
-		return pdat.put(item,extd);
+		return pdat.put(item,extd,region,receiverName);
 	}
 
 	public void setPDat(String data) {

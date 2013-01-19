@@ -28,17 +28,19 @@ public class Entity implements GameElement, Comparable<Entity> {
 	public float xs,ys; //Smoothed
 	public boolean constantUpdate = false;
 	public boolean tellClient = true;
+	public Region region;
 	/**
 	 * 'Constructor' for entity. Used because I suck at reflection and can't figure out how to pass arguments to a real constructor.
 	 * @param name
 	 * @param x
 	 * @param y
 	 */
-	public Entity ctor(String name, int x, int y, String extd, String receiverName) {
+	public Entity ctor(String name, int x, int y, String extd, String receiverName, Region region) {
 		this.name=name;
 		this.receiverName=receiverName;
 		xs=this.x=x;
 		ys=this.y=y;
+		this.region=region;
 		this.extd=extd;
 		this.initSERV();
 		return this;
@@ -128,16 +130,16 @@ public class Entity implements GameElement, Comparable<Entity> {
 	/**
 	 * Make an entity take damage
 	 * @param region Region the entity is in
-	 * @param damage Amount of damage to be dealt
+	 * @param entity Entity that attacked
 	 * @return True if entity needs to be destroyed.
 	 */
-	public void hurt(Region region, int damage, MessageReceiver receiver) {
+	public void hurt(Region region, Entity entity, MessageReceiver receiver) {
 	}
 	
 	/**
 	 * Called when a player interacts with this entity
 	 * @param region Region the entity is in
-	 * @param entityPlayer Player entity
+	 * @param entityPlayer Player entity that interacted
 	 */
 	public void interact(Region region, EntityPlayer entityPlayer, MessageReceiver receiver) {
 	}
@@ -149,7 +151,6 @@ public class Entity implements GameElement, Comparable<Entity> {
 	protected void drop(Region region) {
 		Random rand = new Random();
 		for (String i : this.getDrops()) {
-			System.out.println(i);
 			region.addEntityServer("EntityItem,"+(x-rand.nextInt(32))+","+(y-rand.nextInt(32))+","+i);
 		}
 	}

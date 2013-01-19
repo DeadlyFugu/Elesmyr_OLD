@@ -84,8 +84,8 @@ public class EntityEnemy extends Entity {
 	}
 	
 	@Override
-	public void hurt(Region region, int damage, MessageReceiver receiver) {
-		this.health-=damage;
+	public void hurt(Region region, Entity entity, MessageReceiver receiver) {
+		this.health-=1;
 		if (health<=0) {
 			this.drop(region);
 			region.receiveMessage(new Message(region.name+".killSERV",this.name), receiver );

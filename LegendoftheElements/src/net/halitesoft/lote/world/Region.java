@@ -126,7 +126,6 @@ public class Region implements GameElement {
 			} else if (msg.getName().equals("addEntSERV")) {
 				addEntityServer(msg.getData());
 			} else if (msg.getName().equals("killSERV")) {
-				System.out.println("killSERV");
 				entities.remove(Integer.parseInt(msg.getData()));
 				MessageSystem.sendClient(this, connections, new Message(name+".kill",msg.getData()), false);
 			} else if (msg.getName().equals("kill")) {
@@ -134,11 +133,12 @@ public class Region implements GameElement {
 				entities.get(Integer.parseInt(msg.getData())).kill((GameClient) receiver);
 				entities.remove(Integer.parseInt(msg.getData()));
 				} catch (Exception e) {
-					System.out.println("client kill failed");
+					Log.info("Client could not kill "+msg.getData());
 				}
 			} else if (msg.getName().equals("hitAt")) {
 				for (Entity e : getEntitiesAt(Integer.parseInt(msg.getData().split(",",2)[0]),Integer.parseInt(msg.getData().split(",",2)[1]))) {
-					e.hurt(this,1,receiver);
+					if (e!=((GameServer) receiver).getPlayerEnt(msg.getConnection()))
+						e.hurt(this,((GameServer) receiver).getPlayerEnt(msg.getConnection()),receiver);
 				}
 			} else if (msg.getName().equals("intAt")) {
 				for (Entity e : getEntitiesAt(Integer.parseInt(msg.getData().split(",",2)[0]),Integer.parseInt(msg.getData().split(",",2)[1]))) {
@@ -189,7 +189,7 @@ public class Region implements GameElement {
 	 */
 	public void addEntity(String data,boolean client) {
 		if (data.split(",",5).length==5) {
-			Entity ent = EntityFactory.getEntity(data,name);
+			Entity ent = EntityFactory.getEntity(data,this);
 			entities.put(Integer.valueOf(data.split(",")[1]),ent);
 			if (client)
 				MessageSystem.registerReceiverClient(ent);
@@ -210,7 +210,7 @@ public class Region implements GameElement {
 		//for (Connection c : connections)
 		//	c.sendTCP(new Message(name+".addEnt",data.split(",",2)[0]+","+(idmax+1)+","+data.split(",",2)[1]));
 		MessageSystem.sendClient(this, connections, new Message(name+".addEnt",data.split(",",2)[0]+","+(idmax+1)+","+data.split(",",2)[1]), false);
-		Entity ent = EntityFactory.getEntity(data.split(",",2)[0]+","+(idmax+1)+","+data.split(",",2)[1],name);
+		Entity ent = EntityFactory.getEntity(data.split(",",2)[0]+","+(idmax+1)+","+data.split(",",2)[1],this);
 		entities.put(idmax+1,ent);
 		MessageSystem.registerReceiverServer(ent);
 		return idmax+1;

@@ -9,6 +9,7 @@ import net.halitesoft.lote.system.GameClient;
 import net.halitesoft.lote.system.GameServer;
 
 import com.esotericsoftware.kryonet.Connection;
+import com.esotericsoftware.minlog.Log;
 
 public class MessageSystem {
 	private static HashMap<String,GameElement> clientReceivers;
@@ -23,7 +24,7 @@ public class MessageSystem {
 		MessageSystem.server=server;
 		if (client!=null && server!=null) {
 			fastLink=true;
-			System.out.println("nonNetLink");
+			Log.info("Fastlink established");
 		} else {
 			fastLink=false;
 		}
@@ -75,15 +76,17 @@ public class MessageSystem {
 	}
 	
 	public static void receiveServer(Message msg) {
-		//System.out.println("Server received "+msg);
 		msg.setServerBound(true);
 		serverMsgQueue.add(msg);
 	}
 	
 	public static void receiveClient(Message msg) {
-		//System.out.println("Client received "+msg);
+		try {
 		msg.setServerBound(false);
 		clientMsgQueue.add(msg);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 	
 	public static void receiveMessageServer() {
@@ -98,13 +101,17 @@ public class MessageSystem {
 	}
 	
 	public static void receiveMessageClient() {
-		for (Message msg : clientMsgQueue) {
-			if (clientReceivers.containsKey(msg.getTarget())) {
-				clientReceivers.get(msg.getTarget()).receiveMessage(msg, client);
-			} else {
-				client.receiveMessage(msg);
+		while (!clientMsgQueue.isEmpty()) {
+			Message msg = clientMsgQueue.poll();
+			try {
+				if (clientReceivers.containsKey(msg.getTarget())) {
+					clientReceivers.get(msg.getTarget()).receiveMessage(msg, client);
+				} else {
+					client.receiveMessage(msg);
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
 		}
-		clientMsgQueue.clear();
 	}
 }

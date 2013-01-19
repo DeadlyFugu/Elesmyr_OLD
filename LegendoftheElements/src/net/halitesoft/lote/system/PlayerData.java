@@ -5,6 +5,7 @@ import java.util.ArrayList;
 
 import net.halitesoft.lote.Message;
 import net.halitesoft.lote.MessageSystem;
+import net.halitesoft.lote.world.Region;
 import net.halitesoft.lote.world.item.Item;
 import net.halitesoft.lote.world.item.ItemFactory;
 
@@ -59,11 +60,22 @@ public class PlayerData {
 		this.connection = connection;
 	}
 	
-	public void updated() {
+	public void updated(Region r, String entRName) {
 		if (connection != null)
 			MessageSystem.sendClient(null,connection,new Message("PLAYER.setPDAT",this.toString()),false);
+		System.out.println(r.connections);
+		for (Connection c : r.connections) {
+			System.out.println(c);
+			if (c!=connection)
+				MessageSystem.sendClient(null,c,new Message(entRName+".setPDAT",this.toStringBlinded()),false);
+		}
 	}
 	
+	/** Return a string hiding information other users don't need to know (e.g. Inventory) */
+	private String toStringBlinded() {
+		return name+","+health+",";
+	}
+
 	@Override
 	public String toString() {
 		String inv = "";
@@ -86,14 +98,14 @@ public class PlayerData {
 			}
 	}
 	
-	public boolean put(Item item, String extd) {
+	public boolean put(Item item, String extd, Region r, String ent) {
 		try {
 			InventoryEntry ieo = new InventoryEntry(item,extd,1);
 			if (inventory.contains(ieo))
 				inventory.get(inventory.indexOf(ieo)).upCount();
 			else
 				inventory.add(new InventoryEntry(item,extd,1));
-			updated();
+			updated(r,ent);
 			return true; //Return false if inv is full so item wasn't put
 		} catch (Exception e) {
 			return false;

@@ -83,8 +83,8 @@ public class EntityScripted extends Entity {
 	}
 
 	@Override
-	public void hurt(Region region, int damage, MessageReceiver receiver) {
-		so.call("hurt",!receiver.isServer()," DAMAGE="+damage,receiver);
+	public void hurt(Region region, Entity entity, MessageReceiver receiver) {
+		so.call("hurt",!receiver.isServer()," DAMAGE="+1,receiver);
 	}
 	
 	@Override

@@ -242,7 +242,6 @@ public class ScriptRunner {
 		Matcher matcher = Pattern.compile("(!=|<=|>=|=|<|>|&|\\|)").matcher(in);
 		matcher.find();
 		String op = in.substring(matcher.start());
-		//System.out.println(parts[0]+" "+op+" "+parts[1]);
 		if (op.startsWith("=")) {
 			return ""+parts[0].equalsIgnoreCase(parts[1]);
 		} else if (op.startsWith("!=")) {
