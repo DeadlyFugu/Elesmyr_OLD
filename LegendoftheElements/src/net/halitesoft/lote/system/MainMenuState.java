@@ -28,7 +28,7 @@ import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
-import org.newdawn.slick.Input;
+import org.newdawn.slick.InputListener;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.SpriteSheet;
 import org.newdawn.slick.SpriteSheetFont;
@@ -41,7 +41,6 @@ import com.esotericsoftware.kryonet.KryoSerialization;
 import com.esotericsoftware.minlog.Log;
 
 public class MainMenuState extends BasicGameState {
-
 	int stateID = -1;
 
 	Image background = null;
@@ -81,11 +80,15 @@ public class MainMenuState extends BasicGameState {
 	private int dx = -256;
 	private int tdx = 64;
 
+	private boolean waitingForKeyPress;
+	private String inKey = null;
 
-
+	private InputListener getKeyListener;
+	
 	MainMenuState( int stateID ) 
 	{
 		this.stateID = stateID;
+		getKeyListener = new GetKeyInputListener(this);
 	}
 
 	@Override
@@ -160,6 +163,8 @@ public class MainMenuState extends BasicGameState {
 			entryString[2][3] = "Volume: "+Main.globals.get("volume");
 		entryString[2][4] = "Debug: "+debug;
 		entryString[2][5] = "Lightmap Res: "+lres+"p";
+		
+		setControlText();
 
 		textField = new TextField(gc, Main.font, tdx,128+19,256,16);
 		textField.setBorderColor(null);
@@ -281,19 +286,39 @@ public class MainMenuState extends BasicGameState {
 	}
 
 	public void update(GameContainer gc, StateBasedGame sbg, int delta) throws SlickException {
-
-		Input input = gc.getInput();
-		if (input.isKeyPressed(Input.KEY_DOWN) && !showTextField) {
+		org.newdawn.slick.Input input = gc.getInput();
+		if (waitingForKeyPress) {
+			if (input.isKeyPressed(org.newdawn.slick.Input.KEY_RETURN)) {	//For some odd reason (bug?), InputListener doesn't receive return key presses
+				inKey="KEY_"+org.newdawn.slick.Input.KEY_RETURN;			//So this here checks for them instead.
+				waitingForKeyPress=false;
+			}
+			return; //Do nothing if waiting for a key press
+		} else if (inKey!=null) { //"Input method: Keyboard/Mouse","Walk: Arrow keys","Interact: Z","Attack: X","Inventory: E","Select: Enter","Back/Pause: Esc","Back"
+			switch (selection) {
+			case 2: Input.setKey("int", inKey); break;
+			case 3: Input.setKey("atk", inKey); break;
+			case 4: Input.setKey("inv", inKey); break;
+			case 5: Input.setKey("sel", inKey); break;
+			case 6: Input.setKey("pause", inKey); break;
+			}
+			waitingForKeyPress=false;
+			inKey=null;
+			input.removeListener(getKeyListener);
+			input.clearKeyPressedRecord();
+			setControlText();
+		}
+			
+		if (input.isKeyPressed(org.newdawn.slick.Input.KEY_DOWN) && !showTextField) {
 			if (selection<entryCount[subMenu]-1) {
 				selection++;
 			}
 		}
-		if (input.isKeyPressed(Input.KEY_UP) && !showTextField) {
+		if (input.isKeyPressed(org.newdawn.slick.Input.KEY_UP) && !showTextField) {
 			if (selection>0) {
 				selection--;
 			}
 		}
-		if (input.isKeyPressed(Input.KEY_ESCAPE)) {
+		if (input.isKeyPressed(org.newdawn.slick.Input.KEY_ESCAPE)) {
 			if (showTextField) {
 				showTextField=false;
 				textField.setText("");
@@ -311,7 +336,7 @@ public class MainMenuState extends BasicGameState {
 				gc.exit();
 			}
 		}
-		if (input.isKeyPressed(Input.KEY_ENTER)){
+		if (input.isKeyPressed(org.newdawn.slick.Input.KEY_ENTER)){
 			switch ((subMenu*100)+selection) {
 			case 000: { //Singleplayer
 				selection = 0;
@@ -444,8 +469,14 @@ public class MainMenuState extends BasicGameState {
 				subMenu = 0;
 				dx=-256;
 			} break;
-			case 402: {
-				//TODO: make this
+			case 402:
+			case 403:
+			case 404:
+			case 405:
+			case 406: { //"Input method: Keyboard/Mouse","Walk: Arrow keys","Interact: Z","Attack: X","Inventory: E","Select: Enter","Back/Pause: Esc","Back"
+				input.clearKeyPressedRecord();
+				input.addListener(getKeyListener );
+				waitingForKeyPress = true;
 			} break;
 			case 407: {
 				selection = 0;
@@ -555,6 +586,23 @@ public class MainMenuState extends BasicGameState {
 		}
 	}
 
+	private void setControlText() {
+		entryString[4]=new String[] {"Input method: Keyboard/Mouse",
+				"Walk: Arrow keys",
+				"Interact: "+resolveKeyName(Main.globals.get("IN_int")),
+				"Attack: "+org.newdawn.slick.Input.getKeyName(Integer.parseInt(Main.globals.get("IN_atk").split("_")[1])),
+				"Inventory: "+org.newdawn.slick.Input.getKeyName(Integer.parseInt(Main.globals.get("IN_inv").split("_")[1])),
+				"Select: Enter",
+				"Back/Pause: Esc",
+				"Back"};
+	}
+
+	private String resolveKeyName(String keyn) {
+		if (keyn.split("_")[0].equals("KEY"))
+			return org.newdawn.slick.Input.getKeyName(Integer.parseInt(keyn.split("_")[1]));
+		return keyn;
+	}
+
 	public List<InetAddress> discoverHosts (int udpPort, int timeoutMillis) {
 		List<InetAddress> hosts = new ArrayList<InetAddress>();
 		DatagramSocket socket = null;
@@ -646,5 +694,50 @@ public class MainMenuState extends BasicGameState {
 			in.close();
 			out.close();
 		}
+	}
+	
+	public class GetKeyInputListener implements InputListener {
+		private MainMenuState mms;
+		public GetKeyInputListener(MainMenuState mms) {
+			this.mms=mms;
+		}
+		
+		private void setControl(String control) {
+			mms.inKey=control;
+			mms.waitingForKeyPress=false;
+		}
+		
+		@Override public void mousePressed(int arg0, int arg1, int arg2) { setControl("MOUSE_"+arg0);
+		}
+		
+		@Override public void keyPressed(int arg0, char arg1) {
+			Log.info(arg0+","+arg1);
+			setControl("KEY_"+arg0);
+		}
+
+
+		@Override public void controllerButtonPressed(int arg0, int arg1) {
+			setControl("GC_"+arg1);
+		}
+
+		@Override public void setInput(org.newdawn.slick.Input arg0) {}
+		@Override public void inputEnded() {}
+		@Override public void inputStarted() {}
+		@Override public boolean isAcceptingInput() {return true;}
+		@Override public void mouseClicked(int arg0, int arg1, int arg2, int arg3) {}
+		@Override public void mouseDragged(int arg0, int arg1, int arg2, int arg3) {}
+		@Override public void mouseMoved(int arg0, int arg1, int arg2, int arg3) {}
+		@Override public void mouseReleased(int arg0, int arg1, int arg2) {}
+		@Override public void mouseWheelMoved(int arg0) {}
+		@Override public void keyReleased(int arg0, char arg1) {}
+		@Override public void controllerButtonReleased(int arg0, int arg1) {}
+		@Override public void controllerDownPressed(int arg0) {}
+		@Override public void controllerDownReleased(int arg0) {}
+		@Override public void controllerLeftPressed(int arg0) {}
+		@Override public void controllerLeftReleased(int arg0) {}
+		@Override public void controllerRightPressed(int arg0) {}
+		@Override public void controllerRightReleased(int arg0) {}
+		@Override public void controllerUpPressed(int arg0) {}
+		@Override public void controllerUpReleased(int arg0) {}
 	}
 }

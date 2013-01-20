@@ -42,11 +42,11 @@ public class InventoryUI implements UserInterface {
 			}
 		}
 		} catch (Exception e) {};
-		if (sel>0)
-			Main.font.drawString(100-Main.font.getWidth(types[sel-1])/2,40,types[sel-1]);
-		Main.font.drawString(310-Main.font.getWidth(types[sel])/2,40,types[sel]);
-		if (sel<types.length-1)
-			Main.font.drawString(525-Main.font.getWidth(types[sel+1])/2,40,types[sel+1]);
+//		if (sel>0)
+//			Main.font.drawString(100-Main.font.getWidth(types[sel-1])/2,40,types[sel-1]);
+//		Main.font.drawString(310-Main.font.getWidth(types[sel])/2,40,types[sel]);
+//		if (sel<types.length-1)
+//			Main.font.drawString(525-Main.font.getWidth(types[sel+1])/2,40,types[sel+1]);
 	}
 
 	@Override public void update(GameContainer gc, StateBasedGame sbg, GameClient receiver) {

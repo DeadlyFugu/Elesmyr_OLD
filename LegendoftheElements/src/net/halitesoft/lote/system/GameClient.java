@@ -3,6 +3,7 @@ package net.halitesoft.lote.system;
 
 import java.io.IOException;
 import java.net.InetAddress;
+import java.util.Iterator;
 import java.util.LinkedList;
 
 import net.halitesoft.lote.Message;
@@ -125,8 +126,9 @@ public class GameClient extends BasicGameState implements MessageReceiver {
 				Main.font.drawString(10,Main.INTERNAL_RESY-89-i*18, s);
 				i++;
 			}
-			for (UserInterface uii : ui) {
-				uii.render(gc, sbg, g, cam, this);
+			Iterator<UserInterface> itui = ui.descendingIterator();
+			while (itui.hasNext()) {
+				itui.next().render(gc, sbg, g, cam, this);
 			}
 
 			if (showTextField) {

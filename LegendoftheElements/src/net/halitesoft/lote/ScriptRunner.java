@@ -13,6 +13,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import net.halitesoft.lote.system.GameClient;
+import net.halitesoft.lote.system.Main;
 
 import com.esotericsoftware.minlog.Log;
 
@@ -120,6 +121,8 @@ public class ScriptRunner {
 			Message msg = new Message(fargs.split(":",2)[0],fargs.split(":",2)[1]);
 			MessageSystem.sendServer(master,msg,false);
 			return "T"+initVar;
+		} else if (fname.equals("set")) {
+			Main.globals.put(fargs.split("=",2)[0],fargs.split("=",2)[1]);
 		}
 		
 		//Find function

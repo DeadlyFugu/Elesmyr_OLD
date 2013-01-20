@@ -12,7 +12,6 @@ import net.halitesoft.lote.world.entity.EntityPlayer;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
-import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.state.StateBasedGame;
 
@@ -122,7 +121,7 @@ public class PlayerClient implements GameElement {
 			}
 			posUpdate();
 		} else {
-			Input in = gc.getInput();
+			org.newdawn.slick.Input in = gc.getInput();
 			int xp=x;
 			int yp=y;
 			int mvspd = 2;
@@ -130,20 +129,20 @@ public class PlayerClient implements GameElement {
 			int noMove=0;
 			int xm=0;
 			int ym=0;
-			if (in.isKeyDown(Input.KEY_LEFT)) {
+			if (in.isKeyDown(org.newdawn.slick.Input.KEY_LEFT)) {
 				x-=mvspd;
 				xm=-1;
-			} else if (in.isKeyDown(Input.KEY_RIGHT)) {
+			} else if (in.isKeyDown(org.newdawn.slick.Input.KEY_RIGHT)) {
 				x+=mvspd;
 				xm=1;
 			} else {
 				noMove++;
 				xm=0;
 			}
-			if (in.isKeyDown(Input.KEY_UP)) {
+			if (in.isKeyDown(org.newdawn.slick.Input.KEY_UP)) {
 				y-=mvspd;
 				ym=-1;
-			} else if (in.isKeyDown(Input.KEY_DOWN)) {
+			} else if (in.isKeyDown(org.newdawn.slick.Input.KEY_DOWN)) {
 				y+=mvspd;
 				ym=1;
 			} else {
@@ -170,17 +169,17 @@ public class PlayerClient implements GameElement {
 					 y+=snkspd;
 			}
 			
-			if (in.isKeyPressed(Input.KEY_X))
+			if (Input.isKeyPressed(gc, "atk"))
 				MessageSystem.sendServer(this,new Message(regionName+".hitAt",(x+xm*16)+","+(y+ym*16)),true);
 			
-			if (in.isKeyPressed(Input.KEY_Z)) {
+			if (Input.isKeyPressed(gc, "int")) {
 				int colInfront = region.map.getTileId((int) (x+xm*16)/32, (int) (y+ym*16)/32, region.mapColLayer);
 				if (!intWith(colInfront))
 					MessageSystem.sendServer(this,new Message(regionName+".intAt",(x+xm*16)+","+(y+ym*16)),true);
 			}
 			
 			if (region != null) {
-				if (!in.isKeyDown(Input.KEY_SPACE)) {
+				if (!in.isKeyDown(org.newdawn.slick.Input.KEY_SPACE)) {
 					if (placeFree(x,yp))
 						x=xp;
 					if (placeFree(x,y))
