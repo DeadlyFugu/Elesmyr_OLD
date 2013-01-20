@@ -68,7 +68,7 @@ public class IntroState extends BasicGameState {
 //			ox = 0;
 //			oy = (vh-h)/2;
 //		} else {
-			w = vh*1.6f;
+			w = vh*1.778125f;
 			h = vh;
 			ox = (vw-w)/2;
 			oy = 0;

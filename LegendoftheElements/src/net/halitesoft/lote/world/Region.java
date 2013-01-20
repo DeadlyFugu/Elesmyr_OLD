@@ -137,7 +137,7 @@ public class Region implements GameElement {
 				}
 			} else if (msg.getName().equals("hitAt")) {
 				for (Entity e : getEntitiesAt(Integer.parseInt(msg.getData().split(",",2)[0]),Integer.parseInt(msg.getData().split(",",2)[1]))) {
-					if (e!=((GameServer) receiver).getPlayerEnt(msg.getConnection()))
+					//if (e!=((GameServer) receiver).getPlayerEnt(msg.getConnection())) //Comment this line to allow player to attack self
 						e.hurt(this,((GameServer) receiver).getPlayerEnt(msg.getConnection()),receiver);
 				}
 			} else if (msg.getName().equals("intAt")) {

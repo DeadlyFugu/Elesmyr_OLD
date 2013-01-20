@@ -140,7 +140,8 @@ public class GameClient extends BasicGameState implements MessageReceiver {
 			g.fillRect(0,0,Main.INTERNAL_RESX,Main.INTERNAL_RESY);
 			g.setColor(Color.white);
 		}
-		Main.font.drawString(0, 0, "LotE "+Main.version+":"+(CLIENT?" CLIENT":"")+(SERVER?" SERVER":"")+(MessageSystem.fastLink?" FASTLINK":""));
+		if (!CLIENT)
+			Main.font.drawString(0, 0, "LotE "+Main.version+":"+(CLIENT?" CLIENT":"")+(SERVER?" SERVER":"")+(MessageSystem.fastLink?" FASTLINK":""));
 		if (SERVER && (!CLIENT || Boolean.parseBoolean(Main.globals.get("debug")))) {
 			if (!CLIENT) {
 				g.setColor(Color.black);

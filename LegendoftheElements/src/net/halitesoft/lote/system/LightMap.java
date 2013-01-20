@@ -153,7 +153,7 @@ public class LightMap {
 
 	private void calcAmbLight(float timeh) {
 		if (timeh<5) { //Night
-			setAmbCol(0.02f,0.02f,0.05f,0.995f);
+			setAmbCol(0.02f,0.02f,0.05f,0.995f); //(0.14f,0.14f,0.22f,0.995f)-Nighttime fog?
 		} else if (timeh<5.5f) { //Night to Sunrise
 			setAmbColInterp(0.02f,0.02f,0.05f,0.995f,0.4f,0.2f,0.1f,0.5f,(timeh%0.5f)*2);
 		} else if (timeh<6) { //Sunrise to day
