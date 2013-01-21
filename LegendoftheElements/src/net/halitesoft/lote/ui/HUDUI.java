@@ -54,10 +54,6 @@ public class HUDUI implements UserInterface {
 				if (ep.pdat.getEquipped()!=null)
 					ep.pdat.getEquipped().getItem().spr.draw(dx+16,dy+16);
 				Main.font.drawString(dx+13,dy+6,ep.getName());
-				//System.out.println(ep);
-				//System.out.println(ep.pdat);
-				//if (ep.pdat!=null)
-				//	Main.font.drawString(dx+30,dy+18,"HP:"+ep.pdat.health);
 				bars.startUse();
 				bars.drawEmbedded(dx+57, dy+25, dx+57+104, dy+34,0,75,104,84);
 				if (ep.pdat!=null)

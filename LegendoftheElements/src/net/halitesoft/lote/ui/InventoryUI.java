@@ -79,7 +79,6 @@ public class InventoryUI implements UserInterface {
 				isel++;
 		if (in.isKeyPressed(Input.KEY_X)) {
 			PlayerData.InventoryEntry i = getItem(isel, receiver);
-			System.out.println(i);
 			if (i!=null) {
 				EntityPlayer ep = ((EntityPlayer) receiver.player.region.entities.get(receiver.player.entid));
 				ArrayList<PlayerData.InventoryEntry> inv = ((EntityPlayer) receiver.player.region.entities.get(receiver.player.entid)).pdat.inventory;

@@ -154,7 +154,6 @@ public class EntityPlayer extends Entity {
 				if (ie.getItem().onUse((GameServer) server,this));
 					pdat.removeItem(Integer.parseInt(msg.getData()),region,receiverName);
 		} else if (msg.getName().equals("setPDAT")) {
-			System.out.println("player ent received setPDAT "+msg);
 			if (pdat==null)
 				pdat=new PlayerData(extd,msg.getConnection());
 			pdat.fromString(msg.getData());

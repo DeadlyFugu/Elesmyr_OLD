@@ -124,7 +124,10 @@ public class Region implements GameElement {
 			if (msg.getName().equals("addEnt")) {
 				addEntity(msg.getData(),true);
 			} else if (msg.getName().equals("addEntSERV")) {
-				addEntityServer(msg.getData());
+				if (addEntityServer(msg.getData())==-1) {
+					msg.reply("CLIENT.chat","ERROR: addEntityServer failed for input string:",this);
+					msg.reply("CLIENT.chat","       "+msg.getData(),this);
+				}
 			} else if (msg.getName().equals("killSERV")) {
 				entities.remove(Integer.parseInt(msg.getData()));
 				MessageSystem.sendClient(this, connections, new Message(name+".kill",msg.getData()), false);
@@ -190,11 +193,13 @@ public class Region implements GameElement {
 	public void addEntity(String data,boolean client) {
 		if (data.split(",",5).length==5) {
 			Entity ent = EntityFactory.getEntity(data,this);
-			entities.put(Integer.valueOf(data.split(",")[1]),ent);
-			if (client)
-				MessageSystem.registerReceiverClient(ent);
-			else
-				MessageSystem.registerReceiverServer(ent);
+			if (ent!=null) {
+				entities.put(Integer.valueOf(data.split(",")[1]),ent);
+				if (client)
+					MessageSystem.registerReceiverClient(ent);
+				else
+					MessageSystem.registerReceiverServer(ent);
+			}
 		} else
 			Log.info("Ignored invalid entity '"+data+"'");
 	}
@@ -202,6 +207,7 @@ public class Region implements GameElement {
 	/**
 	 * Adds an entity to this region, dynamically creating a new ID.
 	 * @param data String containing entity info, without the ID.
+	 * @return ID of the new entity. -1 if creation failed.
 	 */
 	public int addEntityServer(String data) {
 		int idmax=0;
@@ -211,9 +217,12 @@ public class Region implements GameElement {
 		//	c.sendTCP(new Message(name+".addEnt",data.split(",",2)[0]+","+(idmax+1)+","+data.split(",",2)[1]));
 		MessageSystem.sendClient(this, connections, new Message(name+".addEnt",data.split(",",2)[0]+","+(idmax+1)+","+data.split(",",2)[1]), false);
 		Entity ent = EntityFactory.getEntity(data.split(",",2)[0]+","+(idmax+1)+","+data.split(",",2)[1],this);
-		entities.put(idmax+1,ent);
-		MessageSystem.registerReceiverServer(ent);
-		return idmax+1;
+		if (ent!=null) {
+			entities.put(idmax+1,ent);
+			MessageSystem.registerReceiverServer(ent);
+			return idmax+1;
+		} else
+			return -1;
 	}
 	
 	public boolean aiPlaceFree(int x, int y) {

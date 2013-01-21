@@ -1,5 +1,7 @@
 package net.halitesoft.lote.world.entity;
 
+import groovy.lang.GroovyObject;
+import net.halitesoft.lote.ScriptRunner;
 import net.halitesoft.lote.world.Region;
 
 public class EntityFactory {
@@ -11,10 +13,18 @@ public class EntityFactory {
 				Entity e = (Entity) Class.forName("net.halitesoft.lote.world.entity."+parts[0]).newInstance();
 				e.ctor(parts[1],Integer.parseInt(parts[2]),Integer.parseInt(parts[3]),parts[4],r.name+"."+parts[1],r);
 				return e;
-			} catch (Exception e) {
-				e.printStackTrace();
+			} catch (ClassNotFoundException e) {
+				GroovyObject go = ScriptRunner.get(parts[0]);
+				if (go != null) {
+					go.invokeMethod("ctor",new Object[] {parts[1],Integer.parseInt(parts[2]),Integer.parseInt(parts[3]),parts[4],r.name+"."+parts[1],r});
+					return (Entity) go.invokeMethod("toEntity", new Object[0]);
+				}
+			} catch (InstantiationException e1) {
+				e1.printStackTrace();
+			} catch (IllegalAccessException e1) {
+				e1.printStackTrace();
 			}
 			//return new EntityEnemy(parts[1],Integer.parseInt(parts[2]),Integer.parseInt(parts[3]));
-		return new Entity().ctor("null",0,0,"null",r.name+".null",r);
+		return null;
 	}
 }

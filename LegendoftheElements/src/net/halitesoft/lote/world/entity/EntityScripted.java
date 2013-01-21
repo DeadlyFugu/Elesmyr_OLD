@@ -31,16 +31,15 @@ public class EntityScripted extends Entity {
 	
 	@Override
 	protected void initSERV() {
-		so = new ScriptObject(extd.split(",",2)[0],extd.split(",",2)[1],this);
-		so.call("init",false," ENTID="+name+" X="+x+" Y="+y,null);
+		so = new ScriptObject(extd,this);
+		so.call("init",new Object[] {this});
 		constantUpdate=true;
 	}
 	
 	@Override
 	public void init(GameContainer gc, StateBasedGame sbg, MessageReceiver receiver)
 			throws SlickException {
-		if (so.getVar("spr")!=null)
-			spr = new Image("data/ent/"+so.getVar("spr")+".png",false,0);
+		so.call("initG",new Object[] {this,gc,receiver});
 		inited = true;
 	}
 	
@@ -51,6 +50,7 @@ public class EntityScripted extends Entity {
 			init(gc,sbg,receiver);
 		if (spr!=null)
 			spr.draw(xs+cam.getXOff()-96,ys+cam.getYOff()-190);
+		so.call("render",new Object[] {this,gc,receiver});
 	}
 
 	@Override
@@ -61,7 +61,7 @@ public class EntityScripted extends Entity {
 	
 	@Override
 	public void update(Region region, GameServer receiver) {
-		so.call("update",false,"",receiver);
+		so.call("update",new Object[] {this,region,receiver});
 	}
 	
 	@Override
@@ -69,36 +69,20 @@ public class EntityScripted extends Entity {
 		if (msg.getName().equals("setInitVar")) {
 			initVar=msg.getData();
 			extd=extd.split(",",2)[0]+","+initVar;
-			readVarFromInitVar();
 		} else {
 			so.receiveMessage(msg,receiver);
 		}
 	}
-	
-	protected void readVarFromInitVar() {
-		x=(int) Float.parseFloat(so.getVar("X"));
-		y=(int) Float.parseFloat(so.getVar("Y"));
-		if (so.getVar("constantUpdate")!=null)
-			constantUpdate=Boolean.parseBoolean(so.getVar("constantUpdate"));
-	}
 
 	@Override
 	public void hurt(Region region, Entity entity, MessageReceiver receiver) {
-		so.call("hurt",!receiver.isServer()," DAMAGE="+1,receiver);
+		so.call("hurt",new Object[] {this,region,entity,receiver});
 	}
 	
 	@Override
 	public void interact(Region region, EntityPlayer entityPlayer, MessageReceiver receiver) {
-		so.call("interact",!receiver.isServer()," PLAYER="+region.name+"."+entityPlayer.name,receiver);
+		so.call("interact",new Object[] {this,region,entityPlayer,receiver});
 	}
-
-	/*private void runScript(String func, boolean client, String initVarExt, MessageReceiver receiver) {
-		String ret = ScriptRunner.run(func, extd.split(",",2)[0], receiver, initVar+" CLIENT="+client+" SERVER="+!client+initVarExt);
-		if (!ret.startsWith("F")) {
-			initVar = ret.substring(1);
-			extd=extd.split(",",2)[0]+","+initVar;
-		}
-	}*/
 	
 	@Override
 	public void save(Save save) {

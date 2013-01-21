@@ -159,4 +159,9 @@ public class Entity implements GameElement, Comparable<Entity> {
 	public String getReceiverName() {
 		return receiverName;
 	}
+	
+	/** Returns this. Used for scripting purposes */
+	public Entity toEntity() {
+		return this;
+	}
 }

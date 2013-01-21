@@ -76,7 +76,7 @@ public class GameClient extends BasicGameState implements MessageReceiver {
 		ItemFactory.init();
 		regionLoaded = false;
 		error = null;
-		chatso = new ScriptObject("ccmd","NAME="+Main.globals.get("name"),this);
+		chatso = new ScriptObject("Console",this);
 		time=-20;
 		servtime=-20;
 		//msgList = new ConcurrentLinkedQueue<Message>();
@@ -217,16 +217,9 @@ public class GameClient extends BasicGameState implements MessageReceiver {
 							&& textField.getText().contains(":")
 							&& textField.getText().split(":",2)[0].contains(".")) {
 						MessageSystem.sendServer(null,new Message(textField.getText().split(":",2)[0].substring(1),textField.getText().split(":",2)[1]),false);
-					} else if (textField.getText().startsWith("/def ")) {
-						if (textField.getText().contains("="))
-							chatso.putVariable(textField.getText().substring(5).trim());
 					} else if (textField.getText().startsWith("/")) {
 						//chatInitVar=ScriptRunner.run(textField.getText().substring(1), "ccmd", this,chatInitVar+" CLIENT=true SERVER=false").substring(1);
-						chatso.putVariable("PLAYERX="+player.x);
-						chatso.putVariable("PLAYERY="+player.y);
-						chatso.putVariable("PLAYERREGION="+player.region.name);
-						chatso.putVariable("PLAYERENT="+player.region.name+"."+player.entid);
-						chatso.call(textField.getText().substring(1), true, "", this);
+						chatso.call("call",new Object[] {textField.getText().substring(1),this});
 					} else
 						MessageSystem.sendServer(null,new Message("SERVER.chat",textField.getText()),true);
 					showTextField=false;

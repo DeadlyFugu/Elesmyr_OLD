@@ -236,6 +236,10 @@ public class GameServer extends Server implements MessageReceiver {
 			}
 		}
 		int entid = world.getRegion(data).addEntityServer("EntityPlayer,"+x+","+y+","+players.get(connection)); //Add a player entity
+		if (entid==-1) { //Shouldn't happen
+			MessageSystem.sendClient(null,connection,new Message("CLIENT.error","addEntityServer returned -1"),false);
+			return;
+		}
 		PlayerData pdat = playerDat.get(players.get(connection)); //Get the PlayerData object for this player
 		if (pdat==null) //If there is no PlayerData object for this player, make one.
 			playerDat.put(players.get(connection),pdat = new PlayerData(players.get(connection),connection));
