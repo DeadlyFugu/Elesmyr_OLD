@@ -50,6 +50,9 @@ public class PlayerData {
 	private Connection connection;
 	public ArrayList<InventoryEntry> inventory;
 	public int health;
+	public int magicka;
+	public int stamina;
+	private InventoryEntry equipped;
 	public PlayerData(String name, Connection connection) {
 		this.name=name;
 		this.connection=connection;
@@ -65,13 +68,8 @@ public class PlayerData {
 			MessageSystem.sendClient(null,connection,new Message("PLAYER.setPDAT",this.toString()),false);
 		for (Connection c : r.connections) {
 			if (c!=connection)
-				MessageSystem.sendClient(null,c,new Message(entRName+".setPDAT",this.toStringBlinded()),false);
+				MessageSystem.sendClient(null,c,new Message(entRName+".setPDAT",this.toString()),false);
 		}
-	}
-	
-	/** Return a string hiding information other users don't need to know (e.g. Inventory) */
-	private String toStringBlinded() {
-		return name+","+health+",";
 	}
 
 	@Override
@@ -80,20 +78,24 @@ public class PlayerData {
 		for (InventoryEntry ie : inventory)
 			inv=inv+"\\"+ie.count+","+ie.item.name+","+ie.extd;
 		if (inv.length()>1)
-			return name+","+health+","+inv.substring(1);
+			return name+","+health+","+magicka+","+stamina+","+inventory.indexOf(equipped)+","+inv.substring(1);
 		else
-			return name+","+health+",";
+			return name+","+health+","+magicka+","+stamina+","+inventory.indexOf(equipped)+",";
 	}
 	
 	public void fromString(String str) {
-		String[] parts = str.split(",",3);
+		String[] parts = str.split(",",6);
 		name=parts[0];
 		health=Integer.parseInt(parts[1]);
+		magicka=Integer.parseInt(parts[2]);
+		stamina=Integer.parseInt(parts[3]);
 		inventory.clear();
-		if (!parts[2].equals(""))
-			for (String is : parts[2].split("\\\\")) {
+		if (!parts[5].equals(""))
+			for (String is : parts[5].split("\\\\")) {
 				inventory.add(new InventoryEntry(ItemFactory.getItem(is.split(",",3)[1]),is.split(",",3)[2],Integer.parseInt(is.split(",",3)[0])));
 			}
+		if (!parts[4].equals("-1"))
+			equipped = inventory.get(Integer.valueOf(parts[4]));
 	}
 	
 	public boolean put(Item item, String extd, Region r, String ent) {
@@ -120,5 +122,24 @@ public class PlayerData {
 	
 	public String getName() {
 		return name;
+	}
+
+	public InventoryEntry getEquipped() {
+		if (!inventory.contains(equipped))
+			equipped=null;
+		return equipped;
+	}
+
+	public void setEquipped(InventoryEntry equipped, Region r, String ent) {
+		if (inventory.contains(equipped))
+			this.equipped = equipped;
+		updated(r,ent);
+	}
+
+	public void removeItem(int pos, Region r, String ent) {
+		if (inventory.get(pos).downCount()) {
+			inventory.remove(pos);
+		}
+		updated(r,ent);
 	}
 }

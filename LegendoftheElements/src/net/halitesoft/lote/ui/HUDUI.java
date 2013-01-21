@@ -51,6 +51,8 @@ public class HUDUI implements UserInterface {
 				int dx = i*160;
 				int dy = Main.INTERNAL_RESY-64;
 				equip.draw(dx,dy);
+				if (ep.pdat.getEquipped()!=null)
+					ep.pdat.getEquipped().getItem().spr.draw(dx+16,dy+16);
 				Main.font.drawString(dx+13,dy+6,ep.getName());
 				//System.out.println(ep);
 				//System.out.println(ep.pdat);
@@ -68,6 +70,8 @@ public class HUDUI implements UserInterface {
 			int dy = Main.INTERNAL_RESY-64;
 			EntityPlayer ep = nearplayers.get(0);
 			equip.draw(dx,dy);
+			if (ep.pdat.getEquipped()!=null)
+				ep.pdat.getEquipped().getItem().spr.draw(dx+16,dy+16);
 			Main.font.drawString(dx+62,dy+25,ep.getName());
 			int bdx = Main.INTERNAL_RESX-112;
 			bars.startUse();

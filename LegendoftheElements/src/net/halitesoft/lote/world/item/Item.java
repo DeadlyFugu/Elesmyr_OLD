@@ -1,17 +1,18 @@
 package net.halitesoft.lote.world.item;
 
+import net.halitesoft.lote.system.GameServer;
+import net.halitesoft.lote.world.entity.EntityPlayer;
+
 import org.newdawn.slick.Image;
 import org.newdawn.slick.SlickException;
 
 public class Item {
 	public Image spr;
 	public String name;
-	private String extd;
-	private String img;
+	protected String extd;
 	
 	public Item ctor(String name, String img, String extd) {
 		this.name=name;
-		this.img=img;
 		this.extd=extd;
 		try {
 			spr = new Image("data/item/"+img+".png",false,0);
@@ -21,10 +22,18 @@ public class Item {
 	
 	@Override
 	public String toString() {
-		return name+","+this.getClass().getName().substring("net.halitesoft.lote.world.item.".length())+","+extd;
+		return name+","+this.getClass().getSimpleName()+","+extd;
 	}
 	
 	public String getType() {
 		return "Misc";
+	}
+	
+	public boolean canEquip() {
+		return false;
+	}
+	
+	public boolean onUse(GameServer reciever, EntityPlayer player) {
+		return false;
 	}
 }

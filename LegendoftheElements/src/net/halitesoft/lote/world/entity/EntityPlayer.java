@@ -146,6 +146,13 @@ public class EntityPlayer extends Entity {
 			this.isUser = true;
 		} else if (msg.getName().equals("putItem")) {
 			pdat.put(ItemFactory.getItem(msg.getData().split(",",2)[0]), msg.getData().split(",",2)[1],region,receiverName);
+		} else if (msg.getName().equals("equip")) {
+			pdat.setEquipped(pdat.inventory.get(Integer.parseInt(msg.getData())),region,receiverName);
+		} else if (msg.getName().equals("use")) {
+			PlayerData.InventoryEntry ie = pdat.inventory.get(Integer.parseInt(msg.getData()));
+			if (ie!=null)
+				if (ie.getItem().onUse((GameServer) server,this));
+					pdat.removeItem(Integer.parseInt(msg.getData()),region,receiverName);
 		} else if (msg.getName().equals("setPDAT")) {
 			System.out.println("player ent received setPDAT "+msg);
 			if (pdat==null)

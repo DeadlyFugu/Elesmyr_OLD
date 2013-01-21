@@ -91,6 +91,8 @@ public class MessageSystem {
 	
 	public static void receiveMessageServer() {
 		for (Message msg : serverMsgQueue) {
+			//if (!msg.getName().equals("move") && !msg.getName().equals("pickupAt"))
+			//Log.info("Server received "+msg);
 			if (serverReceivers.containsKey(msg.getTarget())) {
 				serverReceivers.get(msg.getTarget()).receiveMessage(msg, server);
 			} else {
@@ -103,6 +105,8 @@ public class MessageSystem {
 	public static void receiveMessageClient() {
 		while (!clientMsgQueue.isEmpty()) {
 			Message msg = clientMsgQueue.poll();
+			//if (!msg.getName().equals("move"))
+			//Log.info("Client received "+msg);
 			try {
 				if (clientReceivers.containsKey(msg.getTarget())) {
 					clientReceivers.get(msg.getTarget()).receiveMessage(msg, client);

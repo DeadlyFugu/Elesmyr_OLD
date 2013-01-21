@@ -4,6 +4,8 @@ package net.halitesoft.lote.world.item;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
+import com.esotericsoftware.minlog.Log;
+
 import net.halitesoft.lote.util.HashmapLoader;
 
 public class ItemFactory {
@@ -27,6 +29,8 @@ public class ItemFactory {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
+		Log.warn("Invalid item entry "+name+": "+str);
+		
 		return new Item().ctor("Null","null","");
 	}
 	
