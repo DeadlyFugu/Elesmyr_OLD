@@ -36,9 +36,10 @@ public class InventoryUI implements UserInterface {
 
 	@Override public void render(GameContainer gc, StateBasedGame sbg, Graphics g,
 			Camera cam, GameClient receiver) throws SlickException {
-		bg.draw();
-		invsel.draw(84+sel*35,66);
-		Main.font.drawString(77,17,types[sel]);
+		int xoff = (Main.INTERNAL_RESX/2)-320;
+		bg.draw(xoff,0);
+		invsel.draw(xoff+84+sel*35,66);
+		Main.font.drawString(xoff+77,17,types[sel]);
 		try {
 		PlayerData pdat = ((EntityPlayer) receiver.player.region.entities.get(receiver.player.entid)).pdat;
 		int i=0;
@@ -46,12 +47,12 @@ public class InventoryUI implements UserInterface {
 			Item iei = ie.getItem();
 			if (iei.getType().equalsIgnoreCase(types[sel]) || sel==0) {
 				if (i==isel)
-					g.fillRect(74, 116+i*38, 406, 36);
-				iei.spr.draw(78,120+i*38);
-				Main.font.drawString(117,128+i*38, iei.name);
-				Main.font.drawString(450,128+i*38, ""+ie.getCount());
+					g.fillRect(xoff+67, 116+i*38, 506, 36);
+				iei.spr.draw(xoff+78,120+i*38);
+				Main.font.drawString(xoff+117,128+i*38, iei.name+(ie.equals(pdat.getEquipped())?" (Equipped)":""));
+				Main.font.drawString(xoff+450,128+i*38, ""+ie.getCount());
 				//Main.font.drawString(526,128+i*40,"$"+ie.getValue()); //TODO: Value thingies
-				Main.font.drawString(526,128+i*38, ie.getExtd());
+				Main.font.drawString(xoff+526,128+i*38, ie.getExtd());
 				i++;
 			}
 		}

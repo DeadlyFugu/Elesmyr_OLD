@@ -1,7 +1,5 @@
 package net.halitesoft.lote.world.item;
 
-import net.halitesoft.lote.Element;
-
 public class ItemWeapon extends Item {
 
 @Override public String getType() { return "Weapons"; }

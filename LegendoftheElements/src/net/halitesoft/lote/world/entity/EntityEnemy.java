@@ -6,9 +6,11 @@ import java.util.Random;
 
 import net.halitesoft.lote.Message;
 import net.halitesoft.lote.MessageReceiver;
+import net.halitesoft.lote.MessageSystem;
 import net.halitesoft.lote.system.Camera;
 import net.halitesoft.lote.system.GameClient;
 import net.halitesoft.lote.system.GameServer;
+import net.halitesoft.lote.system.Main;
 import net.halitesoft.lote.world.Region;
 import net.halitesoft.lote.world.World;
 import net.halitesoft.lote.world.item.Item;
@@ -19,6 +21,8 @@ import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.state.StateBasedGame;
+
+import com.esotericsoftware.minlog.Log;
 
 public class EntityEnemy extends Entity {
 
@@ -93,10 +97,20 @@ public class EntityEnemy extends Entity {
 				dmg=((ItemWeapon) i).getMult(entity.getEquipped().getExtd());
 			dmg*=i.getElement().multAgainst(this.getElement());
 		}
-		this.health-=dmg;
+		System.out.println(health);
+		health-=dmg;
 		if (health<=0) {
 			this.drop(region);
 			region.receiveMessage(new Message(region.name+".killSERV",this.name), receiver );
+		} else {
+			MessageSystem.sendClient(this, region.connections, new Message(this.getReceiverName()+".setHealth",""+health), false);
 		}
+	}
+	
+	@Override public void receiveMessageExt(Message msg, MessageReceiver receiver) {
+		if (msg.getName().equals("setHealth")) {
+			this.health=Integer.parseInt(msg.getData());
+		}
+		Log.warn("ENTITY: Ignored message "+msg.toString());
 	}
 }

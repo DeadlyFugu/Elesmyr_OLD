@@ -16,11 +16,13 @@ import net.halitesoft.lote.ui.InventoryUI;
 import net.halitesoft.lote.ui.UserInterface;
 import net.halitesoft.lote.world.Region;
 import net.halitesoft.lote.world.World;
+import net.halitesoft.lote.world.entity.Entity;
 import net.halitesoft.lote.world.item.ItemFactory;
 
 import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
+import org.newdawn.slick.Image;
 import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.gui.TextField;
@@ -64,6 +66,8 @@ public class GameClient extends BasicGameState implements MessageReceiver {
 	private ScriptObject chatso;
 	
 	private LinkedList<UserInterface> ui;
+	
+	private Image vignette;
 
 	GameClient(int stateID) {
 		this.stateID = stateID;
@@ -90,6 +94,7 @@ public class GameClient extends BasicGameState implements MessageReceiver {
 		player.init(gc, sbg,this);
 		cam = new Camera(10,10);
 		lm = new LightMap(true,(int) (MainMenuState.lres*Main.INTERNAL_ASPECT),MainMenuState.lres);
+		vignette = new Image("data/ui/vignette.png",false,1);
 		System.gc();
 
 		textField = new TextField(gc, Main.font, 10,Main.INTERNAL_RESY-84,530,16);
@@ -113,6 +118,10 @@ public class GameClient extends BasicGameState implements MessageReceiver {
 			world.render(gc, sbg, g, cam,this);
 			player.render(gc,sbg,g,cam,this);
 			renderMap(player.region,true);
+			if (Main.globals.get("debug").equals("true")) { //Show ent IDs.
+				for (Entity e : player.region.entities.values())
+					Main.font.drawString(e.x+cam.getXOff(),e.y+cam.getYOff(),e.name);
+			}
 			g.popTransform();
 			g.pushTransform();
 			g.scale((float) Main.INTERNAL_RESX/(lm.resx-2), (float) Main.INTERNAL_RESY/(lm.resy-2));
@@ -126,6 +135,8 @@ public class GameClient extends BasicGameState implements MessageReceiver {
 				Main.font.drawString(10,Main.INTERNAL_RESY-89-i*18, s);
 				i++;
 			}
+			if (ui.peekFirst().blockUpdates())
+				vignette.draw(0,0,Main.INTERNAL_RESX,Main.INTERNAL_RESY);
 			Iterator<UserInterface> itui = ui.descendingIterator();
 			while (itui.hasNext()) {
 				itui.next().render(gc, sbg, g, cam, this);

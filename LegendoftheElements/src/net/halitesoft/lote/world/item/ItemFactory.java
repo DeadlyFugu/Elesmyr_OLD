@@ -1,12 +1,16 @@
 package net.halitesoft.lote.world.item;
 
 
+import groovy.lang.GroovyObject;
+
 import java.util.HashMap;
 import java.util.Map.Entry;
 
 import com.esotericsoftware.minlog.Log;
 
+import net.halitesoft.lote.ScriptRunner;
 import net.halitesoft.lote.util.HashmapLoader;
+import net.halitesoft.lote.world.entity.Entity;
 
 public class ItemFactory {
 	private static HashMap<String,Item> items = null;
@@ -26,6 +30,12 @@ public class ItemFactory {
 				Item i = (Item) Class.forName("net.halitesoft.lote.world.item."+parts[0]).newInstance();
 				i.ctor(name,parts[1],parts[2]);
 				return i;
+			} catch (ClassNotFoundException e) {
+				GroovyObject go = ScriptRunner.get(parts[0]);
+				if (go != null) {
+					go.invokeMethod("ctor",new Object[] {name,parts[1],parts[2]});
+					return (Item) go.invokeMethod("toItem", new Object[0]);
+				}
 			} catch (Exception e) {
 				e.printStackTrace();
 			}

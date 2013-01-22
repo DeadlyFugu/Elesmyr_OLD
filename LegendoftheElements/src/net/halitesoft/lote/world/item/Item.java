@@ -2,6 +2,7 @@ package net.halitesoft.lote.world.item;
 
 import net.halitesoft.lote.Element;
 import net.halitesoft.lote.system.GameServer;
+import net.halitesoft.lote.world.entity.Entity;
 import net.halitesoft.lote.world.entity.EntityPlayer;
 
 import org.newdawn.slick.Image;
@@ -36,6 +37,11 @@ public class Item {
 	
 	public boolean onUse(GameServer reciever, EntityPlayer player) {
 		return false;
+	}
+	
+	/** Returns this. Used for scripting purposes */
+	public Item toItem() {
+		return this;
 	}
 
 	public Element getElement() { return Element.NEUTRAL; }

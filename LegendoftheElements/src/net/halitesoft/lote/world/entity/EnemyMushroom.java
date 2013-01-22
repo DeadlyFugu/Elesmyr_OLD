@@ -7,6 +7,7 @@ import java.util.Random;
 import net.halitesoft.lote.MessageReceiver;
 import net.halitesoft.lote.system.Camera;
 import net.halitesoft.lote.system.GameClient;
+import net.halitesoft.lote.system.Main;
 import net.halitesoft.lote.world.item.Item;
 import net.halitesoft.lote.world.item.ItemFactory;
 
@@ -26,7 +27,7 @@ public class EnemyMushroom extends EntityEnemy {
 		cx2=32;
 		cy1=-32;
 		cy2=16;
-		health=5;
+		health=10;
 	}
 	
 	@Override
