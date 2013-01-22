@@ -46,11 +46,6 @@ public class ScriptRunner {
 		}
 		
 		Log.info("Loaded classes: "+classes);
-		try {
-			loader.close();
-		} catch (IOException e1) {
-			e1.printStackTrace();
-		}
 
 		get("Init").invokeMethod("run", new Object[0]);
 	}
