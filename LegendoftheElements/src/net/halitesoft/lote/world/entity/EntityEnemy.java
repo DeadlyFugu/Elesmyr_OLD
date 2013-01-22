@@ -12,6 +12,7 @@ import net.halitesoft.lote.system.GameServer;
 import net.halitesoft.lote.world.Region;
 import net.halitesoft.lote.world.World;
 import net.halitesoft.lote.world.item.Item;
+import net.halitesoft.lote.world.item.ItemWeapon;
 
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
@@ -85,7 +86,14 @@ public class EntityEnemy extends Entity {
 	
 	@Override
 	public void hurt(Region region, Entity entity, MessageReceiver receiver) {
-		this.health-=1;
+		float dmg = 1;
+		if (entity.getEquipped()!=null) {
+			Item i = entity.getEquipped().getItem();
+			if (i instanceof ItemWeapon)
+				dmg=((ItemWeapon) i).getMult(entity.getEquipped().getExtd());
+			dmg*=i.getElement().multAgainst(this.getElement());
+		}
+		this.health-=dmg;
 		if (health<=0) {
 			this.drop(region);
 			region.receiveMessage(new Message(region.name+".killSERV",this.name), receiver );

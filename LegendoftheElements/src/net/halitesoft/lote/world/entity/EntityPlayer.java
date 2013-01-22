@@ -145,6 +145,7 @@ public class EntityPlayer extends Entity {
 			this.cy=Integer.parseInt(msg.getData().split(",")[1]);
 			this.isUser = true;
 		} else if (msg.getName().equals("putItem")) {
+			System.out.println(msg);
 			pdat.put(ItemFactory.getItem(msg.getData().split(",",2)[0]), msg.getData().split(",",2)[1],region,receiverName);
 		} else if (msg.getName().equals("equip")) {
 			pdat.setEquipped(pdat.inventory.get(Integer.parseInt(msg.getData())),region,receiverName);
@@ -222,5 +223,9 @@ public class EntityPlayer extends Entity {
 		if (pdat==null)
 			pdat=new PlayerData(getName(),null);
 		this.pdat.fromString(data);
+	}
+	
+	@Override public PlayerData.InventoryEntry getEquipped() {
+		return pdat.getEquipped();
 	}
 }

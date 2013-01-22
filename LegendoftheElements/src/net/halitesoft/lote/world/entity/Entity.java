@@ -3,6 +3,7 @@ package net.halitesoft.lote.world.entity;
 import java.util.ArrayList;
 import java.util.Random;
 
+import net.halitesoft.lote.Element;
 import net.halitesoft.lote.GameElement;
 import net.halitesoft.lote.Message;
 import net.halitesoft.lote.MessageReceiver;
@@ -10,6 +11,7 @@ import net.halitesoft.lote.Save;
 import net.halitesoft.lote.system.Camera;
 import net.halitesoft.lote.system.GameClient;
 import net.halitesoft.lote.system.GameServer;
+import net.halitesoft.lote.system.PlayerData.InventoryEntry;
 import net.halitesoft.lote.world.Region;
 import net.halitesoft.lote.world.item.Item;
 
@@ -163,5 +165,11 @@ public class Entity implements GameElement, Comparable<Entity> {
 	/** Returns this. Used for scripting purposes */
 	public Entity toEntity() {
 		return this;
+	}
+	
+	public Element getElement() { return Element.NEUTRAL; }
+	
+	public InventoryEntry getEquipped() {
+		return null;
 	}
 }

@@ -81,12 +81,8 @@ public class MessageSystem {
 	}
 	
 	public static void receiveClient(Message msg) {
-		try {
 		msg.setServerBound(false);
 		clientMsgQueue.add(msg);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
 	}
 	
 	public static void receiveMessageServer() {
