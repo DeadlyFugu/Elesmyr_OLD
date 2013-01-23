@@ -7,6 +7,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.BindException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
@@ -136,11 +137,9 @@ public class MainMenuState extends BasicGameState {
 			i++;
 		}
 
-		if (Main.globals.containsKey("resdm"))
-			dm = Integer.parseInt(Main.globals.get("resdm"));
-		if (Main.globals.containsKey("lres"))
-			lres = Integer.parseInt(Main.globals.get("lres"));
-		debug = Boolean.parseBoolean(Main.globals.get("debug"));
+		dm = Integer.parseInt(Globals.get("resdm","0"));
+		lres = Integer.parseInt(Globals.get("lres","24"));
+		debug = Globals.get("debug",false);
 
 		Main.font = new SpriteSheetFont(new SpriteSheet(new Image("data/font.png",false,0),9,16),' ');
 
@@ -155,12 +154,12 @@ public class MainMenuState extends BasicGameState {
 			entryString[2][0] = "Video: "+disy[dm]+"p windowed";
 		else
 			entryString[2][0] = "Video: "+disy[dm]+"p fullscreen";
-		entryString[2][1] = "Name: "+Main.globals.get("name");
-		entryString[2][2] = "VSync: "+Main.globals.get("vsync");
-		if (Integer.parseInt(Main.globals.get("volume")) == 0)
+		entryString[2][1] = "Name: "+Globals.get("name","Player");
+		entryString[2][2] = "VSync: "+Globals.get("vsync",false);
+		if (Integer.parseInt(Globals.get("volume","10")) == 0)
 			entryString[2][3] = "Volume: Mute";
 		else
-			entryString[2][3] = "Volume: "+Main.globals.get("volume");
+			entryString[2][3] = "Volume: "+Globals.get("volume","10");
 		entryString[2][4] = "Debug: "+debug;
 		entryString[2][5] = "Lightmap Res: "+lres+"p";
 		
@@ -388,7 +387,7 @@ public class MainMenuState extends BasicGameState {
 					entryString[2][0] = "Video: "+disy[dm]+"p windowed";
 				else
 					entryString[2][0] = "Video: "+disy[dm]+"p fullscreen";
-				Main.globals.put("resdm", String.valueOf(dm));
+				Globals.set("resdm", String.valueOf(dm));
 			} break;
 			case 201: {
 				//Enter name
@@ -400,7 +399,7 @@ public class MainMenuState extends BasicGameState {
 					textField.setFocus(true);
 				} else {
 					entryString[2][1] = "Name: "+textField.getText();
-					Main.globals.put("name",textField.getText());
+					Globals.set("name",textField.getText());
 					showTextField=false;
 					textField.setText("");
 					textField.setAcceptingInput(false);
@@ -408,13 +407,13 @@ public class MainMenuState extends BasicGameState {
 				}
 			} break;
 			case 202: {
-				boolean vsync = Boolean.parseBoolean(Main.globals.get("vsync"));
+				boolean vsync = Boolean.parseBoolean(Globals.get("vsync","false"));
 				//entryString[2][0] = "Resolution: "+disx[dm]+"x"+disy[dm];
 				entryString[2][2] = "VSync: "+!vsync;
-				Main.globals.put("vsync", String.valueOf(!vsync));
+				Globals.set("vsync", String.valueOf(!vsync));
 			} break;
 			case 203: {
-				int vol = Integer.parseInt(Main.globals.get("volume"));
+				int vol = Integer.parseInt(Globals.get("volume","10"));
 				vol++;
 				if (vol>10) {
 					vol = 0;
@@ -424,14 +423,14 @@ public class MainMenuState extends BasicGameState {
 					entryString[2][3] = "Volume: Mute";
 				else
 					entryString[2][3] = "Volume: "+vol;
-				Main.globals.put("volume", String.valueOf(vol));
+				Globals.set("volume", String.valueOf(vol));
 			} break;
 			case 204: {
-				debug = Boolean.parseBoolean(Main.globals.get("debug"));
+				debug = Globals.get("debug",false);
 				//entryString[2][0] = "Resolution: "+disx[dm]+"x"+disy[dm];
 				debug = !debug;
 				entryString[2][4] = "Debug: "+debug;
-				Main.globals.put("debug", String.valueOf(debug));
+				Globals.set("debug", String.valueOf(debug));
 				ArrayList<File> files = getSubs(new File("save"));
 				levels = new String[files.size()+2];
 				entryCount[1]=files.size()+2;
@@ -450,7 +449,7 @@ public class MainMenuState extends BasicGameState {
 					lres+=6;
 				if (lres>48) lres=6;
 				entryString[2][5] = "Lightmap Res: "+lres+"p";
-				Main.globals.put("lres", String.valueOf(lres));
+				Globals.set("lres", String.valueOf(lres));
 			} break;
 			case 206: {
 				selection = 0;
@@ -464,7 +463,7 @@ public class MainMenuState extends BasicGameState {
 					Main.INTERNAL_RESX = (int) (Main.INTERNAL_RESY*Main.INTERNAL_ASPECT); //Internal resolution x
 				}
 				((AppGameContainer) gc).setMouseGrabbed(dm==3 || dm==3);
-				HashmapLoader.writeHashmap("conf", Main.globals);
+				Globals.save();
 				selection = 0;
 				subMenu = 0;
 				dx=-256;
@@ -566,11 +565,23 @@ public class MainMenuState extends BasicGameState {
 			} break;
 			default: {
 				if (subMenu == 1) {
-					Main.globals.put("save",levels[selection]);
-					((GameClient) sbg.getState(Main.GAMEPLAYSTATE)).loadSave(gc,levels[selection],serverOnly);
-					((GameClient) sbg.getState(Main.GAMEPLAYSTATE)).init(gc,sbg);
-					gc.getInput().clearKeyPressedRecord();
-					sbg.enterState(Main.GAMEPLAYSTATE);
+					Globals.set("save",levels[selection]);
+					try {
+						((GameClient) sbg.getState(Main.GAMEPLAYSTATE)).loadSave(gc,levels[selection],serverOnly,sbg);
+						((GameClient) sbg.getState(Main.GAMEPLAYSTATE)).init(gc,sbg);
+						gc.getInput().clearKeyPressedRecord();
+						sbg.enterState(Main.GAMEPLAYSTATE);
+					} catch (Exception e) {
+						gc.getInput().clearKeyPressedRecord();
+						((ErrorState) sbg.getState(Main.ERRORSTATE)).errorText = 
+								"Could not bind server to ports 37020 and 37021.\n" +
+								"Please close anything that may be bound to\n" +
+								"either of these ports, then try again.\n" +
+								"Note: This is most likely caused by having\n" +
+								"another copy of this game already running.";
+						sbg.enterState(Main.ERRORSTATE);
+						return;
+					}
 				} else if (subMenu == 3) {
 					try {
 						((GameClient) sbg.getState(Main.GAMEPLAYSTATE)).join(lanServers.get(selection-2));
@@ -589,9 +600,9 @@ public class MainMenuState extends BasicGameState {
 	private void setControlText() {
 		entryString[4]=new String[] {"Input method: Keyboard/Mouse",
 				"Walk: Arrow keys",
-				"Interact: "+resolveKeyName(Main.globals.get("IN_int")),
-				"Attack: "+org.newdawn.slick.Input.getKeyName(Integer.parseInt(Main.globals.get("IN_atk").split("_")[1])),
-				"Inventory: "+org.newdawn.slick.Input.getKeyName(Integer.parseInt(Main.globals.get("IN_inv").split("_")[1])),
+				"Interact: "+resolveKeyName(Globals.get("IN_int",""+org.newdawn.slick.Input.KEY_Z)),
+				"Attack: "+org.newdawn.slick.Input.getKeyName(Integer.parseInt(Globals.get("IN_atk",""+org.newdawn.slick.Input.KEY_X).split("_")[1])),
+				"Inventory: "+org.newdawn.slick.Input.getKeyName(Integer.parseInt(Globals.get("IN_inv",""+org.newdawn.slick.Input.KEY_E).split("_")[1])),
 				"Select: Enter",
 				"Back/Pause: Esc",
 				"Back"};
@@ -665,7 +676,6 @@ public class MainMenuState extends BasicGameState {
 		}
 	}
 
-
 	// If targetLocation does not exist, it will be created.
 	public static void copyDirectory(File sourceLocation , File targetLocation)
 			throws IOException {
@@ -714,7 +724,6 @@ public class MainMenuState extends BasicGameState {
 			Log.info(arg0+","+arg1);
 			setControl("KEY_"+arg0);
 		}
-
 
 		@Override public void controllerButtonPressed(int arg0, int arg1) {
 			setControl("GC_"+arg1);

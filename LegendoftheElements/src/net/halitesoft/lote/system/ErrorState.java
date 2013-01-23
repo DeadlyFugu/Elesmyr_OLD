@@ -29,7 +29,7 @@ public class ErrorState extends BasicGameState {
 	
 	public void init(GameContainer gc, StateBasedGame sbg)
 			throws SlickException {
-		overlay = new Image("data/menu/error.png");
+		overlay = new Image("data/menu/error.png",false,0);
 	}
 
 	public void render(GameContainer gc, StateBasedGame sbg, Graphics g)

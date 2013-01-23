@@ -2,6 +2,7 @@ package net.halitesoft.lote.system;
 
 
 import java.io.IOException;
+import java.net.BindException;
 import java.net.InetAddress;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -13,12 +14,17 @@ import net.halitesoft.lote.Save;
 import net.halitesoft.lote.ScriptObject;
 import net.halitesoft.lote.ui.HUDUI;
 import net.halitesoft.lote.ui.InventoryUI;
+import net.halitesoft.lote.ui.UIFactory;
 import net.halitesoft.lote.ui.UserInterface;
 import net.halitesoft.lote.world.Region;
 import net.halitesoft.lote.world.World;
 import net.halitesoft.lote.world.entity.Entity;
 import net.halitesoft.lote.world.item.ItemFactory;
 
+import org.lwjgl.opengl.EXTBlendMinmax;
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL12;
+import org.lwjgl.opengl.GL14;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
@@ -35,6 +41,29 @@ import com.esotericsoftware.kryonet.Listener;
 import com.esotericsoftware.minlog.Log;
 
 public class GameClient extends BasicGameState implements MessageReceiver {
+
+	public class ChatMessage {
+		private String msg;
+		private int time;
+		public ChatMessage(String msg) {
+			this.msg=msg;
+			this.time=500;
+		}
+		public void update() {
+			if (time>0)
+				time--;
+		}
+		
+		public String getMessage() { return msg; }
+		
+		public float getAlpha() {
+			if (time>100)
+				return 1;
+			if (time==0)
+				return 0;
+			return time/100f;
+		}
+	}
 
 	int stateID = -1;
 	private GameServer server;
@@ -57,7 +86,7 @@ public class GameClient extends BasicGameState implements MessageReceiver {
 	private float time=-20; //in-game time in minutes
 	private float servtime=-20; //time according to server
 	
-	private LinkedList<String> chat;
+	private LinkedList<ChatMessage> chat;
 	private TextField textField;
 	private boolean showTextField;
 	
@@ -68,6 +97,7 @@ public class GameClient extends BasicGameState implements MessageReceiver {
 	private LinkedList<UserInterface> ui;
 	
 	private Image vignette;
+	private Image alphabg;
 
 	GameClient(int stateID) {
 		this.stateID = stateID;
@@ -84,7 +114,7 @@ public class GameClient extends BasicGameState implements MessageReceiver {
 		time=-20;
 		servtime=-20;
 		//msgList = new ConcurrentLinkedQueue<Message>();
-		chat = new LinkedList<String>();
+		chat = new LinkedList<ChatMessage>();
 		ui = new LinkedList<UserInterface>();
 		HUDUI hud = new HUDUI();
 		hud.init(gc,sbg,this);
@@ -95,6 +125,7 @@ public class GameClient extends BasicGameState implements MessageReceiver {
 		cam = new Camera(10,10);
 		lm = new LightMap(true,(int) (MainMenuState.lres*Main.INTERNAL_ASPECT),MainMenuState.lres);
 		vignette = new Image("data/ui/vignette.png",false,1);
+		alphabg = new Image("data/ui/alphabg.png",false,0);
 		System.gc();
 
 		textField = new TextField(gc, Main.font, 10,Main.INTERNAL_RESY-84,530,16);
@@ -118,8 +149,8 @@ public class GameClient extends BasicGameState implements MessageReceiver {
 			world.render(gc, sbg, g, cam,this);
 			player.render(gc,sbg,g,cam,this);
 			renderMap(player.region,true);
-			if (Main.globals.get("debug").equals("true")) { //Show ent IDs.
-				for (Entity e : player.region.entities.values())
+			if (Globals.get("debug",false) && Globals.get("showEnt",true)) { //Show ent IDs.
+				for (Entity e : player.region.entities.values()) //TODO: Somehow this line throws an NPE occasionally O.o
 					Main.font.drawString(e.x+cam.getXOff(),e.y+cam.getYOff(),e.name);
 			}
 			g.popTransform();
@@ -131,12 +162,22 @@ public class GameClient extends BasicGameState implements MessageReceiver {
 			g.setDrawMode(Graphics.MODE_NORMAL);
 			g.popTransform();
 			int i = 1;
-			for (String s : ((LinkedList<String>) chat.clone())) {
-				Main.font.drawString(10,Main.INTERNAL_RESY-89-i*18, s);
+			for (ChatMessage cm : chat) {
+				if (i==22)
+					break;
+				g.setColor(new Color(0,0,0,(showTextField?0.25f:cm.getAlpha()*0.25f)));
+				g.fillRect(8,Main.INTERNAL_RESY-89-i*18, Main.font.getWidth(cm.getMessage())+4, 18);
+				g.setColor(Color.white);
+				if (showTextField)
+					Main.font.drawString(10,Main.INTERNAL_RESY-89-i*18, cm.getMessage());
+				else if (cm.getAlpha()!=0)
+					Main.font.drawString(10,Main.INTERNAL_RESY-89-i*18, cm.getMessage(), new Color(1,1,1,cm.getAlpha()));
 				i++;
 			}
-			if (ui.peekFirst().blockUpdates())
+			if (ui.peekFirst().blockUpdates()) {
+				alphabg.draw(0,0,Main.INTERNAL_RESX,Main.INTERNAL_RESY);
 				vignette.draw(0,0,Main.INTERNAL_RESX,Main.INTERNAL_RESY);
+			}
 			Iterator<UserInterface> itui = ui.descendingIterator();
 			while (itui.hasNext()) {
 				itui.next().render(gc, sbg, g, cam, this);
@@ -153,7 +194,7 @@ public class GameClient extends BasicGameState implements MessageReceiver {
 		}
 		if (!CLIENT)
 			Main.font.drawString(0, 0, "LotE "+Main.version+":"+(CLIENT?" CLIENT":"")+(SERVER?" SERVER":"")+(MessageSystem.fastLink?" FASTLINK":""));
-		if (SERVER && (!CLIENT || Boolean.parseBoolean(Main.globals.get("debug")))) {
+		if (SERVER && (!CLIENT || (Globals.get("debug",false) && Globals.get("showConnections",true)))) {
 			if (!CLIENT) {
 				g.setColor(Color.black);
 				g.fillRect(0,0,Main.INTERNAL_RESX,Main.INTERNAL_RESY);
@@ -161,9 +202,9 @@ public class GameClient extends BasicGameState implements MessageReceiver {
 			}
 			server.render(gc, sbg, g, CLIENT);
 		}
-		if (CLIENT && Boolean.parseBoolean(Main.globals.get("debug"))) {
+		if (CLIENT && Globals.get("debug",false) && Globals.get("debugInfo",true)) {
 			//Client debug mode
-			String debugText = "DEBUG: \n" +
+			String debugText = 
 					"Pos: X="+player.x+" Y="+player.y+"\n" +
 					"Time raw: "+time+"\n" +
 					"Time norm: "+(int) ((time/60)%12)+":"+(int) (time%60)+"\n" +
@@ -172,7 +213,7 @@ public class GameClient extends BasicGameState implements MessageReceiver {
 				debugText = debugText+"Inventory:\n"+((EntityPlayer) player.region.entities.get(player.entid)).pdat.invToString();
 			} catch (Exception e) {
 			}*/
-			int i = 0;
+			int i = 1;
 			for (String s : debugText.split("\n")) {
 				Main.font.drawString(Main.INTERNAL_RESX-Main.font.getWidth(s)-10, i*18, s);
 				i++;
@@ -187,7 +228,8 @@ public class GameClient extends BasicGameState implements MessageReceiver {
 			if (region.map.getLayerIndex("col")!=i) {
 				//if (fg==Boolean.parseBoolean(region.map.getLayerProperty(i, "fg", "false")));
 				if (fg==(region.map.getLayerIndex("fg")==i))
-					region.map.render(cam.getXOff(), cam.getYOff(), i);
+					region.map.render(cam.getXOff(),cam.getYOff(),i);
+					//region.map.render(cam.getXOff()%32,cam.getYOff()%32,-cam.getXOff()/32, -cam.getYOff()/32,Main.INTERNAL_RESX+32/32,Main.INTERNAL_RESY+32/32, i,false);
 			}
 		}
 	}
@@ -209,11 +251,13 @@ public class GameClient extends BasicGameState implements MessageReceiver {
 				}
 				if (SERVER) {
 					server.save();
+					server.broadcastKill();
 					server.close();
 				}
 				//gc.exit();
 				gc.getInput().clearKeyPressedRecord();
 				sbg.enterState(Main.MENUSTATE);
+				return;
 			}
 		}
 		if (gc.getInput().isKeyPressed(Input.KEY_ENTER)) {
@@ -240,6 +284,9 @@ public class GameClient extends BasicGameState implements MessageReceiver {
 				}
 			}
 		}
+		if (gc.getInput().isKeyPressed(Input.KEY_F3)) {
+			Globals.set("debug",""+!Globals.get("debug",false));
+		}
 		if (gc.getInput().isKeyPressed(Input.KEY_E) && showTextField==false) {
 			if (ui.peekFirst() instanceof InventoryUI) {
 				ui.removeFirst();
@@ -254,6 +301,9 @@ public class GameClient extends BasicGameState implements MessageReceiver {
 		}
 		if (CLIENT) {
 			MessageSystem.receiveMessageClient();
+			
+			if (!client.isConnected())
+				error="Lost connection to server.";
 			
 			if (error!=null) {
 				gc.getInput().clearKeyPressedRecord();
@@ -274,6 +324,8 @@ public class GameClient extends BasicGameState implements MessageReceiver {
 				if (!blocked||!uii.blockUpdates())
 					uii.update(gc, sbg, this);
 			}
+			for (ChatMessage cm : chat)
+				cm.update();
 			world.clientUpdate(gc, sbg,this);
 			if (!blocked)
 				player.clientUpdate(gc, sbg,this);
@@ -297,10 +349,10 @@ public class GameClient extends BasicGameState implements MessageReceiver {
 				player.setRegion(rname);
 				regionLoaded = true;
 			} else if (name.equals("chat")) {
-				chat.addFirst(msg.getData());
-				if (chat.size()>5) {
-					chat.removeLast();
-				}
+				chat.addFirst(new ChatMessage(msg.getData()));
+				//if (chat.size()>5) {
+				//	chat.removeLast();
+				//}
 			} else if (name.equals("error")) {
 				error = msg.getData();
 			} else if (name.equals("time")) {
@@ -311,6 +363,12 @@ public class GameClient extends BasicGameState implements MessageReceiver {
 					lm.skipFade(servtime/60f);
 					time=servtime;
 				}
+			} else if (name.equals("openUI")) {
+				UserInterface nui = UIFactory.getUI(msg.getData());
+				if (nui!=null)
+					ui.addFirst(nui);
+				else
+					Log.warn("CLIENT: Could not open UI "+msg.getData());
 			} else {
 				Log.warn("CLIENT: Ignored message - unrecognised name: "+msg.toString());
 			}
@@ -322,7 +380,7 @@ public class GameClient extends BasicGameState implements MessageReceiver {
 		return false;
 	}
 
-	public void loadSave(GameContainer gc, String saveName, boolean serverOnly) {
+	public void loadSave(GameContainer gc, String saveName, boolean serverOnly, StateBasedGame sbg) throws Exception {
 		Save save = new Save(saveName);
 		if (serverOnly) {
 			SERVER = true;
@@ -333,9 +391,13 @@ public class GameClient extends BasicGameState implements MessageReceiver {
 		}
 		try {
 			if (SERVER) {
-				server = new GameServer(save,CLIENT?Main.globals.get("name"):"");
+				server = new GameServer(save,CLIENT?Globals.get("name","Player"):"");
 				server.start();
+				try {
 				server.bind(37020,37021);
+				} catch (java.net.BindException be) { //For some reason, I can't directly throw a BindException.
+					throw new Exception();
+				}
 				server.getKryo().register(Message.class);
 			}
 			if (CLIENT) {
@@ -353,7 +415,7 @@ public class GameClient extends BasicGameState implements MessageReceiver {
 		if (SERVER)
 			server.load();
 		if (CLIENT) {
-			MessageSystem.sendServer(null,new Message("SERVER.wantPlayer",Main.globals.get("name")+","+Integer.toHexString("".hashCode())),false);
+			MessageSystem.sendServer(null,new Message("SERVER.wantPlayer",Globals.get("name","Player")+","+Integer.toHexString("".hashCode())),false);
 		}
 	}
 

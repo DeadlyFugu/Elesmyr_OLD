@@ -20,6 +20,7 @@ import org.newdawn.slick.Graphics;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.state.StateBasedGame;
 
+import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.minlog.Log;
 
 
@@ -143,7 +144,7 @@ public class Entity implements GameElement, Comparable<Entity> {
 	 * @param region Region the entity is in
 	 * @param entityPlayer Player entity that interacted
 	 */
-	public void interact(Region region, EntityPlayer entityPlayer, MessageReceiver receiver) {
+	public void interact(Region region, EntityPlayer entityPlayer, MessageReceiver receiver, Connection connection) {
 	}
 	
 	protected ArrayList<String> getDrops() {

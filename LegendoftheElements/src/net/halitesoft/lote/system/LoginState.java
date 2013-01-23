@@ -40,7 +40,7 @@ public class LoginState extends BasicGameState {
 		tfUser.setTextColor(Color.white);
 		tfUser.setAcceptingInput(true);
 		tfUser.setFocus(true);
-		tfUser.setText(Main.globals.get("name"));
+		tfUser.setText(Globals.get("name","Player"));
 		tfUser.setMaxLength(15);
 		tfPass = new TextField(gc, Main.font, (Main.INTERNAL_RESX/4)-64,120,256,16);
 		tfPass.setBorderColor(null);
@@ -53,7 +53,7 @@ public class LoginState extends BasicGameState {
 	}
 	
 	public void reset() {
-		tfUser.setText(Main.globals.get("name"));
+		tfUser.setText(Globals.get("name","Player"));
 		tfPass.setText("");
 		time=0;
 	}

@@ -17,7 +17,6 @@ public class IntroState extends BasicGameState {
 	Image intro1;
 	Image intro2;
 	Image intro3;
-	Image intro4;
 	Image menubg;
 	Image bg2;
 	Image bg3;
@@ -34,13 +33,12 @@ public class IntroState extends BasicGameState {
 	
 	public void init(GameContainer gc, StateBasedGame sbg)
 			throws SlickException {
-		intro1 = new Image("data/menu/intro1.png"); //Godai no Densetsu (LotE)
-		intro2 = new Image("data/menu/intro2.png"); //Halitesoft
-		intro3 = new Image("data/menu/intro3.png"); //AML
-		intro4 = new Image("data/menu/intro4.png"); //Powered by Slick
+		intro1 = new Image("data/menu/intro1.png"); //Halite
+		intro2 = new Image("data/menu/intro2.png"); //Alachie
+		intro3 = new Image("data/menu/intro3.png"); //Legend of the Elements
 		menubg = new Image("data/menu/bg.png"); //Menu image (BG)
 		bg2 = new Image("data/menu/bg2.png",false,0); //Menu image (Halitesoft)
-		bg3 = new Image("data/menu/bg3.png",false,0); //Menu image (LotE/AML)
+		bg3 = new Image("data/menu/bg3.png",false,0); //Menu image (LotE/Alachie)
 		gc.setVSync(true); //True in release
 		gc.setVerbose(false); //False in release
 		gc.setClearEachFrame(false); //Set to false in release!
@@ -48,8 +46,8 @@ public class IntroState extends BasicGameState {
 		gc.setTargetFrameRate(60);
 		gc.getInput().initControllers();
 		
-		if (Main.globals.containsKey("resdm")) {
-			int dm = Integer.parseInt(Main.globals.get("resdm"));
+		if (Globals.containsKey("resdm")) {
+			int dm = Integer.parseInt(Globals.get("resdm","0"));
 			((AppGameContainer) gc).setDisplayMode(MainMenuState.disx[dm], MainMenuState.disy[dm], dm==3||dm==4);
 			((AppGameContainer) gc).setMouseGrabbed(dm==3||dm==4);
 			Main.INTERNAL_ASPECT=((float) MainMenuState.disx[dm]/(float) MainMenuState.disy[dm]);
@@ -73,18 +71,15 @@ public class IntroState extends BasicGameState {
 			ox = (vw-w)/2;
 			oy = 0;
 		//}
-		if (timer < 500) {
-			intro1.setAlpha((timer)/500f);
+		if (timer < 600) {
+			intro1.setAlpha((timer)/600f);
 			intro1.draw(ox,oy,w, h);
-		} else if (timer < 1000) {
-			intro2.setAlpha((timer-500)/500f);
+		} else if (timer < 1200) {
+			intro2.setAlpha((timer-600)/600f);
 			intro2.draw(ox,oy,w, h);
-		} else if (timer < 1500) {
-			intro3.setAlpha((timer-1000)/500f);
-			intro3.draw(ox,oy,w, h);
 		} else if (timer < 2000) {
-			intro4.setAlpha((timer-1500)/500f);
-			intro4.draw(ox,oy,w, h);
+			intro3.setAlpha((timer-1200)/500f);
+			intro3.draw(ox,oy,w, h);
 		} else if (timer < 2250) {
 			w = vh*(16/9f);
 			h = vh;
@@ -92,7 +87,7 @@ public class IntroState extends BasicGameState {
 			oy = 0;
 			menubg.setAlpha((timer-2000)/500f);
 			menubg.draw(ox,oy,w, h);
-		} else if (timer < 2500) {
+		} else if (timer < 2400) {
 			w = vh*(16/9f);
 			h = vh;
 			ox = (vw-w)/2;

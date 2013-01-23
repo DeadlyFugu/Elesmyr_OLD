@@ -37,8 +37,7 @@ public class Main extends StateBasedGame {
 	
 	public static SpriteSheetFont font;
 	
-	public static HashMap<String,String> globals;
-	public static String version = "PRE-ALPHA 0.1.8"; //0.0.1 = DEC 16
+	public static String version = "PRE-ALPHA 0.1.9"; //0.0.1 = DEC 16
 
 	public Main() {
 		super("LotE");
@@ -49,10 +48,10 @@ public class Main extends StateBasedGame {
 		this.addState(new ErrorState(ERRORSTATE));
 		this.addState(new LoginState(LOGINSTATE));
 		
-		if (Boolean.parseBoolean(globals.get("debug")))
-			this.enterState(MENUSTATE);
-		else
+		if (Globals.get("showIntro",true))
 			this.enterState(INTROSTATE);
+		else
+			this.enterState(MENUSTATE);
 	}
 
 	public static void main(String[] args) throws SlickException {
@@ -62,7 +61,7 @@ public class Main extends StateBasedGame {
 		
 		Log.info("LotE version "+version);
 		
-		globals = HashmapLoader.readHashmap("conf");
+		Globals.setMap(HashmapLoader.readHashmap("conf"));
 		
 		ScriptRunner.init();
 		

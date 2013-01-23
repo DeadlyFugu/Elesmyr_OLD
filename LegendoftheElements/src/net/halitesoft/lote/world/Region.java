@@ -18,7 +18,10 @@ import net.halitesoft.lote.Save;
 import net.halitesoft.lote.system.Camera;
 import net.halitesoft.lote.system.GameClient;
 import net.halitesoft.lote.system.GameServer;
+import net.halitesoft.lote.system.Globals;
 import net.halitesoft.lote.system.Light;
+import net.halitesoft.lote.system.Main;
+import net.halitesoft.lote.system.PlayerData;
 import net.halitesoft.lote.world.entity.Entity;
 import net.halitesoft.lote.world.entity.EntityFactory;
 import net.halitesoft.lote.world.entity.EntityItem;
@@ -139,18 +142,23 @@ public class Region implements GameElement {
 					Log.info("Client could not kill "+msg.getData());
 				}
 			} else if (msg.getName().equals("hitAt")) {
+				EntityPlayer ep = ((GameServer) receiver).getPlayerEnt(msg.getConnection());
+				PlayerData.InventoryEntry ie = ep.pdat.getEquipped();
+				if (ie!=null)
+					if (ie.getItem().onUse((GameServer) receiver,ep))
+						ep.pdat.removeItem(ep.pdat.inventory.indexOf(ie),ep.region,ep.getReceiverName());
 				for (Entity e : getEntitiesAt(Integer.parseInt(msg.getData().split(",",2)[0]),Integer.parseInt(msg.getData().split(",",2)[1]))) {
-					if (e!=((GameServer) receiver).getPlayerEnt(msg.getConnection())) //Comment this line to allow player to attack self
-						e.hurt(this,((GameServer) receiver).getPlayerEnt(msg.getConnection()),receiver);
+					if (e!=ep || (Globals.get("debug",false) && Globals.get("selfHit",true)))
+						e.hurt(this,ep,receiver);
 				}
 			} else if (msg.getName().equals("intAt")) {
 				for (Entity e : getEntitiesAt(Integer.parseInt(msg.getData().split(",",2)[0]),Integer.parseInt(msg.getData().split(",",2)[1]))) {
-					e.interact(this,((GameServer) receiver).getPlayerEnt(msg.getConnection()),receiver);
+					e.interact(this,((GameServer) receiver).getPlayerEnt(msg.getConnection()),receiver,msg.getConnection());
 				}
 			} else if (msg.getName().equals("pickupAt")) {
 				for (Entity e : getEntitiesAt(Integer.parseInt(msg.getData().split(",",2)[0]),Integer.parseInt(msg.getData().split(",",2)[1]))) {
 					if (e instanceof EntityItem)
-						e.interact(this,((GameServer) receiver).getPlayerEnt(msg.getConnection()),receiver);
+						e.interact(this,((GameServer) receiver).getPlayerEnt(msg.getConnection()),receiver,msg.getConnection());
 				}
 			}
 		} else if (entities.containsKey(Integer.valueOf(msg.getTarget().split("\\.",2)[1]))) {

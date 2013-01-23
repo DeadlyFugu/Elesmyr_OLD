@@ -97,7 +97,6 @@ public class EntityEnemy extends Entity {
 				dmg=((ItemWeapon) i).getMult(entity.getEquipped().getExtd());
 			dmg*=i.getElement().multAgainst(this.getElement());
 		}
-		System.out.println(health);
 		health-=dmg;
 		if (health<=0) {
 			this.drop(region);

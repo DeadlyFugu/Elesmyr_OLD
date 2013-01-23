@@ -42,6 +42,8 @@ public class PlayerData {
 		
 		@Override
 		public boolean equals(Object other) {
+			if (other==null)
+				return false;
 			return this.item.name.equals(((InventoryEntry) other).item.name) && this.extd.equals(((InventoryEntry) other).extd);
 		}
 	}

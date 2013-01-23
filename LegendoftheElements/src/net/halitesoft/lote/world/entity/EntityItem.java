@@ -16,6 +16,8 @@ import org.newdawn.slick.Image;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.state.StateBasedGame;
 
+import com.esotericsoftware.kryonet.Connection;
+
 public class EntityItem extends Entity {
 	Image spr;
 	Item item;
@@ -53,7 +55,7 @@ public class EntityItem extends Entity {
 	}
 	
 	@Override
-	public void interact(Region region, EntityPlayer entityPlayer, MessageReceiver receiver) {
+	public void interact(Region region, EntityPlayer entityPlayer, MessageReceiver receiver, Connection connection) {
 		if (destTimer==-1)
 			if (entityPlayer.putItem(item,extd.split(",",2)[1])) {
 				destTimer=40;

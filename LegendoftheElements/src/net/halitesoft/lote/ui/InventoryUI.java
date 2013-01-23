@@ -53,11 +53,12 @@ public class InventoryUI implements UserInterface {
 				Main.font.drawString(xoff+450,128+i*38, ""+ie.getCount());
 				//Main.font.drawString(526,128+i*40,"$"+ie.getValue()); //TODO: Value thingies
 				Main.font.drawString(xoff+526,128+i*38, ie.getExtd());
+				
 				i++;
 			}
 		}
 		smax=i;
-		} catch (Exception e) {};
+		} catch (Exception e) { e.printStackTrace(); };
 	}
 
 	@Override public void update(GameContainer gc, StateBasedGame sbg, GameClient receiver) {
@@ -107,4 +108,8 @@ public class InventoryUI implements UserInterface {
 	}
 
 	@Override public boolean blockUpdates() {return true;}
+
+	@Override
+	public void ctor(String extd) {
+	}
 }

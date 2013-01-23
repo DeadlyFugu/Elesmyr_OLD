@@ -6,8 +6,8 @@ import com.esotericsoftware.minlog.Log;
 
 public class Input {
 	public static boolean isKeyPressed(GameContainer gc, String name) {
-		String val = Main.globals.get("IN_"+name);
-		if (val==null)
+		String val = Globals.get("IN_"+name,"null");
+		if (val.equals("null"))
 			return false;
 		String type = val.split("_")[0];
 		int keyid = Integer.parseInt(val.split("_")[1]);
@@ -22,6 +22,8 @@ public class Input {
 	}
 	
 	public static void setKey(String name, String value) {
-		Main.globals.put("IN_"+name, value);
+		Globals.set("IN_"+name, value);
 	}
+	
+	
 }

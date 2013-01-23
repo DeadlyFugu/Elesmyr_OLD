@@ -2,7 +2,6 @@ package net.halitesoft.lote.world.item;
 
 import net.halitesoft.lote.Element;
 import net.halitesoft.lote.system.GameServer;
-import net.halitesoft.lote.world.entity.Entity;
 import net.halitesoft.lote.world.entity.EntityPlayer;
 
 import org.newdawn.slick.Image;

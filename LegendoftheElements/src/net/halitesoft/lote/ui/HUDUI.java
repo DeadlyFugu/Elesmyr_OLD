@@ -7,6 +7,7 @@ import net.halitesoft.lote.MessageReceiver;
 import net.halitesoft.lote.MessageSystem;
 import net.halitesoft.lote.system.Camera;
 import net.halitesoft.lote.system.GameClient;
+import net.halitesoft.lote.system.Globals;
 import net.halitesoft.lote.system.Main;
 import net.halitesoft.lote.system.PlayerData;
 import net.halitesoft.lote.world.entity.Entity;
@@ -83,7 +84,7 @@ public class HUDUI implements UserInterface {
 				(GameClient.CLIENT?" CLIENT":"")+
 				(GameClient.SERVER?" SERVER":"")+
 				(MessageSystem.fastLink?" FASTLINK":"")+
-				(Boolean.parseBoolean(Main.globals.get("debug"))?" DEBUG":"");
+				(Globals.get("debug",false)?" DEBUG":"");
 	}
 	@Override
 	public void update(GameContainer gc, StateBasedGame sbg, GameClient receiver) {
@@ -123,5 +124,8 @@ public class HUDUI implements UserInterface {
 
 	@Override
 	public boolean blockUpdates() {return false;}
+	@Override
+	public void ctor(String extd) {
+	}
 
 }

@@ -104,11 +104,13 @@ public class GameServer extends Server implements MessageReceiver {
 		//Check stuff
 		if (timeCheck==0) {
 			timeCheck=100;
-			for (Connection c : this.getConnections()) {
+			if (Globals.get("autosave", true))
+				this.save();
+			for (Connection c : players.keySet()) {
 				//Check if connection lost
 				if (!c.isConnected()) {
 					if (players.containsKey(c)) {
-						sendChat("SERVER: "+players.get(c)+" left the game.");
+						sendChat("SERVER: "+players.get(c)+" timed out.");
 						world.receiveMessage(new Message(playerEnt.get(players.get(c)).split("\\.",2)[0]+".killSERV",playerEnt.get(players.get(c)).split("\\.",2)[1]),this);
 						for (Region r : world.regions.values()) {
 							r.connections.remove(c);
@@ -300,5 +302,9 @@ public class GameServer extends Server implements MessageReceiver {
 	@Override
 	public boolean isServer() {
 		return true;
+	}
+
+	public void broadcastKill() {
+		MessageSystem.sendClient(null, new ArrayList<Connection>(Arrays.asList(getConnections())), new Message("CLIENT.error","Server has been closed."), false);
 	}
 }
