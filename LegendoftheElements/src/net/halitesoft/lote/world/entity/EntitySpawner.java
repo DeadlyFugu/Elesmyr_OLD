@@ -23,12 +23,11 @@ public class EntitySpawner extends Entity {
 
 	@Override
 	public void update(Region region, GameServer receiver) {
-		if (rand.nextInt(600)==1) {
-			int se = 0;
-			for (Entity e : region.entities.values())
-				if (e.getClass().getSimpleName().equals(extd.split(",",2)[0]))
-					se++;
-			if (se<24)
+		int se = 0;
+		for (Entity e : region.entities.values())
+			if (e.getClass().getSimpleName().equals(extd.split(",",2)[0]))
+				se++;
+		if (se==0 || rand.nextInt((int) Math.ceil(600*(se/12f)))==1) {
 				region.addEntityServer(extd.split(",",2)[0]+","+x+","+y+","+extd.split(",",2)[1]);
 		}
 	}

@@ -10,6 +10,7 @@ import net.halitesoft.lote.system.GameServer;
 import net.halitesoft.lote.system.Light;
 import net.halitesoft.lote.system.Main;
 import net.halitesoft.lote.system.PlayerData;
+import net.halitesoft.lote.ui.CraftUI;
 import net.halitesoft.lote.world.Region;
 import net.halitesoft.lote.world.item.Item;
 import net.halitesoft.lote.world.item.ItemFactory;
@@ -153,6 +154,8 @@ public class EntityPlayer extends Entity {
 			if (ie!=null)
 				if (ie.getItem().onUse((GameServer) server,this));
 					pdat.removeItem(Integer.parseInt(msg.getData()),region,receiverName);
+		} else if (msg.getName().equals("craftItem")) {
+			CraftUI.getRecipe(Integer.parseInt(msg.getData())).addToPDAT(pdat,region,receiverName);
 		} else if (msg.getName().equals("setPDAT")) {
 			if (pdat==null)
 				pdat=new PlayerData(extd,msg.getConnection());

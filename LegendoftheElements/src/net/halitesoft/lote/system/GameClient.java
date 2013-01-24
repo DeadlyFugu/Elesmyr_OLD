@@ -12,6 +12,7 @@ import net.halitesoft.lote.MessageReceiver;
 import net.halitesoft.lote.MessageSystem;
 import net.halitesoft.lote.Save;
 import net.halitesoft.lote.ScriptObject;
+import net.halitesoft.lote.ui.CraftUI;
 import net.halitesoft.lote.ui.HUDUI;
 import net.halitesoft.lote.ui.InventoryUI;
 import net.halitesoft.lote.ui.UIFactory;
@@ -178,6 +179,7 @@ public class GameClient extends BasicGameState implements MessageReceiver {
 				alphabg.draw(0,0,Main.INTERNAL_RESX,Main.INTERNAL_RESY);
 				vignette.draw(0,0,Main.INTERNAL_RESX,Main.INTERNAL_RESY);
 			}
+			//System.out.println(ui);
 			Iterator<UserInterface> itui = ui.descendingIterator();
 			while (itui.hasNext()) {
 				itui.next().render(gc, sbg, g, cam, this);
@@ -319,6 +321,7 @@ public class GameClient extends BasicGameState implements MessageReceiver {
 			if (ui.peekFirst().blockUpdates()) {
 				ui.peekFirst().update(gc, sbg, this);
 				blocked=true;
+				gc.getInput().clearKeyPressedRecord();
 			}
 			for (UserInterface uii : ui) {
 				if (!blocked||!uii.blockUpdates())

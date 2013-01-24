@@ -26,7 +26,7 @@ public class InventoryUI implements UserInterface {
 	Image invsel;
 	int sel = 0;
 	int isel = 0;
-	int smax = 0;
+	int smax = 1;
 	String[] types = {"All","Weapons","Armor","Potions","Food","Books","Misc"};
 	@Override public void init(GameContainer gc, StateBasedGame sbg,
 			MessageReceiver receiver) throws SlickException {
@@ -93,6 +93,11 @@ public class InventoryUI implements UserInterface {
 				}
 			}
 		}
+		if (isel>smax-1)
+			isel=smax-1;
+		if (isel==-1&&smax!=0)
+			isel=0;
+		System.out.println(isel +":"+ smax);
 	}
 	
 	private InventoryEntry getItem(int isel, GameClient receiver) {

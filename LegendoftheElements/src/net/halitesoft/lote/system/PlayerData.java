@@ -23,11 +23,11 @@ public class PlayerData {
 			this.count = count;
 		}
 		
-		public void upCount() {
+		private void upCount() {
 			count++;
 		}
 		
-		public boolean downCount() {
+		private boolean downCount() {
 			count--;
 			return (count==0);
 		}
