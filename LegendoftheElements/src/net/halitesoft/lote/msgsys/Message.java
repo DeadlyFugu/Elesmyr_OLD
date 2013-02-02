@@ -1,4 +1,6 @@
-package net.halitesoft.lote;
+package net.halitesoft.lote.msgsys;
+
+import net.halitesoft.lote.GameElement;
 
 import com.esotericsoftware.kryonet.Connection;
 

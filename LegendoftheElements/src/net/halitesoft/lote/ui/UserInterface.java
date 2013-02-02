@@ -1,8 +1,8 @@
 package net.halitesoft.lote.ui;
 
 
-import net.halitesoft.lote.MessageReceiver;
-import net.halitesoft.lote.system.Camera;
+import net.halitesoft.lote.msgsys.MessageReceiver;
+import net.halitesoft.lote.player.Camera;
 import net.halitesoft.lote.system.GameClient;
 
 import org.newdawn.slick.GameContainer;

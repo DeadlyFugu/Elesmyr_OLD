@@ -7,11 +7,14 @@ import java.net.InetAddress;
 import java.util.Iterator;
 import java.util.LinkedList;
 
-import net.halitesoft.lote.Message;
-import net.halitesoft.lote.MessageReceiver;
-import net.halitesoft.lote.MessageSystem;
 import net.halitesoft.lote.Save;
 import net.halitesoft.lote.ScriptObject;
+import net.halitesoft.lote.lighting.LightMap;
+import net.halitesoft.lote.msgsys.Message;
+import net.halitesoft.lote.msgsys.MessageReceiver;
+import net.halitesoft.lote.msgsys.MessageSystem;
+import net.halitesoft.lote.player.Camera;
+import net.halitesoft.lote.player.PlayerClient;
 import net.halitesoft.lote.ui.CraftUI;
 import net.halitesoft.lote.ui.HUDUI;
 import net.halitesoft.lote.ui.InventoryUI;
@@ -70,7 +73,7 @@ public class GameClient extends BasicGameState implements MessageReceiver {
 	private GameServer server;
 	public Client client;
 	//private ConcurrentLinkedQueue<Message> msgList;
-	boolean regionLoaded = false;
+	public boolean regionLoaded = false;
 
 	public PlayerClient player; //Client player controller.
 
@@ -81,7 +84,7 @@ public class GameClient extends BasicGameState implements MessageReceiver {
 	 * Client-side world
 	 */
 	private World world;
-	Camera cam;
+	public Camera cam;
 	public LightMap lm;
 	
 	private float time=-20; //in-game time in minutes

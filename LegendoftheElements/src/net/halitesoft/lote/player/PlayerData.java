@@ -1,10 +1,10 @@
-package net.halitesoft.lote.system;
+package net.halitesoft.lote.player;
 
 
 import java.util.ArrayList;
 
-import net.halitesoft.lote.Message;
-import net.halitesoft.lote.MessageSystem;
+import net.halitesoft.lote.msgsys.Message;
+import net.halitesoft.lote.msgsys.MessageSystem;
 import net.halitesoft.lote.world.Region;
 import net.halitesoft.lote.world.item.Item;
 import net.halitesoft.lote.world.item.ItemFactory;

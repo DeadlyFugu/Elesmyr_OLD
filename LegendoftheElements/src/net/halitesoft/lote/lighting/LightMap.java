@@ -1,10 +1,12 @@
-package net.halitesoft.lote.system;
+package net.halitesoft.lote.lighting;
 
 
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
 
+import net.halitesoft.lote.player.Camera;
+import net.halitesoft.lote.system.Main;
 import net.halitesoft.lote.world.Region;
 
 import org.lwjgl.BufferUtils;

@@ -1,10 +1,11 @@
-package net.halitesoft.lote;
+package net.halitesoft.lote.msgsys;
 
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
+import net.halitesoft.lote.GameElement;
 import net.halitesoft.lote.system.GameClient;
 import net.halitesoft.lote.system.GameServer;
 import net.halitesoft.lote.system.Globals;

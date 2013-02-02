@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.Random;
 
 
-import net.halitesoft.lote.MessageReceiver;
-import net.halitesoft.lote.system.Camera;
+import net.halitesoft.lote.msgsys.MessageReceiver;
+import net.halitesoft.lote.player.Camera;
 import net.halitesoft.lote.system.GameClient;
 import net.halitesoft.lote.system.Main;
 import net.halitesoft.lote.world.item.Item;

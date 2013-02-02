@@ -1,5 +1,7 @@
 package net.halitesoft.lote;
 
+import net.halitesoft.lote.msgsys.Message;
+import net.halitesoft.lote.msgsys.MessageReceiver;
 import groovy.lang.GroovyObject;
 
 public class ScriptObject {

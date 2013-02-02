@@ -1,4 +1,4 @@
-package net.halitesoft.lote.system;
+package net.halitesoft.lote.lighting;
 
 import java.util.Random;
 

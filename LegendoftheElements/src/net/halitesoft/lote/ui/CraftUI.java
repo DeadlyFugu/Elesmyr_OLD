@@ -3,13 +3,13 @@ package net.halitesoft.lote.ui;
 import java.util.ArrayList;
 import java.util.Map.Entry;
 
-import net.halitesoft.lote.Message;
-import net.halitesoft.lote.MessageReceiver;
-import net.halitesoft.lote.MessageSystem;
-import net.halitesoft.lote.system.Camera;
+import net.halitesoft.lote.msgsys.Message;
+import net.halitesoft.lote.msgsys.MessageReceiver;
+import net.halitesoft.lote.msgsys.MessageSystem;
+import net.halitesoft.lote.player.Camera;
+import net.halitesoft.lote.player.PlayerData;
 import net.halitesoft.lote.system.GameClient;
 import net.halitesoft.lote.system.Main;
-import net.halitesoft.lote.system.PlayerData;
 import net.halitesoft.lote.util.HashmapLoader;
 import net.halitesoft.lote.world.Region;
 import net.halitesoft.lote.world.entity.EntityPlayer;

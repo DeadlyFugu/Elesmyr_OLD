@@ -1,10 +1,13 @@
-package net.halitesoft.lote.system;
+package net.halitesoft.lote.player;
 
 import net.halitesoft.lote.GameElement;
-import net.halitesoft.lote.Message;
-import net.halitesoft.lote.MessageReceiver;
-import net.halitesoft.lote.MessageSystem;
 import net.halitesoft.lote.Save;
+import net.halitesoft.lote.msgsys.Message;
+import net.halitesoft.lote.msgsys.MessageReceiver;
+import net.halitesoft.lote.msgsys.MessageSystem;
+import net.halitesoft.lote.system.GameClient;
+import net.halitesoft.lote.system.GameServer;
+import net.halitesoft.lote.system.Input;
 import net.halitesoft.lote.world.Region;
 import net.halitesoft.lote.world.World;
 import net.halitesoft.lote.world.entity.EntityPlayer;
@@ -21,7 +24,7 @@ import com.esotericsoftware.minlog.Log;
 public class PlayerClient implements GameElement {
 	private World world;
 	private GameClient gs;
-	int x,y;
+	public int x,y;
 	private String regionName;
 	public Region region;
 	public int entid = -1;

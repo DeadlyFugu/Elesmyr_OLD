@@ -6,10 +6,11 @@ import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 
-import net.halitesoft.lote.Message;
-import net.halitesoft.lote.MessageReceiver;
-import net.halitesoft.lote.MessageSystem;
 import net.halitesoft.lote.Save;
+import net.halitesoft.lote.msgsys.Message;
+import net.halitesoft.lote.msgsys.MessageReceiver;
+import net.halitesoft.lote.msgsys.MessageSystem;
+import net.halitesoft.lote.player.PlayerData;
 import net.halitesoft.lote.util.HashmapLoader;
 import net.halitesoft.lote.world.Region;
 import net.halitesoft.lote.world.World;

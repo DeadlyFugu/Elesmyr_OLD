@@ -1,6 +1,7 @@
-package net.halitesoft.lote.system;
+package net.halitesoft.lote.player;
 
 
+import net.halitesoft.lote.system.Main;
 import net.halitesoft.lote.world.Region;
 
 import org.newdawn.slick.tiled.TiledMap;
@@ -10,7 +11,7 @@ public class Camera {
 	float y,ty;
 	int xoff,yoff;
 	
-	Camera(int x,int y) {
+	public Camera(int x,int y) {
 		this.x = tx = x;
 		this.y = ty = y;
 	}

@@ -8,10 +8,10 @@ import org.newdawn.slick.state.StateBasedGame;
 
 import com.esotericsoftware.kryonet.Connection;
 
-import net.halitesoft.lote.Message;
-import net.halitesoft.lote.MessageReceiver;
-import net.halitesoft.lote.MessageSystem;
-import net.halitesoft.lote.system.Camera;
+import net.halitesoft.lote.msgsys.Message;
+import net.halitesoft.lote.msgsys.MessageReceiver;
+import net.halitesoft.lote.msgsys.MessageSystem;
+import net.halitesoft.lote.player.Camera;
 import net.halitesoft.lote.system.GameClient;
 import net.halitesoft.lote.world.Region;
 import net.halitesoft.lote.world.item.ItemFactory;

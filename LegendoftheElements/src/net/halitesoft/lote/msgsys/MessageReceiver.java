@@ -1,4 +1,4 @@
-package net.halitesoft.lote;
+package net.halitesoft.lote.msgsys;
 
 public interface MessageReceiver {
 	public boolean receiveMessage(Message msg);

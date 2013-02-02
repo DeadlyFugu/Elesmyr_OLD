@@ -3,7 +3,7 @@ package net.halitesoft.lote.world.entity;
 import java.util.Random;
 
 
-import net.halitesoft.lote.system.Camera;
+import net.halitesoft.lote.player.Camera;
 import net.halitesoft.lote.system.GameServer;
 import net.halitesoft.lote.world.Region;
 
