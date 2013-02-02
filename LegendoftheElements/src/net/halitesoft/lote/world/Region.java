@@ -44,6 +44,7 @@ public class Region implements GameElement {
 	public int mapColLayer = 0; //Layer containing collision tiles
 	public int mapColTOff = 0; //Offset of first collision tile
 	private int sendEntities = 20;
+	public WeatherCondition weather = new WeatherCondition();
 	
 	public Region(String name) {
 		this.name = name;
@@ -65,7 +66,11 @@ public class Region implements GameElement {
 	public void render(GameContainer gc, StateBasedGame sbg, Graphics g, Camera cam, GameClient receiver) throws SlickException {
 		//Map is rendered in GameplayState
 		List<Entity> list = new ArrayList<Entity>(entities.values());
-		Collections.sort(list);
+		try {
+		Collections.sort(list); //TODO: Occasionally throws IllegalArgumentException: Comparison methood violates its general contract!
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		for (Entity e : list) {
 			e.render(gc, sbg, g, cam, receiver);
 		}

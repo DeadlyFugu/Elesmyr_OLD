@@ -16,6 +16,7 @@ import net.halitesoft.lote.world.World;
 import net.halitesoft.lote.world.item.Item;
 import net.halitesoft.lote.world.item.ItemWeapon;
 
+import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
@@ -32,6 +33,7 @@ public class EntityEnemy extends Entity {
 	protected int xtarget,ytarget;
 	protected int mdist,cmdist; //mdist = distance to move in tiles, cmdist = distance moved so far in pixels
 	protected int health = 0;
+	protected int maxHealth = 0;
 	protected Random airand = new Random();
 	
 	public EntityEnemy() {
@@ -51,6 +53,17 @@ public class EntityEnemy extends Entity {
 			init(gc,sbg,receiver);
 		//spr.draw(x+cam.getXOff(),y+cam.getYOff());
 		spr.draw(xs+cam.getXOff(),ys+cam.getYOff());
+		drawHealthBar(xs+cam.getXOff(),ys+cam.getYOff(),g);
+	}
+
+	protected void drawHealthBar(float x, float y, Graphics g) {
+		if (health!=maxHealth) {
+			g.setColor(Color.lightGray);
+			g.fillRect(x-16, y-4, 32, 4);
+			g.setColor(Color.red);
+			g.fillRect(x-16, y-4, ((float) health/maxHealth)*32, 4);
+			g.setColor(Color.white);
+		}
 	}
 
 	@Override
@@ -109,7 +122,8 @@ public class EntityEnemy extends Entity {
 	@Override public void receiveMessageExt(Message msg, MessageReceiver receiver) {
 		if (msg.getName().equals("setHealth")) {
 			this.health=Integer.parseInt(msg.getData());
+		} else {
+			Log.warn("ENTITY: Ignored message "+msg.toString());
 		}
-		Log.warn("ENTITY: Ignored message "+msg.toString());
 	}
 }

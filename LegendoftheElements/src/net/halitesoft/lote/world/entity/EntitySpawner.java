@@ -13,6 +13,8 @@ import org.newdawn.slick.Image;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.state.StateBasedGame;
 
+import com.esotericsoftware.minlog.Log;
+
 public class EntitySpawner extends Entity {
 	
 	private Random rand;
@@ -27,8 +29,9 @@ public class EntitySpawner extends Entity {
 		for (Entity e : region.entities.values())
 			if (e.getClass().getSimpleName().equals(extd.split(",",2)[0]))
 				se++;
-		if (se==0 || rand.nextInt((int) Math.ceil(600*(se/12f)))==1) {
+		if (rand.nextInt((int) Math.ceil(600*Math.log10((se+1)*2)))==1) {
 				region.addEntityServer(extd.split(",",2)[0]+","+x+","+y+","+extd.split(",",2)[1]);
+				//Log.info("Spawned chance = 1/"+600*Math.log10((se+1)*2));
 		}
 	}
 }

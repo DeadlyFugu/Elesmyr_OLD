@@ -179,7 +179,6 @@ public class GameClient extends BasicGameState implements MessageReceiver {
 				alphabg.draw(0,0,Main.INTERNAL_RESX,Main.INTERNAL_RESY);
 				vignette.draw(0,0,Main.INTERNAL_RESX,Main.INTERNAL_RESY);
 			}
-			//System.out.println(ui);
 			Iterator<UserInterface> itui = ui.descendingIterator();
 			while (itui.hasNext()) {
 				itui.next().render(gc, sbg, g, cam, this);
@@ -363,7 +362,7 @@ public class GameClient extends BasicGameState implements MessageReceiver {
 				servtime = Float.parseFloat(msg.getData());
 				if (servtime>oltime+10 || servtime<oltime-10) {
 					Log.info("Time skip");
-					lm.skipFade(servtime/60f);
+					lm.skipFade(servtime/60f,player.region);
 					time=servtime;
 				}
 			} else if (name.equals("openUI")) {

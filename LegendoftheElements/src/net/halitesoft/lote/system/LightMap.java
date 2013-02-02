@@ -93,7 +93,7 @@ public class LightMap {
 		
 		//a=a+(b-a)*c
 		float timeh = time/60f;
-		calcAmbLight(timeh);
+		calcAmbLight(timeh,r);
 		
 		ambLight.r+=(ambLightT.r-ambLight.r)/30f;
 		ambLight.g+=(ambLightT.g-ambLight.g)/30f;
@@ -151,7 +151,7 @@ public class LightMap {
 		}
 	}
 
-	private void calcAmbLight(float timeh) {
+	private void calcAmbLight(float timeh, Region region) {
 		if (timeh<5) { //Night
 			setAmbCol(0.02f,0.02f,0.05f,0.995f); //(0.14f,0.14f,0.22f,0.995f)-Nighttime fog?
 		} else if (timeh<5.5f) { //Night to Sunrise
@@ -167,6 +167,15 @@ public class LightMap {
 		} else if (timeh<24) { //Night
 			setAmbCol(0.02f,0.02f,0.05f,0.995f);
 		}
+		if (region!=null)
+			setAmbCol(region.weather.getAmbCol(new float[] {ambLightT.r,ambLightT.g,ambLightT.b,ambLightT.a}));
+	}
+
+	private void setAmbCol(float[] c) {
+		ambLightT.r=c[0];
+		ambLightT.g=c[1];
+		ambLightT.b=c[2];
+		ambLightT.a=c[3];
 	}
 
 	private void setAmbCol(float r, float g, float b, float a) {
@@ -183,8 +192,8 @@ public class LightMap {
 		ambLightT.a=a1+(a2-a1)*i;
 	}
 	
-	public void skipFade(float time) {
-		calcAmbLight(time);
+	public void skipFade(float time, Region region) {
+		calcAmbLight(time, region);
 		ambLight=ambLightT;
 	}
 

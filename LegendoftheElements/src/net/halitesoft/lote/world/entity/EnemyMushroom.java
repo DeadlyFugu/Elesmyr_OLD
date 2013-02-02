@@ -27,7 +27,7 @@ public class EnemyMushroom extends EntityEnemy {
 		cx2=32;
 		cy1=-32;
 		cy2=16;
-		health=10;
+		maxHealth = health=10;
 	}
 	
 	@Override
@@ -48,6 +48,7 @@ public class EnemyMushroom extends EntityEnemy {
 		if (anim>=4) {
 			anim=0;
 		}
+		drawHealthBar(xs+cam.getXOff(),ys+cam.getYOff()-34,g);
 	}
 	
 	@Override

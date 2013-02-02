@@ -43,18 +43,21 @@ public class InventoryUI implements UserInterface {
 		try {
 		PlayerData pdat = ((EntityPlayer) receiver.player.region.entities.get(receiver.player.entid)).pdat;
 		int i=0;
+		int ir=0-Math.max(0,isel-4);
 		for (PlayerData.InventoryEntry ie : pdat.inventory) {
 			Item iei = ie.getItem();
 			if (iei.getType().equalsIgnoreCase(types[sel]) || sel==0) {
-				if (i==isel)
-					g.fillRect(xoff+67, 116+i*38, 506, 36);
-				iei.spr.draw(xoff+78,120+i*38);
-				Main.font.drawString(xoff+117,128+i*38, iei.name+(ie.equals(pdat.getEquipped())?" (Equipped)":""));
-				Main.font.drawString(xoff+450,128+i*38, ""+ie.getCount());
-				//Main.font.drawString(526,128+i*40,"$"+ie.getValue()); //TODO: Value thingies
-				Main.font.drawString(xoff+526,128+i*38, ie.getExtd());
-				
+				if (ir>=0 && ir<=7) {
+					if (i==isel)
+						g.fillRect(xoff+67, 116+ir*38, 506, 36);
+					iei.spr.draw(xoff+78,120+ir*38);
+					Main.font.drawString(xoff+117,128+ir*38, iei.name+(ie.equals(pdat.getEquipped())?" (Equipped)":""));
+					Main.font.drawString(xoff+450,128+ir*38, ""+ie.getCount());
+					//Main.font.drawString(526,128+ir*40,"$"+ie.getValue()); //TODO: Value thingies
+					Main.font.drawString(xoff+526,128+ir*38, ie.getExtd());
+				}
 				i++;
+				ir++;
 			}
 		}
 		smax=i;
@@ -97,7 +100,6 @@ public class InventoryUI implements UserInterface {
 			isel=smax-1;
 		if (isel==-1&&smax!=0)
 			isel=0;
-		System.out.println(isel +":"+ smax);
 	}
 	
 	private InventoryEntry getItem(int isel, GameClient receiver) {

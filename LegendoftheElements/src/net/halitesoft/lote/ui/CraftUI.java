@@ -147,10 +147,15 @@ public class CraftUI implements UserInterface {
 			if (isel<smax-1)
 				isel++;
 		if (in.isKeyPressed(Input.KEY_X)) {
+			ArrayList<PlayerData.InventoryEntry> inv = ((EntityPlayer) receiver.player.region.entities.get(receiver.player.entid)).pdat.inventory;
 			int i=0;
+			int iv=-1;
 			for (Craftable c : recipes) {
-				if (i==isel) {
-					MessageSystem.sendServer(null,new Message(receiver.player.region.name+"."+receiver.player.entid+".craftItem",""+isel),false);
+				if (c.isCraftable(inv))
+					iv++;
+				if (iv==isel) {
+					System.out.println("Craft send");
+					MessageSystem.sendServer(null,new Message(receiver.player.region.name+"."+receiver.player.entid+".craftItem",""+i),false);
 				}
 				i++;
 			}
@@ -165,6 +170,7 @@ public class CraftUI implements UserInterface {
 	}
 	
 	public static Craftable getRecipe(int index) {
+		System.out.println(index);
 		return recipes.get(index);
 	}
 }
