@@ -92,6 +92,8 @@ public class MessageSystem {
 			if (Globals.get("printAllMsg",false) || Globals.get("printMsg", false) && !msg.getName().equals("move") && !msg.getName().equals("pickupAt"))
 				Log.info("Server received "+msg);
 			if (serverReceivers.containsKey(msg.getTarget())) {
+				if (msg.getName().equals("_info"))
+					MessageSystem.sendClient(null,msg.getConnection(),new Message("CLIENT.chat",serverReceivers.get(msg.getTarget()).toString()),false);
 				serverReceivers.get(msg.getTarget()).receiveMessage(msg, server);
 			} else {
 				server.receiveMessage(msg);

@@ -69,4 +69,8 @@ public class Message {
 	public void setSender(String sender) {
 		this.sender=sender;
 	}
+
+	public String getSender() {
+		return sender;
+	}
 }

@@ -27,7 +27,7 @@ public class EnemyMushroom extends EntityEnemy {
 		cx2=32;
 		cy1=-32;
 		cy2=16;
-		maxHealth = health=10;
+		maxHealth = 10;
 	}
 	
 	@Override

@@ -39,7 +39,12 @@ public class EntityEnemy extends Entity {
 	public EntityEnemy() {
 		constantUpdate = true;
 	}
-
+	
+	@Override
+	public void initSERV() {
+		health = Integer.parseInt(extd.split(",",2)[0]);
+	}
+	
 	@Override
 	public void init(GameContainer gc, StateBasedGame sbg, MessageReceiver receiver)
 			throws SlickException {
@@ -117,6 +122,10 @@ public class EntityEnemy extends Entity {
 		} else {
 			MessageSystem.sendClient(this, region.connections, new Message(this.getReceiverName()+".setHealth",""+health), false);
 		}
+		if (extd.contains(","))
+			extd = health+","+extd.split(",",2)[1];
+		else
+			extd = ""+health;
 	}
 	
 	@Override public void receiveMessageExt(Message msg, MessageReceiver receiver) {

@@ -105,14 +105,15 @@ public class Entity implements GameElement, Comparable<Entity> {
 
 	@Override
 	public int compareTo(Entity other) {
+		int thisy=(int) ys;
+		if (this instanceof EntityPlayer && ((EntityPlayer) this).isUser == true)
+			thisy=((EntityPlayer) this).cy;
+		int othery=(int) other.ys;
 		if (other instanceof EntityPlayer && ((EntityPlayer) other).isUser == true)
-			if (this.ys<((EntityPlayer) other).cy)
-				return -1;
-			else if (this.ys>((EntityPlayer) other).cy)
-				return 1;
-		if (this.ys<other.ys)
+			othery=((EntityPlayer) other).cy;
+		if (thisy<othery)
 			return -1;
-		else if (this.ys>other.ys)
+		else if (thisy>othery)
 			return 1;
 		else
 			if (Integer.parseInt(this.name)>Integer.parseInt(other.name))

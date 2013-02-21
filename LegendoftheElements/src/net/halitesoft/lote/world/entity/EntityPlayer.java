@@ -189,23 +189,6 @@ public class EntityPlayer extends Entity {
 	public void kill(GameClient gs) {
 		gs.lm.removeLight(torchLight);
 	}
-	
-	@Override
-	public int compareTo(Entity other) {
-		if (other instanceof EntityPlayer && ((EntityPlayer) other).isUser == true)
-			if (this.cy<((EntityPlayer) other).cy)
-				return -1;
-			else if (this.cy>((EntityPlayer) other).cy)
-				return 1;
-			else
-				return 0;
-		if (this.cy<other.ys)
-			return -1;
-		else if (this.cy>other.ys)
-			return 1;
-		else
-			return 0;
-	}
 
 	public Connection getConnection() {
 		return connection;

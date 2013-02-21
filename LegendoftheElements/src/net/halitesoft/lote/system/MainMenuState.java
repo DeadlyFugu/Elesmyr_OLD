@@ -546,7 +546,6 @@ public class MainMenuState extends BasicGameState {
 						((GameClient) sbg.getState(Main.GAMEPLAYSTATE)).join(InetAddress.getByName(textField.getText()));
 						gc.getInput().clearKeyPressedRecord();
 						sbg.enterState(Main.LOGINSTATE);
-						//TODO: FIX
 					} catch (UnknownHostException e) {
 						gc.getInput().clearKeyPressedRecord();
 						((ErrorState) sbg.getState(Main.ERRORSTATE)).errorText = "Unknown host "+textField.getText();
@@ -588,8 +587,13 @@ public class MainMenuState extends BasicGameState {
 						((GameClient) sbg.getState(Main.GAMEPLAYSTATE)).init(gc,sbg);
 						gc.getInput().clearKeyPressedRecord();
 						sbg.enterState(Main.LOGINSTATE);
-					} catch (IOException e) {
-						//TODO: warn
+					} catch (Exception e) {
+						gc.getInput().clearKeyPressedRecord();
+						((ErrorState) sbg.getState(Main.ERRORSTATE)).errorText = 
+								"Exception caught joining server:\n" +
+								e.getLocalizedMessage();
+						sbg.enterState(Main.ERRORSTATE);
+						return;
 					}
 				}
 			}

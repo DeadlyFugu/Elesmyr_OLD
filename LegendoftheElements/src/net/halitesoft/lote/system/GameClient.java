@@ -15,6 +15,7 @@ import net.halitesoft.lote.msgsys.MessageReceiver;
 import net.halitesoft.lote.msgsys.MessageSystem;
 import net.halitesoft.lote.player.Camera;
 import net.halitesoft.lote.player.PlayerClient;
+import net.halitesoft.lote.ui.ChatUI;
 import net.halitesoft.lote.ui.CraftUI;
 import net.halitesoft.lote.ui.HUDUI;
 import net.halitesoft.lote.ui.InventoryUI;
@@ -98,10 +99,11 @@ public class GameClient extends BasicGameState implements MessageReceiver {
 	
 	private ScriptObject chatso;
 	
-	private LinkedList<UserInterface> ui;
+	public LinkedList<UserInterface> ui;
 	
 	private Image vignette;
 	private Image alphabg;
+	private Object ChatUI;
 
 	GameClient(int stateID) {
 		this.stateID = stateID;
@@ -291,7 +293,7 @@ public class GameClient extends BasicGameState implements MessageReceiver {
 		if (gc.getInput().isKeyPressed(Input.KEY_F3)) {
 			Globals.set("debug",""+!Globals.get("debug",false));
 		}
-		if (gc.getInput().isKeyPressed(Input.KEY_E) && showTextField==false) {
+		if (net.halitesoft.lote.system.Input.isKeyPressed(gc, "inv") && showTextField==false) {
 			if (ui.peekFirst() instanceof InventoryUI) {
 				ui.removeFirst();
 			} else if (!ui.peekFirst().blockUpdates()) {
@@ -358,6 +360,14 @@ public class GameClient extends BasicGameState implements MessageReceiver {
 				//if (chat.size()>5) {
 				//	chat.removeLast();
 				//}
+			} else if (name.equals("talk")) {
+				if (ui.peekFirst() instanceof ChatUI) {
+					((ChatUI) ui.peekFirst()).setMsg(msg.getData().split(":",2)[0],msg.getData().split(":",2)[1],msg);
+				} else {
+					ChatUI nui = new ChatUI();
+					nui.setMsg(msg.getData().split(":",2)[0],msg.getData().split(":",2)[1],msg);
+					ui.addFirst(nui);
+				}
 			} else if (name.equals("error")) {
 				error = msg.getData();
 			} else if (name.equals("time")) {

@@ -53,7 +53,7 @@ public interface GameElement {
 	/**
 	 * Receive a message from the server (or client)
 	 * @param msg String containing the message
-	 * @param server TODO
+	 * @param receiver
 	 */
 	public void receiveMessage(Message msg, MessageReceiver receiver);
 	

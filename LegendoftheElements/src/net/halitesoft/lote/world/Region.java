@@ -68,6 +68,7 @@ public class Region implements GameElement {
 		List<Entity> list = new ArrayList<Entity>(entities.values());
 		try {
 		Collections.sort(list); //TODO: Occasionally throws IllegalArgumentException: Comparison methood violates its general contract!
+		System.out.println(list);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -79,7 +80,7 @@ public class Region implements GameElement {
 	@Override
 	public void load(Save save) {
 		if (save.get("region."+name) != null)
-			this.parseEntityString(save.get("region."+name),false);
+			this.parseEntityStringGenIDs(save.get("region."+name),false);
 	}
 
 	@Override
@@ -93,7 +94,7 @@ public class Region implements GameElement {
 			} else {
 				e.save(save);
 				String[] parts = e.toString().split(",",3);
-				ret = ret+"\\"+parts[0]+","+id+","+parts[2];
+				ret = ret+"\\"+parts[0]+","+parts[2];
 				id++;
 			}
 		}
@@ -196,6 +197,15 @@ public class Region implements GameElement {
 		String[] ents = str.split("\\\\");
 		for (String s : ents) {
 			addEntity(s,client);
+		}
+	}
+	
+	public void parseEntityStringGenIDs(String str,boolean client) {
+		String[] ents = str.split("\\\\");
+		int id = 0;
+		for (String s : ents) {
+			addEntity(s.split(",",2)[0]+","+id+","+s.split(",",2)[1],client);
+			id++;
 		}
 	}
 	
