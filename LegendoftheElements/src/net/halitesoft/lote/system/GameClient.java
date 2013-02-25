@@ -1,12 +1,10 @@
 package net.halitesoft.lote.system;
 
 
-import java.io.IOException;
-import java.net.BindException;
-import java.net.InetAddress;
-import java.util.Iterator;
-import java.util.LinkedList;
-
+import com.esotericsoftware.kryonet.Client;
+import com.esotericsoftware.kryonet.Connection;
+import com.esotericsoftware.kryonet.Listener;
+import com.esotericsoftware.minlog.Log;
 import net.halitesoft.lote.Save;
 import net.halitesoft.lote.ScriptObject;
 import net.halitesoft.lote.lighting.LightMap;
@@ -15,35 +13,21 @@ import net.halitesoft.lote.msgsys.MessageReceiver;
 import net.halitesoft.lote.msgsys.MessageSystem;
 import net.halitesoft.lote.player.Camera;
 import net.halitesoft.lote.player.PlayerClient;
-import net.halitesoft.lote.ui.ChatUI;
-import net.halitesoft.lote.ui.CraftUI;
-import net.halitesoft.lote.ui.HUDUI;
-import net.halitesoft.lote.ui.InventoryUI;
-import net.halitesoft.lote.ui.UIFactory;
-import net.halitesoft.lote.ui.UserInterface;
+import net.halitesoft.lote.ui.*;
 import net.halitesoft.lote.world.Region;
 import net.halitesoft.lote.world.World;
 import net.halitesoft.lote.world.entity.Entity;
 import net.halitesoft.lote.world.item.ItemFactory;
-
-import org.lwjgl.opengl.EXTBlendMinmax;
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL12;
-import org.lwjgl.opengl.GL14;
-import org.newdawn.slick.Color;
-import org.newdawn.slick.GameContainer;
-import org.newdawn.slick.Graphics;
-import org.newdawn.slick.Image;
+import org.newdawn.slick.*;
 import org.newdawn.slick.Input;
-import org.newdawn.slick.SlickException;
 import org.newdawn.slick.gui.TextField;
 import org.newdawn.slick.state.BasicGameState;
 import org.newdawn.slick.state.StateBasedGame;
 
-import com.esotericsoftware.kryonet.Client;
-import com.esotericsoftware.kryonet.Connection;
-import com.esotericsoftware.kryonet.Listener;
-import com.esotericsoftware.minlog.Log;
+import java.io.IOException;
+import java.net.InetAddress;
+import java.util.Iterator;
+import java.util.LinkedList;
 
 public class GameClient extends BasicGameState implements MessageReceiver {
 

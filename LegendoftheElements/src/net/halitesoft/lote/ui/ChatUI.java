@@ -6,7 +6,6 @@ import net.halitesoft.lote.player.Camera;
 import net.halitesoft.lote.system.GameClient;
 import net.halitesoft.lote.system.Input;
 import net.halitesoft.lote.system.Main;
-
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.SlickException;
@@ -32,7 +31,6 @@ public class ChatUI implements UserInterface {
 	@Override
 	public void render(GameContainer gc, StateBasedGame sbg, Graphics g,
 			Camera cam, GameClient receiver) throws SlickException { //TODO: Make this look good.
-		System.out.println(type);
 		if (type.equals("talk")) {
 			Main.font.drawString(77,17,msg);
 		} else if (type.equals("talkwf")) {

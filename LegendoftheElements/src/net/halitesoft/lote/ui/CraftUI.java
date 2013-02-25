@@ -1,8 +1,5 @@
 package net.halitesoft.lote.ui;
 
-import java.util.ArrayList;
-import java.util.Map.Entry;
-
 import net.halitesoft.lote.msgsys.Message;
 import net.halitesoft.lote.msgsys.MessageReceiver;
 import net.halitesoft.lote.msgsys.MessageSystem;
@@ -13,14 +10,15 @@ import net.halitesoft.lote.system.Main;
 import net.halitesoft.lote.util.HashmapLoader;
 import net.halitesoft.lote.world.Region;
 import net.halitesoft.lote.world.entity.EntityPlayer;
-import net.halitesoft.lote.world.item.Item;
 import net.halitesoft.lote.world.item.ItemFactory;
-
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.state.StateBasedGame;
+
+import java.util.ArrayList;
+import java.util.Map.Entry;
 
 public class CraftUI implements UserInterface {
 	
@@ -154,7 +152,6 @@ public class CraftUI implements UserInterface {
 				if (c.isCraftable(inv))
 					iv++;
 				if (iv==isel) {
-					System.out.println("Craft send");
 					MessageSystem.sendServer(null,new Message(receiver.player.region.name+"."+receiver.player.entid+".craftItem",""+i),false);
 				}
 				i++;
@@ -170,7 +167,6 @@ public class CraftUI implements UserInterface {
 	}
 	
 	public static Craftable getRecipe(int index) {
-		System.out.println(index);
 		return recipes.get(index);
 	}
 }

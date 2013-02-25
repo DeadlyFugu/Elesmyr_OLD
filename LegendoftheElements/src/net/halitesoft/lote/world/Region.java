@@ -1,15 +1,8 @@
 package net.halitesoft.lote.world;
 
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
-
+import com.esotericsoftware.kryonet.Connection;
+import com.esotericsoftware.minlog.Log;
 import net.halitesoft.lote.GameElement;
 import net.halitesoft.lote.Save;
 import net.halitesoft.lote.lighting.Light;
@@ -21,20 +14,24 @@ import net.halitesoft.lote.player.PlayerData;
 import net.halitesoft.lote.system.GameClient;
 import net.halitesoft.lote.system.GameServer;
 import net.halitesoft.lote.system.Globals;
-import net.halitesoft.lote.system.Main;
 import net.halitesoft.lote.world.entity.Entity;
 import net.halitesoft.lote.world.entity.EntityFactory;
 import net.halitesoft.lote.world.entity.EntityItem;
 import net.halitesoft.lote.world.entity.EntityPlayer;
-
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.state.StateBasedGame;
 import org.newdawn.slick.tiled.TiledMap;
 
-import com.esotericsoftware.kryonet.Connection;
-import com.esotericsoftware.minlog.Log;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class Region implements GameElement {
 	public String name;
@@ -67,8 +64,7 @@ public class Region implements GameElement {
 		//Map is rendered in GameplayState
 		List<Entity> list = new ArrayList<Entity>(entities.values());
 		try {
-		Collections.sort(list); //TODO: Occasionally throws IllegalArgumentException: Comparison methood violates its general contract!
-		System.out.println(list);
+		Collections.sort(list); //TODO: Occasionally throws IllegalArgumentException: Comparison methood violates its general contract! May be fixed?
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
