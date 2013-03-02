@@ -1,25 +1,21 @@
 package net.halitesoft.lote.ui;
 
 
-import java.util.ArrayList;
-
 import net.halitesoft.lote.msgsys.Message;
 import net.halitesoft.lote.msgsys.MessageReceiver;
 import net.halitesoft.lote.msgsys.MessageSystem;
 import net.halitesoft.lote.player.Camera;
 import net.halitesoft.lote.player.PlayerData;
 import net.halitesoft.lote.player.PlayerData.InventoryEntry;
+import net.halitesoft.lote.system.FontRenderer;
 import net.halitesoft.lote.system.GameClient;
 import net.halitesoft.lote.system.Main;
 import net.halitesoft.lote.world.entity.EntityPlayer;
 import net.halitesoft.lote.world.item.Item;
-
-import org.newdawn.slick.GameContainer;
-import org.newdawn.slick.Graphics;
-import org.newdawn.slick.Image;
-import org.newdawn.slick.Input;
-import org.newdawn.slick.SlickException;
+import org.newdawn.slick.*;
 import org.newdawn.slick.state.StateBasedGame;
+
+import java.util.ArrayList;
 
 public class InventoryUI implements UserInterface {
 	Image bg;
@@ -39,7 +35,7 @@ public class InventoryUI implements UserInterface {
 		int xoff = (Main.INTERNAL_RESX/2)-320;
 		bg.draw(xoff,0);
 		invsel.draw(xoff+84+sel*35,66);
-		Main.font.drawString(xoff+77,17,types[sel]);
+		FontRenderer.drawString(xoff + 77, 17, types[sel], g);
 		try {
 		PlayerData pdat = ((EntityPlayer) receiver.player.region.entities.get(receiver.player.entid)).pdat;
 		int i=0;
@@ -51,10 +47,10 @@ public class InventoryUI implements UserInterface {
 					if (i==isel)
 						g.fillRect(xoff+67, 116+ir*38, 506, 36);
 					iei.spr.draw(xoff+78,120+ir*38);
-					Main.font.drawString(xoff+117,128+ir*38, iei.name+(ie.equals(pdat.getEquipped())?" (Equipped)":""));
-					Main.font.drawString(xoff+450,128+ir*38, ""+ie.getCount());
+					FontRenderer.drawString(xoff+117,128+ir*38, iei.name+(ie.equals(pdat.getEquipped())?" (Equipped)":""), g);
+					FontRenderer.drawString(xoff+450,128+ir*38, ""+ie.getCount(), g);
 					//Main.font.drawString(526,128+ir*40,"$"+ie.getValue()); //TODO: Value thingies
-					Main.font.drawString(xoff+526,128+ir*38, ie.getExtd());
+					FontRenderer.drawString(xoff+526,128+ir*38, ie.getExtd(), g);
 				}
 				i++;
 				ir++;

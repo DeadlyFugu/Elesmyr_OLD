@@ -3,9 +3,9 @@ package net.halitesoft.lote.ui;
 import net.halitesoft.lote.msgsys.Message;
 import net.halitesoft.lote.msgsys.MessageReceiver;
 import net.halitesoft.lote.player.Camera;
+import net.halitesoft.lote.system.FontRenderer;
 import net.halitesoft.lote.system.GameClient;
 import net.halitesoft.lote.system.Input;
-import net.halitesoft.lote.system.Main;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.SlickException;
@@ -32,19 +32,19 @@ public class ChatUI implements UserInterface {
 	public void render(GameContainer gc, StateBasedGame sbg, Graphics g,
 			Camera cam, GameClient receiver) throws SlickException { //TODO: Make this look good.
 		if (type.equals("talk")) {
-			Main.font.drawString(77,17,msg);
+			FontRenderer.drawString(77,17,msg, g);
 		} else if (type.equals("talkwf")) {
-			Main.font.drawString(77,17,msg.split(":",2)[1]);
+			FontRenderer.drawString(77, 17, msg.split(":", 2)[1], g);
 		} else if (type.equals("ask")) {
-			Main.font.drawString(77,17,msg.split("\\|")[0]);
+			FontRenderer.drawString(77,17,msg.split("\\|")[0], g);
 			for (int i=0; i< msg.split("\\|").length-1; i++) {
 				if (i==sel) {
-					Main.font.drawString(346, 17+i*16, ">");
+					FontRenderer.drawString(346, 17+i*16, ">", g);
 				}
-				Main.font.drawString(356,17+i*16,msg.split("\\|")[i+1].split(":",2)[1]);
+				FontRenderer.drawString(356,17+i*16,msg.split("\\|")[i+1].split(":",2)[1], g);
 			}
 		} else {
-			Main.font.drawString(77,17,"ERROR: ChatUI type = "+type);
+			FontRenderer.drawString(77,17,"ERROR: ChatUI type = "+type, g);
 		}
 		if (killTimer>0) {
 			killTimer--;

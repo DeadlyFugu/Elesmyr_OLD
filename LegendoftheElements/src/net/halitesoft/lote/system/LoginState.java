@@ -34,7 +34,7 @@ public class LoginState extends BasicGameState {
 	public void init(GameContainer gc, StateBasedGame sbg)
 			throws SlickException {
 		overlay = new Image("data/menu/error.png");
-		tfUser = new TextField(gc, Main.font, (Main.INTERNAL_RESX/4)-64,90,256,16);
+		tfUser = new TextField(gc, FontRenderer.getFont(), (Main.INTERNAL_RESX/4)-64,90,256,16);
 		tfUser.setBorderColor(null);
 		tfUser.setBackgroundColor(null);
 		tfUser.setTextColor(Color.white);
@@ -42,7 +42,7 @@ public class LoginState extends BasicGameState {
 		tfUser.setFocus(true);
 		tfUser.setText(Globals.get("name","Player"));
 		tfUser.setMaxLength(15);
-		tfPass = new TextField(gc, Main.font, (Main.INTERNAL_RESX/4)-64,120,256,16);
+		tfPass = new TextField(gc, FontRenderer.getFont(), (Main.INTERNAL_RESX/4)-64,120,256,16);
 		tfPass.setBorderColor(null);
 		tfPass.setBackgroundColor(null);
 		tfPass.setTextColor(Color.white);
@@ -76,11 +76,11 @@ public class LoginState extends BasicGameState {
 			overlay.draw(ox,oy,w, h); //TODO: replace with no-bg version;
 			g.scale(vw/(Main.INTERNAL_RESX/2),vh/(Main.INTERNAL_RESY/2));
 			//tfUser.render(gc,g);
-			Main.font.drawString((Main.INTERNAL_RESX/4)-64, 80, "Login:");
-			Main.font.drawString((Main.INTERNAL_RESX/4)-64,110,
-					tfUser.getText().concat(tfUser.isAcceptingInput()?"_":""));
-			Main.font.drawString((Main.INTERNAL_RESX/4)-64,130,
-					tfPass.getText().replaceAll(".", "*").concat(tfPass.isAcceptingInput()?"_":""));
+			FontRenderer.drawString((Main.INTERNAL_RESX/4)-64, 80, "Login:", g);
+			FontRenderer.drawString((Main.INTERNAL_RESX/4)-64,110,
+					tfUser.getText().concat(tfUser.isAcceptingInput()?"_":""), g);
+			FontRenderer.drawString((Main.INTERNAL_RESX/4)-64,130,
+					tfPass.getText().replaceAll(".", "*").concat(tfPass.isAcceptingInput()?"_":""), g);
 		}
 	}
 

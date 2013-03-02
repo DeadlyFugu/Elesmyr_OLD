@@ -1,12 +1,15 @@
 package net.halitesoft.lote.world.entity;
 
 
+import com.esotericsoftware.kryonet.Connection;
+import com.esotericsoftware.minlog.Log;
 import net.halitesoft.lote.lighting.Light;
 import net.halitesoft.lote.msgsys.Message;
 import net.halitesoft.lote.msgsys.MessageReceiver;
 import net.halitesoft.lote.msgsys.MessageSystem;
 import net.halitesoft.lote.player.Camera;
 import net.halitesoft.lote.player.PlayerData;
+import net.halitesoft.lote.system.FontRenderer;
 import net.halitesoft.lote.system.GameClient;
 import net.halitesoft.lote.system.GameServer;
 import net.halitesoft.lote.system.Main;
@@ -14,16 +17,8 @@ import net.halitesoft.lote.ui.CraftUI;
 import net.halitesoft.lote.world.Region;
 import net.halitesoft.lote.world.item.Item;
 import net.halitesoft.lote.world.item.ItemFactory;
-
-import org.newdawn.slick.GameContainer;
-import org.newdawn.slick.Graphics;
-import org.newdawn.slick.Image;
-import org.newdawn.slick.SlickException;
-import org.newdawn.slick.SpriteSheet;
+import org.newdawn.slick.*;
 import org.newdawn.slick.state.StateBasedGame;
-
-import com.esotericsoftware.kryonet.Connection;
-import com.esotericsoftware.minlog.Log;
 
 public class EntityPlayer extends Entity {
 
@@ -67,7 +62,7 @@ public class EntityPlayer extends Entity {
 			if (spr==null)
 				init(gc,sbg,receiver);
 			draw(xs,ys,x,y,px,py,spx,spy,cam);
-			Main.font.drawString((xs+cam.getXOff())-Main.font.getWidth(getName())/2,(ys+cam.getYOff()-52),getName());
+			FontRenderer.drawString((xs + cam.getXOff()) - FontRenderer.getWidth(getName()) / 2, (ys + cam.getYOff() - 52), getName(), g);
 			px=(int) x;
 			py=(int) y;
 			spx=xs;

@@ -1,23 +1,13 @@
 package net.halitesoft.lote.system;
 
-import java.util.HashMap;
-
-
+import com.esotericsoftware.minlog.Log;
 import net.halitesoft.lote.ScriptRunner;
 import net.halitesoft.lote.util.HashmapLoader;
-
-import org.lwjgl.LWJGLException;
-import org.lwjgl.opengl.Display;
-import org.lwjgl.opengl.DisplayMode;
 import org.newdawn.slick.AppGameContainer;
 import org.newdawn.slick.GameContainer;
-import org.newdawn.slick.Image;
 import org.newdawn.slick.SlickException;
-import org.newdawn.slick.SpriteSheetFont;
 import org.newdawn.slick.state.StateBasedGame;
 import org.newdawn.slick.util.LogSystem;
-
-import com.esotericsoftware.minlog.Log;
 
 /**
  * Godai no Densetsu/Legend of the Elements/LotE Main class
@@ -34,10 +24,10 @@ public class Main extends StateBasedGame {
 	public static float INTERNAL_ASPECT = (4/3f);
 	public static int INTERNAL_RESY = 480; //Internal resolution y
 	public static int INTERNAL_RESX = (int) (INTERNAL_RESY*INTERNAL_ASPECT); //Internal resolution x
-	
-	public static SpriteSheetFont font;
-	
-	public static String version = "PRE-ALPHA 0.1.10"; //0.0.1 = DEC 16
+
+	public static final String verNum = "0.1.11";
+	public static final String verRelease = "PRE-ALPHA";
+	public static final String version = "$version.prealpha| "+verNum; //0.0.1 = DEC 16
 
 	public Main() {
 		super("LotE");
@@ -59,7 +49,7 @@ public class Main extends StateBasedGame {
 		
 		org.newdawn.slick.util.Log.setLogSystem(new SlickToMinLogSystem());
 		
-		Log.info("LotE version "+version);
+		Log.info("LotE version "+verRelease+" "+verNum);
 		
 		Globals.setMap(HashmapLoader.readHashmap("conf"));
 		

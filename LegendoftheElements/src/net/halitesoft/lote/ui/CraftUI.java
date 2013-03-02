@@ -5,6 +5,7 @@ import net.halitesoft.lote.msgsys.MessageReceiver;
 import net.halitesoft.lote.msgsys.MessageSystem;
 import net.halitesoft.lote.player.Camera;
 import net.halitesoft.lote.player.PlayerData;
+import net.halitesoft.lote.system.FontRenderer;
 import net.halitesoft.lote.system.GameClient;
 import net.halitesoft.lote.system.Main;
 import net.halitesoft.lote.util.HashmapLoader;
@@ -115,7 +116,7 @@ public class CraftUI implements UserInterface {
 			Camera cam, GameClient receiver) throws SlickException {
 		int xoff = (Main.INTERNAL_RESX/2)-320;
 		
-		Main.font.drawString(xoff+77,17,"Crafting");
+		FontRenderer.drawString(xoff + 77, 17, "Crafting", g);
 		
 		int i=0;
 		ArrayList<PlayerData.InventoryEntry> inv = ((EntityPlayer) receiver.player.region.entities.get(receiver.player.entid)).pdat.inventory;
@@ -124,7 +125,7 @@ public class CraftUI implements UserInterface {
 				if (i==isel)
 					g.fillRect(xoff+67, 116+i*38, 506, 36);
 				//iei.spr.draw(xoff+78,120+i*38);
-				Main.font.drawString(xoff+117,128+i*38, c.toString());
+				FontRenderer.drawString(xoff+117,128+i*38, c.toString(), g);
 				//Main.font.drawString(xoff+450,128+i*38, ""+ie.getCount());
 				//Main.font.drawString(526,128+i*40,"$"+ie.getValue()); //TODO: Value thingies
 				//Main.font.drawString(xoff+526,128+i*38, ie.getExtd());

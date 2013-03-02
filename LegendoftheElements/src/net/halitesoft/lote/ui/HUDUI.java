@@ -1,23 +1,22 @@
 package net.halitesoft.lote.ui;
 
 
-import java.util.ArrayList;
-
 import net.halitesoft.lote.msgsys.MessageReceiver;
 import net.halitesoft.lote.msgsys.MessageSystem;
 import net.halitesoft.lote.player.Camera;
-import net.halitesoft.lote.player.PlayerData;
+import net.halitesoft.lote.system.FontRenderer;
 import net.halitesoft.lote.system.GameClient;
 import net.halitesoft.lote.system.Globals;
 import net.halitesoft.lote.system.Main;
 import net.halitesoft.lote.world.entity.Entity;
 import net.halitesoft.lote.world.entity.EntityPlayer;
-
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.state.StateBasedGame;
+
+import java.util.ArrayList;
 
 public class HUDUI implements UserInterface {
 	private Image bart;
@@ -43,7 +42,7 @@ public class HUDUI implements UserInterface {
 	public void render(GameContainer gc, StateBasedGame sbg, Graphics g,
 			Camera cam, GameClient receiver) throws SlickException {
 		bart.draw(0,0,Main.INTERNAL_RESX,16);
-		Main.font.drawString(0, 0, HUDUI.getTopString());
+		FontRenderer.drawString(0, 0, HUDUI.getTopString(), g);
 		barb.draw(0,Main.INTERNAL_RESY-64,Main.INTERNAL_RESX,64);
 		
 		int i=0;
@@ -54,7 +53,7 @@ public class HUDUI implements UserInterface {
 				equip.draw(dx,dy);
 				if (ep.pdat.getEquipped()!=null)
 					ep.pdat.getEquipped().getItem().spr.draw(dx+16,dy+16);
-				Main.font.drawString(dx+13,dy+6,ep.getName());
+				FontRenderer.drawString(dx+13,dy+6,ep.getName(), g);
 				bars.startUse();
 				bars.drawEmbedded(dx+57, dy+25, dx+57+104, dy+34,0,75,104,84);
 				if (ep.pdat!=null)
@@ -69,7 +68,7 @@ public class HUDUI implements UserInterface {
 			equip.draw(dx,dy);
 			if (ep.pdat.getEquipped()!=null)
 				ep.pdat.getEquipped().getItem().spr.draw(dx+16,dy+16);
-			Main.font.drawString(dx+62,dy+25,ep.getName());
+			FontRenderer.drawString(dx+62,dy+25,ep.getName(), g);
 			int bdx = Main.INTERNAL_RESX-112;
 			bars.startUse();
 			bars.drawEmbedded(bdx, dy+13, bdx+104, dy+25,0,75,104,84);
@@ -80,11 +79,12 @@ public class HUDUI implements UserInterface {
 	}
 
 	private static String getTopString() {
-		return "LotE "+Main.version+":"+
-				(GameClient.CLIENT?" CLIENT":"")+
-				(GameClient.SERVER?" SERVER":"")+
-				(MessageSystem.fastLink?" FASTLINK":"")+
-				(Globals.get("debug",false)?" DEBUG":"");
+		//FontRenderer.drawString(0, 0, "#LotE |"+Main.version+": "+(CLIENT?"|$bar.client| ":"")+(SERVER?"|$bar.server| ":"")+(MessageSystem.fastLink?"|$bar.fastlink| ":""), g);
+		return "#LotE |"+Main.version+":"+
+				(GameClient.CLIENT?" |$bar.client|":"")+
+				(GameClient.SERVER?" |$bar.server|":"")+
+				(MessageSystem.fastLink?" |$bar.fastlink|":"")+
+				(Globals.get("debug",false)?" |$menu.debug|":"");
 	}
 	@Override
 	public void update(GameContainer gc, StateBasedGame sbg, GameClient receiver) {

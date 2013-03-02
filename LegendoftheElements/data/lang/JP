@@ -1,0 +1,30 @@
+menu.singleplayer,一人　ゲーム
+menu.join,数人　ゲーム
+menu.server,サーバーのみの
+menu.settings,設定
+menu.exit,終了
+menu.back,戻る
+menu.name,異名
+menu.menu,メニュー
+menu.video,解像度
+menu.video.windowed,ウィンドウ
+menu.video.fullscreen,フルスクリーン
+menu.vsync,垂直同期
+menu.volume,ボリューム
+menu.volume.mute,黙々
+menu.debug,デバッグ
+menu.lres,ライトマップの解像度
+menu.lang,言語
+menu.controls,コントロール...
+
+lang.JP,日本語
+lang.EN_US,English (US)
+
+version.prealpha,プレアルファ
+bar.client,クライアント
+bar.server,サーバー
+bar.fastlink,高速リンク
+
+null,空白
+true,使用可能
+false,使用禁止

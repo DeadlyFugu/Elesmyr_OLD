@@ -1,45 +1,21 @@
 package net.halitesoft.lote.system;
 
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.BindException;
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
-import java.net.InetAddress;
-import java.net.InterfaceAddress;
-import java.net.NetworkInterface;
-import java.net.SocketException;
-import java.net.SocketTimeoutException;
-import java.net.UnknownHostException;
+import com.esotericsoftware.kryonet.FrameworkMessage;
+import com.esotericsoftware.kryonet.KryoSerialization;
+import com.esotericsoftware.minlog.Log;
+import org.newdawn.slick.*;
+import org.newdawn.slick.gui.TextField;
+import org.newdawn.slick.state.BasicGameState;
+import org.newdawn.slick.state.StateBasedGame;
+
+import java.io.*;
+import java.net.*;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
-
-import net.halitesoft.lote.util.HashmapLoader;
-
-import org.newdawn.slick.AppGameContainer;
-import org.newdawn.slick.Color;
-import org.newdawn.slick.GameContainer;
-import org.newdawn.slick.Graphics;
-import org.newdawn.slick.Image;
-import org.newdawn.slick.InputListener;
-import org.newdawn.slick.SlickException;
-import org.newdawn.slick.SpriteSheet;
-import org.newdawn.slick.SpriteSheetFont;
-import org.newdawn.slick.gui.TextField;
-import org.newdawn.slick.state.BasicGameState;
-import org.newdawn.slick.state.StateBasedGame;
-
-import com.esotericsoftware.kryonet.FrameworkMessage;
-import com.esotericsoftware.kryonet.KryoSerialization;
-import com.esotericsoftware.minlog.Log;
 
 public class MainMenuState extends BasicGameState {
 	int stateID = -1;
@@ -54,16 +30,16 @@ public class MainMenuState extends BasicGameState {
 	private boolean debug;
 
 	static int subMenu = 0; //0=main 1=play 2=options 3=join 4=controls
-	static int[] entryCount = {5,2,8,2,8};
-	static String[][] entryString = {{"Single Player","Join","Server","Settings","Exit"},
-		{"Back","New Game"},
-		{"Video: 480p","Name: Player","VSync: false","Volume: 10","Debug: false","Lightmap Res: 24p","Controls...","Done"},
-		{"Back","Enter IP"},
-		{"Input method: Keyboard/Mouse","Walk: Arrow keys","Interact: Z","Attack: X","Inventory: E","Select: Enter","Back/Pause: Esc","Back"}};
+	static int[] entryCount = {5,2,9,2,8};
+	static String[][] entryString = {{"#menu.singleplayer","#menu.join","#menu.server","#menu.settings","#menu.exit"},
+		{"#menu.back","#menu.newgame"},
+		{"#$menu.video|: 480p |$menu.video.windowed","#$menu.name|: Player","#$menu.vsync|: |$false","Volume: 10","#$menu.debug|: |$false","#$menu.lres| 24p","#$menu.lang|: |$lang.EN_US","#menu.controls","#menu.back"},
+		{"#menu.back","#menu.enterip"},
+		{"Input method: Keyboard/Mouse","Walk: Arrow keys","Interact: Z","Attack: X","Inventory: E","Select: Enter","Back/Pause: Esc","#menu.back"}};
 	static String[][] entryDesc = {{"Play single player.","Join a multiplayer game.","Run server-only.","Configure the game.","Close the window."},
 		{"Return to the menu."},
 		{"Change the resolution.","Change your name","Toggle VSync.","Change the volume.","Toggle debug mode.",
-			"Change lightmap resolution.","Configure the controls","Apply changes and return to the menu."},
+			"Change lightmap resolution.","Change the language","Configure the controls","Apply changes and return to the menu."},
 		{"Return to the menu."}};
 	static int selection = 0;
 	private static int dm = 0;
@@ -129,7 +105,7 @@ public class MainMenuState extends BasicGameState {
 		ArrayList<File> files = getSubs(new File("save"));
 		levels = new String[files.size()+2];
 		entryCount[1]=files.size()+2;
-		levels[0] = "Back";
+		levels[0] = "#menu.back";
 		levels[1] = "New Game";
 		int i=2;
 		for (File f:files) {
@@ -139,9 +115,10 @@ public class MainMenuState extends BasicGameState {
 
 		dm = Integer.parseInt(Globals.get("resdm","0"));
 		lres = Integer.parseInt(Globals.get("lres","24"));
+		FontRenderer.setLang(FontRenderer.Language.valueOf(Globals.get("lang","EN_US")));
 		debug = Globals.get("debug",false);
 
-		Main.font = new SpriteSheetFont(new SpriteSheet(new Image("data/font.png",false,0),9,16),' ');
+		FontRenderer.initialise();
 
 		Image temp = new Image("data/menu/button.png",false,0);
 		button[0] = temp.getSubImage(0, 1, 256, 32);
@@ -151,21 +128,22 @@ public class MainMenuState extends BasicGameState {
 		//disy[3]=gc.getScreenHeight();
 
 		if (dm!=3&&dm!=4)
-			entryString[2][0] = "Video: "+disy[dm]+"p windowed";
+			entryString[2][0] = "#$menu.video|: "+disy[dm]+"p |$menu.video.windowed";
 		else
-			entryString[2][0] = "Video: "+disy[dm]+"p fullscreen";
-		entryString[2][1] = "Name: "+Globals.get("name","Player");
-		entryString[2][2] = "VSync: "+Globals.get("vsync",false);
+			entryString[2][0] = "#$menu.video|: "+disy[dm]+"p |$menu.video.fullscreen";
+		entryString[2][1] = "#$menu.name|: "+Globals.get("name","Player");
+		entryString[2][2] = "#$menu.vsync|: |$"+Globals.get("vsync",false);
 		if (Integer.parseInt(Globals.get("volume","10")) == 0)
-			entryString[2][3] = "Volume: Mute";
+			entryString[2][3] = "#$menu.volume|: |$menu.volume.mute";
 		else
-			entryString[2][3] = "Volume: "+Globals.get("volume","10");
-		entryString[2][4] = "Debug: "+debug;
-		entryString[2][5] = "Lightmap Res: "+lres+"p";
+			entryString[2][3] = "#$menu.volume|: "+Globals.get("volume","10");
+		entryString[2][4] = "#$menu.debug|: |$"+debug;
+		entryString[2][5] = "#$menu.lres|: "+lres+"p";
+		entryString[2][6] = "#$menu.lang|: |$lang."+FontRenderer.getLang().name();
 		
 		setControlText();
 
-		textField = new TextField(gc, Main.font, tdx,128+19,256,16);
+		textField = new TextField(gc, FontRenderer.getFont(), tdx,128+19,256,16);
 		textField.setBorderColor(null);
 		textField.setBackgroundColor(null);
 		textField.setTextColor(Color.white);
@@ -206,46 +184,46 @@ public class MainMenuState extends BasicGameState {
 			for (int i=0; i<showList.length;i++) {
 				int buttonState = 0;
 				if (i==selection) buttonState = 1;
-				int size = (int) (Main.font.getWidth(showList[i]))+16;
+				int size = (int) (FontRenderer.getWidth(showList[i]))+16;
 				button[buttonState].draw(dx+64-size/2,(float) (128+(i-Math.max(selection-12,0))*menuSpace),size,16);
-				Main.font.drawString(dx+64-(Main.font.getWidth(showList[i])/2), (float) (128+(i-Math.max(selection-12,0))*menuSpace), showList[i]);
+				FontRenderer.drawString(dx+64-(FontRenderer.getWidth(showList[i])/2), (float) (128+(i-Math.max(selection-12,0))*menuSpace), showList[i], g);
 			}
 		} else if (subMenu != 1) { //normal
 			for (int i=0; i<entryCount[subMenu];i++) {
 				int buttonState = 0;
 				if (i==selection) buttonState = 1;
-				int size = (int) (Main.font.getWidth(entryString[subMenu][i]))+16;
+				int size = (int) (FontRenderer.getWidth(entryString[subMenu][i]))+16;
 				button[buttonState].draw(dx+64-size/2,(float) (128+(i-Math.max(selection-12,0))*menuSpace),size,16);
-				Main.font.drawString(dx+64-(Main.font.getWidth(entryString[subMenu][i])/2), (float) (128+(i-Math.max(selection-12,0))*menuSpace), entryString[subMenu][i]);
+				FontRenderer.drawString(dx+64-(FontRenderer.getWidth(entryString[subMenu][i])/2), (float) (128+(i-Math.max(selection-12,0))*menuSpace), entryString[subMenu][i], g);
 			}
 		} else { //Levels
 			for (int i=0; i<levels.length;i++) {
 				int buttonState = 0;
 				if (i==selection) buttonState = 1;
-				int size = (int) (Main.font.getWidth(levels[i]))+16;
+				int size = (int) (FontRenderer.getWidth(levels[i]))+16;
 				button[buttonState].draw(dx+64-size/2,(float) (128+(i-Math.max(selection-12,0))*menuSpace),size,16);
-				Main.font.drawString(dx+64-(Main.font.getWidth(levels[i])/2), (float) (128+(i-Math.max(selection-12,0))*menuSpace), levels[i]);
+				FontRenderer.drawString(dx+64-(FontRenderer.getWidth(levels[i])/2), (float) (128+(i-Math.max(selection-12,0))*menuSpace), levels[i], g);
 			}
 		}
 		if (showTextField) {
-			textField.setLocation(dx+64-(Main.font.getWidth(textField.getText())/2), textField.getY());
+			textField.setLocation(dx+64-(FontRenderer.getWidth(textField.getText())/2), textField.getY());
 			textField.render(gc, g);
 			textField.setFocus(true);
 		}
-		Main.font.drawString(Main.INTERNAL_RESX-(Main.font.getWidth(getDescription(subMenu,selection))+128),380,getDescription(subMenu,selection));
-		Main.font.drawString(0, 0, "LotE "+Main.version);
+		FontRenderer.drawString(Main.INTERNAL_RESX-(FontRenderer.getWidth(getDescription(subMenu,selection))+128),380,getDescription(subMenu,selection), g);
+		FontRenderer.drawString(0, 0, "#LotE |" + Main.version, g);
 		g.scale(2, 2);
-		Main.font.drawString((dx+64-(Main.font.getWidth(menuName(subMenu))))/2,56/2,menuName(subMenu));
+		FontRenderer.drawString((dx+64-(FontRenderer.getWidth(menuName(subMenu))))/2,56/2,menuName(subMenu), g);
 	}
 
 	private String menuName(int menu) {
 		switch (menu) {
-		case 0: return "MENU";
-		case 1: if (serverOnly) { return "SERVER"; } else { return "PLAY"; }
-		case 2: return "SETTINGS";
-		case 3: return "JOIN";
-		case 4: return "CONTROLS";
-		default: return "NULL";
+		case 0: return "#menu.menu";
+		case 1: if (serverOnly) { return "#menu.server"; } else { return "#menu.singleplayer"; }
+		case 2: return "#menu.settings";
+		case 3: return "#menu.join";
+		case 4: return "#menu.controls";
+		default: return "#null";
 		}
 	}
 
@@ -384,9 +362,9 @@ public class MainMenuState extends BasicGameState {
 				fullscreen = (dm==3 || dm==4);
 				//entryString[2][0] = "Resolution: "+disx[dm]+"x"+disy[dm];
 				if (!fullscreen)
-					entryString[2][0] = "Video: "+disy[dm]+"p windowed";
+					entryString[2][0] = "#$menu.video|: "+disy[dm]+"p |$menu.video.windowed";
 				else
-					entryString[2][0] = "Video: "+disy[dm]+"p fullscreen";
+					entryString[2][0] = "#$menu.video|: "+disy[dm]+"p |$menu.video.fullscreen";
 				Globals.set("resdm", String.valueOf(dm));
 			} break;
 			case 201: {
@@ -398,7 +376,7 @@ public class MainMenuState extends BasicGameState {
 					textField.setAcceptingInput(true);
 					textField.setFocus(true);
 				} else {
-					entryString[2][1] = "Name: "+textField.getText();
+					entryString[2][1] = "#$menu.name|: "+textField.getText();
 					Globals.set("name",textField.getText());
 					showTextField=false;
 					textField.setText("");
@@ -409,7 +387,7 @@ public class MainMenuState extends BasicGameState {
 			case 202: {
 				boolean vsync = Boolean.parseBoolean(Globals.get("vsync","false"));
 				//entryString[2][0] = "Resolution: "+disx[dm]+"x"+disy[dm];
-				entryString[2][2] = "VSync: "+!vsync;
+				entryString[2][2] = "#$menu.vsync|: |$"+!vsync;
 				Globals.set("vsync", String.valueOf(!vsync));
 			} break;
 			case 203: {
@@ -420,21 +398,21 @@ public class MainMenuState extends BasicGameState {
 				}
 				//entryString[2][0] = "Resolution: "+disx[dm]+"x"+disy[dm];
 				if (vol == 0)
-					entryString[2][3] = "Volume: Mute";
+					entryString[2][3] = "#$menu.volume|: |$menu.volume.mute";
 				else
-					entryString[2][3] = "Volume: "+vol;
+					entryString[2][3] = "#$menu.volume|: "+vol;
 				Globals.set("volume", String.valueOf(vol));
 			} break;
 			case 204: {
 				debug = Globals.get("debug",false);
 				//entryString[2][0] = "Resolution: "+disx[dm]+"x"+disy[dm];
 				debug = !debug;
-				entryString[2][4] = "Debug: "+debug;
+				entryString[2][4] = "#$menu.debug|: |$"+debug;
 				Globals.set("debug", String.valueOf(debug));
 				ArrayList<File> files = getSubs(new File("save"));
 				levels = new String[files.size()+2];
 				entryCount[1]=files.size()+2;
-				levels[0] = "Back";
+				levels[0] = "#menu.back";
 				levels[1] = "New Game";
 				int i=2;
 				for (File f:files) {
@@ -448,21 +426,27 @@ public class MainMenuState extends BasicGameState {
 				else
 					lres+=6;
 				if (lres>48) lres=6;
-				entryString[2][5] = "Lightmap Res: "+lres+"p";
+				entryString[2][5] = "#$menu.lres| "+lres+"p";
 				Globals.set("lres", String.valueOf(lres));
 			} break;
 			case 206: {
+				FontRenderer.setLang(FontRenderer.Language.values()[(FontRenderer.getLang().ordinal()+1)%FontRenderer.Language.values().length]);
+				entryString[2][6] = "#$menu.lang|: |$lang."+FontRenderer.getLang().name();
+				Globals.set("lang", FontRenderer.getLang().name());
+			} break;
+			case 207: {
 				selection = 0;
 				subMenu = 4;
 				dx=-256;
 			} break;
-			case 207: {
+			case 208: {
 				if (((AppGameContainer) gc).getHeight()!=disy[dm]) {
 					((AppGameContainer) gc).setDisplayMode(disx[dm], disy[dm], fullscreen);
 					Main.INTERNAL_ASPECT=((float) MainMenuState.disx[dm]/(float) MainMenuState.disy[dm]);
 					Main.INTERNAL_RESX = (int) (Main.INTERNAL_RESY*Main.INTERNAL_ASPECT); //Internal resolution x
 				}
 				((AppGameContainer) gc).setMouseGrabbed(dm==3 || dm==3);
+				FontRenderer.reset();
 				Globals.save();
 				selection = 0;
 				subMenu = 0;
@@ -507,7 +491,7 @@ public class MainMenuState extends BasicGameState {
 							ArrayList<File> files = getSubs(new File("save"));
 							levels = new String[files.size()+2];
 							entryCount[1]=files.size()+2;
-							levels[0] = "Back";
+							levels[0] = "#menu.back";
 							levels[1] = "New Game";
 							int i=2;
 							for (File f:files) {
@@ -609,7 +593,7 @@ public class MainMenuState extends BasicGameState {
 				"Inventory: "+org.newdawn.slick.Input.getKeyName(Integer.parseInt(Globals.get("IN_inv",""+org.newdawn.slick.Input.KEY_E).split("_")[1])),
 				"Select: Enter",
 				"Back/Pause: Esc",
-				"Back"};
+				"#menu.back"};
 	}
 
 	private String resolveKeyName(String keyn) {

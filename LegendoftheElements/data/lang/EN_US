@@ -1,0 +1,30 @@
+menu.singleplayer,Single Player
+menu.join,Join
+menu.server,Server-only
+menu.settings,Settings
+menu.exit,Exit
+menu.back,Back
+menu.name,Name
+menu.menu,Menu
+menu.video,Video
+menu.video.windowed,Windowed
+menu.video.fullscreen,Fullscreen
+menu.vsync,VSync
+menu.volume,Volume
+menu.volume.mute,Mute
+menu.debug,Debug
+menu.lres,Lightmap res
+menu.lang,Language
+menu.controls,Controls...
+
+lang.JP,Japanese
+lang.EN_US,English (US)
+
+version.prealpha,PRE-ALPHA
+bar.client,CLIENT
+bar.server,SERVER
+bar.fastlink,FASTLINK
+
+null,NULL
+true,Enabled
+false,Disabled

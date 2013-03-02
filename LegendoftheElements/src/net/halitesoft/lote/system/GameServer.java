@@ -1,11 +1,9 @@
 package net.halitesoft.lote.system;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map.Entry;
-import java.util.concurrent.ConcurrentHashMap;
-
+import com.esotericsoftware.kryonet.Connection;
+import com.esotericsoftware.kryonet.Listener;
+import com.esotericsoftware.kryonet.Server;
+import com.esotericsoftware.minlog.Log;
 import net.halitesoft.lote.Save;
 import net.halitesoft.lote.msgsys.Message;
 import net.halitesoft.lote.msgsys.MessageReceiver;
@@ -16,16 +14,15 @@ import net.halitesoft.lote.world.Region;
 import net.halitesoft.lote.world.World;
 import net.halitesoft.lote.world.entity.Entity;
 import net.halitesoft.lote.world.entity.EntityPlayer;
-
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.state.StateBasedGame;
 
-
-import com.esotericsoftware.kryonet.Connection;
-import com.esotericsoftware.kryonet.Listener;
-import com.esotericsoftware.kryonet.Server;
-import com.esotericsoftware.minlog.Log;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map.Entry;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class GameServer extends Server implements MessageReceiver {
 	private Save save;
@@ -265,26 +262,26 @@ public class GameServer extends Server implements MessageReceiver {
 
 	public void render(GameContainer gc, StateBasedGame sbg, Graphics g, boolean overlay) {
 		if (overlay) {
-			Main.font.drawString(10, 18, "Connections:");
+			FontRenderer.drawString(10, 18, "Connections:", g);
 			int i = 0;
 			for (Entry<String,String> e : playerEnt.entrySet()) {
-				Main.font.drawString(10, 32+i*10, e.getKey()+":"+e.getValue());
+				FontRenderer.drawString(10, 32+i*10, e.getKey()+":"+e.getValue(), g);
 				i++;
 			}
 		} else {
-			Main.font.drawString(10, 18, "Connections:");
-			Main.font.drawString(128, 18, "Regions:");
+			FontRenderer.drawString(10, 18, "Connections:", g);
+			FontRenderer.drawString(128, 18, "Regions:", g);
 			int i = 0;
 			for (Entry<String,String> e : playerEnt.entrySet()) {
-				Main.font.drawString(10, 32+i*10, e.getKey()+":"+e.getValue());
+				FontRenderer.drawString(10, 32+i*10, e.getKey()+":"+e.getValue(), g);
 				i++;
 			}
 			i = 0;
 			for (Region r : this.world.regions.values()) {
-				Main.font.drawString(128, 32+i*10, r.name);
+				FontRenderer.drawString(128, 32+i*10, r.name, g);
 				i++;
 				for (Entity e : r.entities.values()) {
-					Main.font.drawString(128, 32+i*10, "    "+e.toString());
+					FontRenderer.drawString(128, 32+i*10, "    "+e.toString(), g);
 					i++;
 				}
 			}

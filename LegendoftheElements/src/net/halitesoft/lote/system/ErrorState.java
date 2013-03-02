@@ -49,10 +49,10 @@ public class ErrorState extends BasicGameState {
 			g.scale(vw/Main.INTERNAL_RESX,vh/Main.INTERNAL_RESY);
 			int i=0;
 			for (String s : errorText .split("\n")) {
-				Main.font.drawString(Main.INTERNAL_RESX/2-(Main.font.getWidth(s)/2),160+i*18,s);
+				FontRenderer.drawString(Main.INTERNAL_RESX/2-(FontRenderer.getWidth(s)/2),160+i*18,s, g);
 				i++;
 			}
-			Main.font.drawString(Main.INTERNAL_RESX/2-(Main.font.getWidth("Press <ENTER> to close.")/2),300,"Press <ENTER> to close.");
+			FontRenderer.drawString(Main.INTERNAL_RESX / 2 - (FontRenderer.getWidth("Press <ENTER> to close.") / 2), 300, "Press <ENTER> to close.", g);
 		}
 	}
 

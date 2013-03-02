@@ -41,8 +41,8 @@ public class HashmapLoader {
 			while((l = br.readLine()) != null) {
 				String[] args = l.split("[,]", 2);
 				if(args.length != 2)continue;
-				String p = args[0].replaceAll(" ", "");
-				String b = args[1].replaceAll(" ", "");
+				String p = args[0];
+				String b = args[1];
 				hashMap.put(p, b);
 			}
 			br.close();
@@ -63,8 +63,8 @@ public class HashmapLoader {
 			while((l = br.readLine()) != null) {
 				String[] args = l.split("[,]", 2);
 				if(args.length != 2)continue;
-				String p = args[0].replaceAll(" ", "");
-				String b = args[1].replaceAll(" ", "");
+				String p = args[0];
+				String b = args[1];
 				hashMap.put(keyHeader+p, b);
 			}
 			br.close();

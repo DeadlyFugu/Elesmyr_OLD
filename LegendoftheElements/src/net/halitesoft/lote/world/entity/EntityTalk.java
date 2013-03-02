@@ -47,7 +47,7 @@ public class EntityTalk extends Entity {
 
 	private void response(String call, Connection connection) {
 		if (call.equals("int")) {
-			MessageSystem.sendClient(this,connection,new Message("CLIENT.talk","ask:How are you?|good:Good.|bad:Bad.|meh:Meh."),false);
+			MessageSystem.sendClient(this,connection,new Message("CLIENT.talk","ask:お元気ですか?|good:お元気です.|bad:お元気じゃない.|meh:Meh."),false);
 		} else if (call.equals("good"))  {
 			MessageSystem.sendClient(this,connection,new Message("CLIENT.talk","talk:That's great!"),false);
 		} else if (call.equals("bad"))  {

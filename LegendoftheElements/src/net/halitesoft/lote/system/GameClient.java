@@ -118,7 +118,7 @@ public class GameClient extends BasicGameState implements MessageReceiver {
 		alphabg = new Image("data/ui/alphabg.png",false,0);
 		System.gc();
 
-		textField = new TextField(gc, Main.font, 10,Main.INTERNAL_RESY-84,530,16);
+		textField = new TextField(gc, FontRenderer.getFont(), 10,Main.INTERNAL_RESY-84,530,16);
 		textField.setBorderColor(null);
 		textField.setBackgroundColor(new Color(0,0,0,0.2f));
 		textField.setTextColor(Color.white);
@@ -141,7 +141,7 @@ public class GameClient extends BasicGameState implements MessageReceiver {
 			renderMap(player.region,true);
 			if (Globals.get("debug",false) && Globals.get("showEnt",true)) { //Show ent IDs.
 				for (Entity e : player.region.entities.values()) //TODO: Somehow this line throws an NPE occasionally O.o
-					Main.font.drawString(e.x+cam.getXOff(),e.y+cam.getYOff(),e.name);
+					FontRenderer.drawString(e.x+cam.getXOff(),e.y+cam.getYOff(),e.name, g);
 			}
 			g.popTransform();
 			g.pushTransform();
@@ -156,12 +156,12 @@ public class GameClient extends BasicGameState implements MessageReceiver {
 				if (i==22)
 					break;
 				g.setColor(new Color(0,0,0,(showTextField?0.25f:cm.getAlpha()*0.25f)));
-				g.fillRect(8,Main.INTERNAL_RESY-89-i*18, Main.font.getWidth(cm.getMessage())+4, 18);
+				g.fillRect(8,Main.INTERNAL_RESY-89-i*18, FontRenderer.getWidth(cm.getMessage())+4, 18);
 				g.setColor(Color.white);
 				if (showTextField)
-					Main.font.drawString(10,Main.INTERNAL_RESY-89-i*18, cm.getMessage());
+					FontRenderer.drawString(10,Main.INTERNAL_RESY-89-i*18, cm.getMessage(), g);
 				else if (cm.getAlpha()!=0)
-					Main.font.drawString(10,Main.INTERNAL_RESY-89-i*18, cm.getMessage(), new Color(1,1,1,cm.getAlpha()));
+					FontRenderer.drawString(10,Main.INTERNAL_RESY-89-i*18, cm.getMessage(), new Color(1,1,1,cm.getAlpha()), g);
 				i++;
 			}
 			if (ui.peekFirst().blockUpdates()) {
@@ -183,7 +183,7 @@ public class GameClient extends BasicGameState implements MessageReceiver {
 			g.setColor(Color.white);
 		}
 		if (!CLIENT)
-			Main.font.drawString(0, 0, "LotE "+Main.version+":"+(CLIENT?" CLIENT":"")+(SERVER?" SERVER":"")+(MessageSystem.fastLink?" FASTLINK":""));
+			FontRenderer.drawString(0, 0, "#LotE |"+Main.version+": "+(CLIENT?"|$bar.client| ":"")+(SERVER?"|$bar.server| ":"")+(MessageSystem.fastLink?"|$bar.fastlink| ":""), g);
 		if (SERVER && (!CLIENT || (Globals.get("debug",false) && Globals.get("showConnections",true)))) {
 			if (!CLIENT) {
 				g.setColor(Color.black);
@@ -205,7 +205,7 @@ public class GameClient extends BasicGameState implements MessageReceiver {
 			}*/
 			int i = 1;
 			for (String s : debugText.split("\n")) {
-				Main.font.drawString(Main.INTERNAL_RESX-Main.font.getWidth(s)-10, i*18, s);
+				FontRenderer.drawString(Main.INTERNAL_RESX-FontRenderer.getWidth(s)-10, i*18, s, g);
 				i++;
 			}
 		}
