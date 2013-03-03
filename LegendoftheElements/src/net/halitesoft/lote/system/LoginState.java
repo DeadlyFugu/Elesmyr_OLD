@@ -76,7 +76,7 @@ public class LoginState extends BasicGameState {
 			overlay.draw(ox,oy,w, h); //TODO: replace with no-bg version;
 			g.scale(vw/(Main.INTERNAL_RESX/2),vh/(Main.INTERNAL_RESY/2));
 			//tfUser.render(gc,g);
-			FontRenderer.drawString((Main.INTERNAL_RESX/4)-64, 80, "Login:", g);
+			FontRenderer.drawString((Main.INTERNAL_RESX/4)-64, 80, "#login", g);
 			FontRenderer.drawString((Main.INTERNAL_RESX/4)-64,110,
 					tfUser.getText().concat(tfUser.isAcceptingInput()?"_":""), g);
 			FontRenderer.drawString((Main.INTERNAL_RESX/4)-64,130,

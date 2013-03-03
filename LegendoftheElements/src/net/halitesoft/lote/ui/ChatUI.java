@@ -59,9 +59,9 @@ public class ChatUI implements UserInterface {
 		org.newdawn.slick.Input in = gc.getInput();
 		if (Input.isKeyPressed(gc, "int")) {
 			if (type.equals("ask"))
-				recMsg.reply(recMsg.getSender()+".tresponse", msg.split("\\|")[sel+1].split(":")[0], null);
+				recMsg.reply(recMsg.getSender()+".tresponse", FontRenderer.getLang().name()+"|"+msg.split("\\|")[sel+1].split(":")[0], null);
 			if (type.equals("talkwf"))
-				recMsg.reply(recMsg.getSender()+".tresponse", msg.split(":")[0], null);
+				recMsg.reply(recMsg.getSender()+".tresponse", FontRenderer.getLang().name()+"|"+msg.split(":")[0], null);
 			killTimer=10;
 		}
 		if (in.isKeyPressed(org.newdawn.slick.Input.KEY_UP) && type.equals("ask"))

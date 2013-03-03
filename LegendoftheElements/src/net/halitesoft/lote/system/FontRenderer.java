@@ -20,7 +20,6 @@ private static Language newlang = lang;
 private static HashMap<String,String> i18n_lang;
 private static HashMap<String,String> i18n_backup;
 
-
 public enum Language { EN_US, JP };
 
 //public static void drawString(int x, int y, String text) {
@@ -31,7 +30,7 @@ public static void setLang(Language lang) {
 	FontRenderer.newlang=lang;
 }
 
-public static void reset() throws SlickException {
+public static void reset(GameContainer gc) throws SlickException {
 	lang=newlang;
 	i18n_lang = HashmapLoader.readHashmap("data/lang/"+lang.name());
 	if (jpfont==null && lang==Language.JP) {
@@ -44,16 +43,17 @@ public static void reset() throws SlickException {
 		uFont.loadGlyphs();
 		jpfont=uFont;
 	}
+	((AppGameContainer) gc).setTitle(resolveI18n("bar.title"));
 }
 
 public static Language getLang() {
 	return newlang;
 }
 
-public static void initialise() throws SlickException {
+public static void initialise(GameContainer gc) throws SlickException {
 	bpfont = new SpriteSheetFont(new SpriteSheet(new org.newdawn.slick.Image("data/font.png",false,0),9,16),' ');
 	i18n_backup = HashmapLoader.readHashmap("data/lang/EN_US");
-	reset();
+	reset(gc);
 }
 
 public static Font getFont() {
@@ -98,11 +98,11 @@ public static void drawString(float x, float y, String str, Graphics g) {
 
 public static void drawString(int x, int y, String str, Color col, Graphics g) {
 	switch (lang) {
-		case JP:
+		/*case JP:
 			g.pushTransform();
 			g.scale(0.5f,0.5f);
 			jpfont.drawString(x*2,y*2,str);
-			g.popTransform(); break;
+			g.popTransform(); break;*/
 		default:
 			bpfont.drawString(x,y,str,col); break;
 	}

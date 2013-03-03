@@ -80,7 +80,7 @@ public class HUDUI implements UserInterface {
 
 	private static String getTopString() {
 		//FontRenderer.drawString(0, 0, "#LotE |"+Main.version+": "+(CLIENT?"|$bar.client| ":"")+(SERVER?"|$bar.server| ":"")+(MessageSystem.fastLink?"|$bar.fastlink| ":""), g);
-		return "#LotE |"+Main.version+":"+
+		return "#$bar.title| |"+Main.version+":"+
 				(GameClient.CLIENT?" |$bar.client|":"")+
 				(GameClient.SERVER?" |$bar.server|":"")+
 				(MessageSystem.fastLink?" |$bar.fastlink|":"")+

@@ -30,17 +30,16 @@ public class MainMenuState extends BasicGameState {
 	private boolean debug;
 
 	static int subMenu = 0; //0=main 1=play 2=options 3=join 4=controls
-	static int[] entryCount = {5,2,9,2,8};
-	static String[][] entryString = {{"#menu.singleplayer","#menu.join","#menu.server","#menu.settings","#menu.exit"},
+	static int[] entryCount = {4,2,9,2,8};
+	static String[][] entryString = {{"#menu.singleplayer","#menu.join","#menu.settings","#menu.exit"},
 		{"#menu.back","#menu.newgame"},
 		{"#$menu.video|: 480p |$menu.video.windowed","#$menu.name|: Player","#$menu.vsync|: |$false","Volume: 10","#$menu.debug|: |$false","#$menu.lres| 24p","#$menu.lang|: |$lang.EN_US","#menu.controls","#menu.back"},
 		{"#menu.back","#menu.enterip"},
 		{"Input method: Keyboard/Mouse","Walk: Arrow keys","Interact: Z","Attack: X","Inventory: E","Select: Enter","Back/Pause: Esc","#menu.back"}};
-	static String[][] entryDesc = {{"Play single player.","Join a multiplayer game.","Run server-only.","Configure the game.","Close the window."},
-		{"Return to the menu."},
-		{"Change the resolution.","Change your name","Toggle VSync.","Change the volume.","Toggle debug mode.",
-			"Change lightmap resolution.","Change the language","Configure the controls","Apply changes and return to the menu."},
-		{"Return to the menu."}};
+	static String[][] entryDesc = {{"#menu.singleplayer.desc","#menu.join.desc","#menu.settings.desc","#menu.exit.desc"},
+	    {"#menu.back.desc"},
+	    {"#menu.video.desc","#menu.name.desc","#menu.vsync.desc","#menu.volume.desc","#menu.debug.desc","#menu.lres.desc","#menu.lang.desc","#menu.controls.desc","#menu.back.desc2"},
+	    {"#menu.back.desc"}};
 	static int selection = 0;
 	private static int dm = 0;
 	public static int[] disx = {(int) (480*Main.INTERNAL_ASPECT),(int) (720*Main.INTERNAL_ASPECT),(int) (960*Main.INTERNAL_ASPECT),0,(int) (480*Main.INTERNAL_ASPECT)};
@@ -106,7 +105,7 @@ public class MainMenuState extends BasicGameState {
 		levels = new String[files.size()+2];
 		entryCount[1]=files.size()+2;
 		levels[0] = "#menu.back";
-		levels[1] = "New Game";
+		levels[1] = "#menu.newgame";
 		int i=2;
 		for (File f:files) {
 			levels[i] = f.getName();
@@ -115,10 +114,7 @@ public class MainMenuState extends BasicGameState {
 
 		dm = Integer.parseInt(Globals.get("resdm","0"));
 		lres = Integer.parseInt(Globals.get("lres","24"));
-		FontRenderer.setLang(FontRenderer.Language.valueOf(Globals.get("lang","EN_US")));
 		debug = Globals.get("debug",false);
-
-		FontRenderer.initialise();
 
 		Image temp = new Image("data/menu/button.png",false,0);
 		button[0] = temp.getSubImage(0, 1, 256, 32);
@@ -211,7 +207,7 @@ public class MainMenuState extends BasicGameState {
 			textField.setFocus(true);
 		}
 		FontRenderer.drawString(Main.INTERNAL_RESX-(FontRenderer.getWidth(getDescription(subMenu,selection))+128),380,getDescription(subMenu,selection), g);
-		FontRenderer.drawString(0, 0, "#LotE |" + Main.version, g);
+		FontRenderer.drawString(0, 0, "#$bar.title| |" + Main.version, g);
 		g.scale(2, 2);
 		FontRenderer.drawString((dx+64-(FontRenderer.getWidth(menuName(subMenu))))/2,56/2,menuName(subMenu), g);
 	}
@@ -235,28 +231,28 @@ public class MainMenuState extends BasicGameState {
 				if (serverOnly) {
 					if (sel==1)
 						if (showTextField) {
-							return "Enter name for the new save.";
+							return "#menu.newgame.enter";
 						} else {
-							return "Host game with a new save.";
+							return "#menu.newgame.desc";
 						}
-					return "Host game with save "+levels[sel]+".";
+					return "#$menu.game.play.prefix|"+levels[sel]+"|$menu.game.play.suffix ";
 				} else {
 					if (sel==1)
 						if (showTextField) {
-							return "Enter name for the new save.";
+							return "#menu.newgame.enter";
 						} else {
-							return "Play game with a new save.";
+							return "#menu.newgame.desc";
 						}
-					return "Play game with save "+levels[sel]+".";
+					return "#$menu.game.play.prefix|"+levels[sel]+"|$menu.game.play.suffix";
 				}
 			} else if (sub == 3) { //join
 				if (sel==1)
 					if (showTextField) {
-						return "Enter remote server's IP.";
+						return "#menu.enterip.enter";
 					} else {
-						return "Connect to a remote server.";
+						return "#menu.enterip.desc";
 					}
-				return "Join "+showList[sel]+".";
+				return "#$menu.join.lan.prefix|"+showList[sel]+"|$menu.join.lan.suffix";
 			}
 		}
 		return "NO DESC";
@@ -302,9 +298,9 @@ public class MainMenuState extends BasicGameState {
 				textField.setAcceptingInput(false);
 				textField.setFocus(false);
 				if (subMenu==1)
-					levels[1] = "New Game";
+					levels[1] = "#menu.newgame";
 				else if (subMenu==3)
-					showList[1] = "Enter IP";
+					showList[1] = "#menu.enterip";
 			} else if (subMenu != 0){
 				selection = 0;
 				subMenu = 0;
@@ -342,18 +338,18 @@ public class MainMenuState extends BasicGameState {
 				}
 				entryCount[3] = showList.length;
 			} break;
-			case 002: { //Server
+			/*case 002: { //Server
 				selection = 0;
 				subMenu = 1;
 				dx=-256;
 				serverOnly = true;
-			} break;
-			case 003: {
+			} break;*/
+			case 002: {
 				selection = 0;
 				subMenu = 2;
 				dx=-256;
 			} break;
-			case 004: {
+			case 003: {
 				gc.exit();
 			} break;
 			case 200: {
@@ -413,7 +409,7 @@ public class MainMenuState extends BasicGameState {
 				levels = new String[files.size()+2];
 				entryCount[1]=files.size()+2;
 				levels[0] = "#menu.back";
-				levels[1] = "New Game";
+				levels[1] = "#menu.newgame";
 				int i=2;
 				for (File f:files) {
 					levels[i] = f.getName();
@@ -446,7 +442,7 @@ public class MainMenuState extends BasicGameState {
 					Main.INTERNAL_RESX = (int) (Main.INTERNAL_RESY*Main.INTERNAL_ASPECT); //Internal resolution x
 				}
 				((AppGameContainer) gc).setMouseGrabbed(dm==3 || dm==3);
-				FontRenderer.reset();
+				FontRenderer.reset(gc);
 				Globals.save();
 				selection = 0;
 				subMenu = 0;
@@ -492,7 +488,7 @@ public class MainMenuState extends BasicGameState {
 							levels = new String[files.size()+2];
 							entryCount[1]=files.size()+2;
 							levels[0] = "#menu.back";
-							levels[1] = "New Game";
+							levels[1] = "#menu.newgame";
 							int i=2;
 							for (File f:files) {
 								levels[i] = f.getName();
@@ -500,12 +496,11 @@ public class MainMenuState extends BasicGameState {
 							}
 						} catch (IOException e) {
 							gc.getInput().clearKeyPressedRecord();
-							((ErrorState) sbg.getState(Main.ERRORSTATE)).errorText = "IO Error making save.\n" +
-									"Try another name.";
+							((ErrorState) sbg.getState(Main.ERRORSTATE)).errorText = "#$error.makesaveioe|\n"+e.getLocalizedMessage();
 							sbg.enterState(Main.ERRORSTATE);
 						}
 					}
-					levels[1] = "New Game";
+					levels[1] = "#menu.newgame";
 					showTextField=false;
 					textField.setText("");
 					textField.setAcceptingInput(false);
@@ -532,11 +527,11 @@ public class MainMenuState extends BasicGameState {
 						sbg.enterState(Main.LOGINSTATE);
 					} catch (UnknownHostException e) {
 						gc.getInput().clearKeyPressedRecord();
-						((ErrorState) sbg.getState(Main.ERRORSTATE)).errorText = "Unknown host "+textField.getText();
+						((ErrorState) sbg.getState(Main.ERRORSTATE)).errorText = "#$error.unknownhost.prefix|"+textField.getText()+"|$error.unknownhost.suffix";
 						sbg.enterState(Main.ERRORSTATE);
 					} catch (IOException e) {
 						gc.getInput().clearKeyPressedRecord();
-						((ErrorState) sbg.getState(Main.ERRORSTATE)).errorText = "Couldn't connect to "+textField.getText();
+						((ErrorState) sbg.getState(Main.ERRORSTATE)).errorText = "#$error.joinioe.prefix|"+textField.getText()+"|$error.joinioe.suffix";
 						sbg.enterState(Main.ERRORSTATE);
 					}
 					showList[1] = entryString[3][1];
@@ -557,11 +552,7 @@ public class MainMenuState extends BasicGameState {
 					} catch (Exception e) {
 						gc.getInput().clearKeyPressedRecord();
 						((ErrorState) sbg.getState(Main.ERRORSTATE)).errorText = 
-								"Could not bind server to ports 37020 and 37021.\n" +
-								"Please close anything that may be bound to\n" +
-								"either of these ports, then try again.\n" +
-								"Note: This is most likely caused by having\n" +
-								"another copy of this game already running.";
+								"#error.bindport";
 						sbg.enterState(Main.ERRORSTATE);
 						return;
 					}

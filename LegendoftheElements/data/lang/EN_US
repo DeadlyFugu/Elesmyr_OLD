@@ -1,30 +1,104 @@
 menu.singleplayer,Single Player
+menu.singleplayer.desc,Play single player
 menu.join,Join
-menu.server,Server-only
+menu.join.desc,Join a multiplayer game
 menu.settings,Settings
+menu.settings.desc,Configure the game
 menu.exit,Exit
+menu.exit.desc,Close the game
 menu.back,Back
-menu.name,Name
+menu.back.desc,Return to the menu
+menu.back.desc2,Apply changes and return to the menu
 menu.menu,Menu
+menu.newgame,New Game
+menu.newgame.desc,Start a new game
+menu.newgame.enter,Enter a name for the new save
+menu.game.play.prefix,Play game with save 
+menu.game.play.suffix,
+menu.game.host.prefix,Host game with save 
+menu.game.host.suffix,
+menu.enterip,Enter IP
+menu.enterip.desc,Connect to a remote server
+menu.enterip.enter,Enter remote server's IP
+menu.join.lan.prefix,Join 
+menu.join.lan.suffix,
 menu.video,Video
+menu.video.desc,Change the resolution
 menu.video.windowed,Windowed
 menu.video.fullscreen,Fullscreen
+menu.name,Name
+menu.name.desc,Change your name
 menu.vsync,VSync
+menu.vsync.desc,Toggle VSync
 menu.volume,Volume
+menu.volume.desc,Change the volume
 menu.volume.mute,Mute
 menu.debug,Debug
+menu.debug.desc,Toggle debug mode
 menu.lres,Lightmap res
+menu.lres.desc,Change the lightmap's resolution
 menu.lang,Language
+menu.lang.desc,Change the language
 menu.controls,Controls...
+menu.controls.desc,Configure the controls
+
+error.close,Press <ENTER> to close.
+error.unknownhost.prefix,Unknown host "
+error.unknownhost.suffix,"
+error.joinioe.prefix,Could not join server "
+error.joinioe.suffix,"
+error.makesaveioe,Error creating the save
+error.bindport,Could not bind server to ports 37020 and 37021.\nPlease close anything that may be bound to\neither of these ports, then try again.\nNote: This is most likely caused by having\nanother copy of this game already running.
 
 lang.JP,Japanese
 lang.EN_US,English (US)
+
+login,Login:
 
 version.prealpha,PRE-ALPHA
 bar.client,CLIENT
 bar.server,SERVER
 bar.fastlink,FASTLINK
+bar.title,LotE
 
-null,NULL
+null,_NULL
 true,Enabled
 false,Disabled
+
+inventory.equip,Equipped
+
+item.Apple,Apple
+item.Bamboo,Bamboo
+item.Bone,Bone
+item.Bowl,Bowl
+item.Bread,Bread
+item.Cake,Cake
+item.Candy,Candy
+item.Carrot,Carrot
+item.Chicken,Chicken
+item.Chocolate,Chocolate
+item.Cookie,Cookie
+item.Egg,Egg
+item.Feather,Feather
+item.Fish,Fish
+item.Flower,Flower
+item.Glass,Glass Shards
+item.Gold,Gold
+item.Ham,Ham
+item.MushroomRed,Red Mushroom
+item.MushroomBrown,Brown Mushroom
+item.ApplePie,Apple Pie
+item.Poop,Poop
+item.Potato,Potato
+item.Seeds,Seeds
+item.Iron,Iron
+item.Soup,Soup
+item.Sugar,Sugar
+item.Watermelon,Watermelon
+item.Wheat,Wheat
+item.Wood,Wooden Plank
+item.WoodenSword,Wooden Sword
+item.IronSword,Iron Sword
+item.GoldSword,Gold Sword
+item.GlassSword,Glass Sword
+item.MagicWand,Magic Wand

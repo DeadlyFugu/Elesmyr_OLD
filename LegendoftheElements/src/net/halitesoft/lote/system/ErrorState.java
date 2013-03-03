@@ -48,11 +48,11 @@ public class ErrorState extends BasicGameState {
 			
 			g.scale(vw/Main.INTERNAL_RESX,vh/Main.INTERNAL_RESY);
 			int i=0;
-			for (String s : errorText .split("\n")) {
+			for (String s : FontRenderer.resolveI18n(errorText.substring(1)).split("(\n|\\\\n)")) {
 				FontRenderer.drawString(Main.INTERNAL_RESX/2-(FontRenderer.getWidth(s)/2),160+i*18,s, g);
 				i++;
 			}
-			FontRenderer.drawString(Main.INTERNAL_RESX / 2 - (FontRenderer.getWidth("Press <ENTER> to close.") / 2), 300, "Press <ENTER> to close.", g);
+			FontRenderer.drawString(Main.INTERNAL_RESX / 2 - (FontRenderer.getWidth("#error.close") / 2), 300, "#error.close", g);
 		}
 	}
 

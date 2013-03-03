@@ -183,7 +183,7 @@ public class GameClient extends BasicGameState implements MessageReceiver {
 			g.setColor(Color.white);
 		}
 		if (!CLIENT)
-			FontRenderer.drawString(0, 0, "#LotE |"+Main.version+": "+(CLIENT?"|$bar.client| ":"")+(SERVER?"|$bar.server| ":"")+(MessageSystem.fastLink?"|$bar.fastlink| ":""), g);
+			FontRenderer.drawString(0, 0, "#$bar.title| |"+Main.version+": "+(CLIENT?"|$bar.client| ":"")+(SERVER?"|$bar.server| ":"")+(MessageSystem.fastLink?"|$bar.fastlink| ":""), g);
 		if (SERVER && (!CLIENT || (Globals.get("debug",false) && Globals.get("showConnections",true)))) {
 			if (!CLIENT) {
 				g.setColor(Color.black);
@@ -352,6 +352,8 @@ public class GameClient extends BasicGameState implements MessageReceiver {
 					nui.setMsg(msg.getData().split(":",2)[0],msg.getData().split(":",2)[1],msg);
 					ui.addFirst(nui);
 				}
+			} else if (name.equals("echointwl")) {
+				msg.reply(msg.getSender()+".tresponse",FontRenderer.getLang()+"|int",null);
 			} else if (name.equals("error")) {
 				error = msg.getData();
 			} else if (name.equals("time")) {

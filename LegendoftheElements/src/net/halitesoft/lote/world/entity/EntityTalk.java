@@ -18,10 +18,16 @@ import com.esotericsoftware.minlog.Log;
 
 public class EntityTalk extends Entity {
 	Image spr;
+	private DialogueHandler dh;
 	@Override
 	public void init(GameContainer gc, StateBasedGame sbg, MessageReceiver receiver)
 			throws SlickException {
 		spr = new Image("data/ent/"+extd.split(",",2)[0]+".png",false,0);
+	}
+
+	@Override
+	public void initSERV() {
+		dh=new DialogueHandler("test");
 	}
 	
 	@Override
@@ -33,21 +39,24 @@ public class EntityTalk extends Entity {
 	}
 	@Override
 	public void interact(Region region, EntityPlayer entityPlayer, MessageReceiver receiver, Connection connection) {
-		response("int",connection);
+		MessageSystem.sendClient(this,connection,new Message("CLIENT.echointwl",""),false);
 	}
 	
 	@Override
 	public void receiveMessageExt(Message msg, MessageReceiver receiver) {
 		if (msg.getName().equals("tresponse")) {
-			response(msg.getData(),msg.getConnection());
+			dh.response(this,msg.getData().split("\\|",2)[0],msg.getData().split("\\|",2)[1],msg.getConnection());
 		} else {
 			Log.warn("EntityPlayer ingored message "+msg);
 		}
 	}
 
-	private void response(String call, Connection connection) {
+	private void response(String lang, String call, Connection connection) {
 		if (call.equals("int")) {
-			MessageSystem.sendClient(this,connection,new Message("CLIENT.talk","ask:お元気ですか?|good:お元気です.|bad:お元気じゃない.|meh:Meh."),false);
+			if (lang.equals("JP"))
+				MessageSystem.sendClient(this,connection,new Message("CLIENT.talk","ask:お元気ですか?|good:お元気です|bad:お元気じゃない|meh:無関心"),false);
+			else
+				MessageSystem.sendClient(this,connection,new Message("CLIENT.talk","ask:How are you?|good:Good.|bad:Bad.|meh:Meh."),false);
 		} else if (call.equals("good"))  {
 			MessageSystem.sendClient(this,connection,new Message("CLIENT.talk","talk:That's great!"),false);
 		} else if (call.equals("bad"))  {

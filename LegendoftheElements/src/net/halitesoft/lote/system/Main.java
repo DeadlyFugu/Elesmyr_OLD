@@ -45,11 +45,11 @@ public class Main extends StateBasedGame {
 	}
 
 	public static void main(String[] args) throws SlickException {
+		Log.info("LotE version "+verRelease+" "+verNum);
+
 		System.setProperty("org.lwjgl.librarypath",System.getProperty("user.dir") + "/lib/native");
 		
 		org.newdawn.slick.util.Log.setLogSystem(new SlickToMinLogSystem());
-		
-		Log.info("LotE version "+verRelease+" "+verNum);
 		
 		Globals.setMap(HashmapLoader.readHashmap("conf"));
 		
@@ -68,11 +68,8 @@ public class Main extends StateBasedGame {
 
 	@Override
 	public void initStatesList(GameContainer gameContainer) throws SlickException {
-		//TODO: What is this?
-		//this.getState(INTROSTATE).init(gameContainer, this);
-		//this.getState(MENUSTATE).init(gameContainer, this);
-		//this.getState(GAMEPLAYSTATE).init(gameContainer, this);
-		//this.getState(ERRORSTATE).init(gameContainer, this);
+		FontRenderer.setLang(FontRenderer.Language.valueOf(Globals.get("lang", "EN_US")));
+		FontRenderer.initialise(gameContainer);
 	}
 	
 	private static class SlickToMinLogSystem implements LogSystem {

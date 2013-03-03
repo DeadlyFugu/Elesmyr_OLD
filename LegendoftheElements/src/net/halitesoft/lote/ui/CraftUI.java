@@ -12,10 +12,7 @@ import net.halitesoft.lote.util.HashmapLoader;
 import net.halitesoft.lote.world.Region;
 import net.halitesoft.lote.world.entity.EntityPlayer;
 import net.halitesoft.lote.world.item.ItemFactory;
-import org.newdawn.slick.GameContainer;
-import org.newdawn.slick.Graphics;
-import org.newdawn.slick.Input;
-import org.newdawn.slick.SlickException;
+import org.newdawn.slick.*;
 import org.newdawn.slick.state.StateBasedGame;
 
 import java.util.ArrayList;
@@ -61,12 +58,16 @@ public class CraftUI implements UserInterface {
 			}
 			return ret;
 		}
-		
+
 		public String toString() {
 			String out = result;
+			boolean metBefore=false;
 			for (String s : ingredients) {
 				String[] parts = parseIng(s);
-				out = out+" "+parts[0]+"x "+parts[1]+(parts[2].equals("")?"":": "+parts[2]);
+				if (metBefore)
+					out = out+",";
+				out = out+"| "+parts[0]+"x|$item."+parts[1]+(parts[2].equals("")?"|":"|: "+parts[2]);
+				metBefore=true;
 			}
 			return out;
 		}
@@ -122,10 +123,12 @@ public class CraftUI implements UserInterface {
 		ArrayList<PlayerData.InventoryEntry> inv = ((EntityPlayer) receiver.player.region.entities.get(receiver.player.entid)).pdat.inventory;
 		for (Craftable c : recipes) {
 			if (c.isCraftable(inv)) {
+				g.setColor(Color.lightGray);
 				if (i==isel)
 					g.fillRect(xoff+67, 116+i*38, 506, 36);
+				g.setColor(Color.white);
 				//iei.spr.draw(xoff+78,120+i*38);
-				FontRenderer.drawString(xoff+117,128+i*38, c.toString(), g);
+				FontRenderer.drawString(xoff+117,128+i*38, "#$item."+c.toString(), g);
 				//Main.font.drawString(xoff+450,128+i*38, ""+ie.getCount());
 				//Main.font.drawString(526,128+i*40,"$"+ie.getValue()); //TODO: Value thingies
 				//Main.font.drawString(xoff+526,128+i*38, ie.getExtd());
