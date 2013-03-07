@@ -198,7 +198,8 @@ public class GameClient extends BasicGameState implements MessageReceiver {
 					"Pos: X="+player.x+" Y="+player.y+"\n" +
 					"Time raw: "+time+"\n" +
 					"Time norm: "+(int) ((time/60)%12)+":"+(int) (time%60)+"\n" +
-					"FPS: "+gc.getFPS();
+					"FPS: "+gc.getFPS()+"\n" +
+					"Ents: "+player.region.entities.size();
 			/*try {
 				debugText = debugText+"Inventory:\n"+((EntityPlayer) player.region.entities.get(player.entid)).pdat.invToString();
 			} catch (Exception e) {
