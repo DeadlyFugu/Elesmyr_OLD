@@ -5,7 +5,7 @@ import net.halitesoft.lote.world.entity.EntityPlayer
 
 public class MagicWand extends ItemWeapon {
 public boolean onUse(GameServer reciever, EntityPlayer player) {
-	player.region.addEntityServer("EnemyMushroom,"+player.x+","+player.y+",")
+	player.region.addEntityServer("EnemyMushroom,"+player.x+","+player.y+",10")
 	return false;
 }
 }

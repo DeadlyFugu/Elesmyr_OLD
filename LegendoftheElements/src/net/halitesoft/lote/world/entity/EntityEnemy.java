@@ -1,29 +1,19 @@
 package net.halitesoft.lote.world.entity;
 
-import java.util.ArrayList;
-import java.util.Random;
-
-
+import com.esotericsoftware.minlog.Log;
 import net.halitesoft.lote.msgsys.Message;
 import net.halitesoft.lote.msgsys.MessageReceiver;
 import net.halitesoft.lote.msgsys.MessageSystem;
 import net.halitesoft.lote.player.Camera;
 import net.halitesoft.lote.system.GameClient;
 import net.halitesoft.lote.system.GameServer;
-import net.halitesoft.lote.system.Main;
 import net.halitesoft.lote.world.Region;
-import net.halitesoft.lote.world.World;
 import net.halitesoft.lote.world.item.Item;
 import net.halitesoft.lote.world.item.ItemWeapon;
-
-import org.newdawn.slick.Color;
-import org.newdawn.slick.GameContainer;
-import org.newdawn.slick.Graphics;
-import org.newdawn.slick.Image;
-import org.newdawn.slick.SlickException;
+import org.newdawn.slick.*;
 import org.newdawn.slick.state.StateBasedGame;
 
-import com.esotericsoftware.minlog.Log;
+import java.util.Random;
 
 public class EntityEnemy extends Entity {
 
@@ -35,6 +25,7 @@ public class EntityEnemy extends Entity {
 	protected int health = 0;
 	protected int maxHealth = 0;
 	protected Random airand = new Random();
+	private int nextHit = 10;
 	
 	public EntityEnemy() {
 		constantUpdate = true;
@@ -100,13 +91,23 @@ public class EntityEnemy extends Entity {
 				cmdist = 0;
 			}
 		}
+		if (nextHit==0) {
+			attack(region,receiver);
+			nextHit=airand.nextInt(6)+6;
+		} else {
+			nextHit--;
+		}
 		//if (x>800)
 		//	move=-1;
 		//if (x<100)
 		//	move=1;
 	}
-	
-	@Override
+
+private void attack(Region region, GameServer receiver) {
+	region.entHitAt(this,xmove*32,ymove*32,receiver);
+}
+
+@Override
 	public void hurt(Region region, Entity entity, MessageReceiver receiver) {
 		float dmg = 1;
 		if (entity.getEquipped()!=null) {

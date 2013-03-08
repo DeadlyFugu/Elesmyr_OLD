@@ -1,9 +1,9 @@
 package net.halitesoft.lote.system;
 
+import net.halitesoft.lote.util.HashmapLoader;
+
 import java.util.HashMap;
 import java.util.Map.Entry;
-
-import net.halitesoft.lote.util.HashmapLoader;
 
 public class Globals {
 	private static HashMap<String,String> globals;
@@ -54,4 +54,8 @@ public class Globals {
 			ret=ret+"\n"+e.getKey()+" = "+e.getValue();
 		return ret.substring(1);
 	}
+
+public static String retrieve(String key) {
+	return globals.get(key);
+}
 }

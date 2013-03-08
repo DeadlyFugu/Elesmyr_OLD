@@ -42,6 +42,8 @@ public class GameServer extends Server implements MessageReceiver {
 	private int timescale = 50; //Default = 20
 	
 	private String hostUName = "";
+
+	public static boolean running = true;
 	
 	/**
 	 * Ent is stored as "REGION.ENTID"

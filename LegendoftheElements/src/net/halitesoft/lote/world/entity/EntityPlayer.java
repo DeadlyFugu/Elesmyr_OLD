@@ -9,10 +9,7 @@ import net.halitesoft.lote.msgsys.MessageReceiver;
 import net.halitesoft.lote.msgsys.MessageSystem;
 import net.halitesoft.lote.player.Camera;
 import net.halitesoft.lote.player.PlayerData;
-import net.halitesoft.lote.system.FontRenderer;
-import net.halitesoft.lote.system.GameClient;
-import net.halitesoft.lote.system.GameServer;
-import net.halitesoft.lote.system.Main;
+import net.halitesoft.lote.system.*;
 import net.halitesoft.lote.ui.CraftUI;
 import net.halitesoft.lote.world.Region;
 import net.halitesoft.lote.world.item.Item;
@@ -175,6 +172,8 @@ public class EntityPlayer extends Entity {
 	
 	@Override
 	public void hurt(Region region, Entity entity, MessageReceiver receiver) {
+		if (Globals.get("godmode",false))
+			return;
 		pdat.health -=1;
 		if (pdat.health<=0) { //TODO: Proper player kill code
 			//this.drop(region);

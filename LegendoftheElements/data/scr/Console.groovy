@@ -11,6 +11,7 @@ public class Console {
 			"time [time]: Sets the time (Prints it if passed no args).\n"+
 			"item <name> [amount]: Give the player an item.\n"+
 			"set <key>=<value>: Change a setting.\n"+
+            "get <key>: Retrieve a setting.\n"+
 			"debug [on/off]: Enable/disable debug (Toggles if passed no args).\n"+
 			"listconf: List all settings and current value.\n"+
 			"health <value>: Sets the health of the player.\n"+
@@ -26,6 +27,7 @@ public class Console {
 		case "time": setTime(args,gc); break;
 		case "item": giveItem(args,gc); break;
 		case "set": Globals.set(args.split("=",2)[0],args.split("=",2)[1]); Globals.save(); break;
+        case "get": echo(Globals.retrieve(args)); break;
 		case "debug": Globals.set("debug",parseDebugBool(args)); break;
 		case "listconf": echo(Globals.getString()); break;
 		case "health": sendMsg(getPlayerRName(gc)+".setHealth",args); break;
@@ -50,6 +52,10 @@ public class Console {
 	}
 	
 	private void echo(String str) {
+        if (str==null) {
+            echo("_NULL");
+        return
+        }
 		println(str);
 		for (String s : str.split("\n"))
 			MessageSystem.receiveClient(new Message("CLIENT.chat",s));

@@ -14,10 +14,7 @@ import net.halitesoft.lote.player.PlayerData;
 import net.halitesoft.lote.system.GameClient;
 import net.halitesoft.lote.system.GameServer;
 import net.halitesoft.lote.system.Globals;
-import net.halitesoft.lote.world.entity.Entity;
-import net.halitesoft.lote.world.entity.EntityFactory;
-import net.halitesoft.lote.world.entity.EntityItem;
-import net.halitesoft.lote.world.entity.EntityPlayer;
+import net.halitesoft.lote.world.entity.*;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.SlickException;
@@ -200,7 +197,8 @@ public class Region implements GameElement {
 		String[] ents = str.split("\\\\");
 		int id = 0;
 		for (String s : ents) {
-			addEntity(s.split(",",2)[0]+","+id+","+s.split(",",2)[1],client);
+			if (s.contains(","))
+				addEntity(s.split(",",2)[0]+","+id+","+s.split(",",2)[1],client);
 			id++;
 		}
 	}
@@ -277,4 +275,11 @@ public class Region implements GameElement {
 	public String getReceiverName() {
 		return name;
 	}
+
+public void entHitAt(EntityEnemy ent, int xdist, int ydist, GameServer receiver) {
+	for (Entity e : getEntitiesAt(ent.x,ent.y)) {
+		if (e instanceof EntityPlayer)
+			e.hurt(this,ent,receiver);
+	}
+}
 }
