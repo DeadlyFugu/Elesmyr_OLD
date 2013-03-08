@@ -12,16 +12,16 @@ import java.util.ArrayList;
  */
 public class BookParser {
 public static ArrayList<String> parseBook(String extd) {
-	ArrayList<String> pages = new ArrayList<String>();
-	String page = "";
-	File file = new File("data/book/"+extd);
+	ArrayList<String> pages=new ArrayList<String>();
+	String page="";
+	File file=new File("data/book/"+extd);
 	if (!file.exists()) {
 		pages.add("INTERNAL SERVER ERROR:\nRequested book file '"+file+" was not found");
 	} else {
 		try {
-			BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
+			BufferedReader br=new BufferedReader(new InputStreamReader(new FileInputStream(file)));
 			String l;
-			while((l = br.readLine()) != null) {
+			while ((l=br.readLine())!=null) {
 				if (!l.equals("PAGE"))
 					page=page+l+" [E ";
 				else
@@ -33,8 +33,8 @@ public static ArrayList<String> parseBook(String extd) {
 			pages.add("INTERNAL SERVER ERROR:\nReading requested book file '"+file+" threw an exception:\n"+e.getLocalizedMessage());
 		}
 	}
-	String pageout = "";
-	String ln = "";
+	String pageout="";
+	String ln="";
 	for (String w : page.split(" ")) {
 		if (w.startsWith("[")) {
 			if (w.equals("[E")) {
@@ -53,8 +53,8 @@ public static ArrayList<String> parseBook(String extd) {
 			ln="";
 			pageout="";
 		} else {
-			String ln2 = ln+w+" ";
-			if (ln2.replaceAll("\\[[A-Za-z0-9]+","").length()>30) {
+			String ln2=ln+w+" ";
+			if (ln2.replaceAll("\\[[A-Za-z0-9]+", "").length()>30) {
 				pageout+=ln+"\n";
 				ln=w+" ";
 				if (pageout.split("\n").length==23) {

@@ -18,28 +18,29 @@ import java.util.HashMap;
  * Templates.
  */
 public class DialogueHandler {
-HashMap<String,ArrayList<String>> dialogue;
+HashMap<String, ArrayList<String>> dialogue;
 String afname;
+
 public DialogueHandler(String fname) {
-	dialogue = new HashMap<String, ArrayList<String>>();
+	dialogue=new HashMap<String, ArrayList<String>>();
 	for (FontRenderer.Language lang : FontRenderer.Language.values()) {
-		loadDiag(fname,lang.name(),lang!=FontRenderer.Language.EN_US);
+		loadDiag(fname, lang.name(), lang!=FontRenderer.Language.EN_US);
 	}
 }
 
 private void loadDiag(String fname, String lang, boolean ignorable) {
-	File file = new File("data/npc/"+lang+"/"+fname);
+	File file=new File("data/npc/"+lang+"/"+fname);
 	afname=file.toString();
-	ArrayList<String> diagInL = new ArrayList<String>();
+	ArrayList<String> diagInL=new ArrayList<String>();
 	if (!file.exists()) {
 		if (ignorable) return;
 		diagInL.add("int:");
 		diagInL.add("INTERNAL SERVER ERROR:\nRequested dialogue file '"+file+" was not found");
 	} else {
 		try {
-			BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
+			BufferedReader br=new BufferedReader(new InputStreamReader(new FileInputStream(file)));
 			String l;
-			while((l = br.readLine()) != null) {
+			while ((l=br.readLine())!=null) {
 				diagInL.add(l);
 			}
 			br.close();
@@ -49,23 +50,23 @@ private void loadDiag(String fname, String lang, boolean ignorable) {
 			diagInL.add("INTERNAL SERVER ERROR:\nReading requested dialogue file '"+file+" threw an exception:\n"+e.getLocalizedMessage());
 		}
 	}
-	dialogue.put(lang,diagInL);
+	dialogue.put(lang, diagInL);
 }
 
-public void response(GameElement master, String lang, String call , Connection connection) {
-	int ln = 1;
-	boolean in = false;
-	boolean askmode = false;
-	String sendline = "";
+public void response(GameElement master, String lang, String call, Connection connection) {
+	int ln=1;
+	boolean in=false;
+	boolean askmode=false;
+	String sendline="";
 	if (FontRenderer.Language.valueOf(lang)==null) {
 		MessageSystem.sendClient(master, connection, new Message("CLIENT.talk", "talk:INTERNAL SERVER ERROR:\nDialogueHandler.response was called with an\nunrecognised language: '"+lang+"'"), false);
 		return;
 	}
-	String langm = "EN_US";
+	String langm="EN_US";
 	if (dialogue.containsKey(lang))
 		langm=lang;
 	while (ln<dialogue.get(langm).size()+1) {
-		String line = dialogue.get(langm).get(ln-1).trim();
+		String line=dialogue.get(langm).get(ln-1).trim();
 		if (in) {
 			System.out.println(askmode+line);
 			if (askmode) {
@@ -80,15 +81,15 @@ public void response(GameElement master, String lang, String call , Connection c
 				sendline=line.substring(4);
 			} else if (line.startsWith("GOTO")) {
 				if (line.split(" ").length>2)
-					MessageSystem.sendClient(master, connection, new Message("CLIENT.talk", "talkwf:"+line.split(" ",3)[1]+":"+line.split(" ",3)[2]), false);
+					MessageSystem.sendClient(master, connection, new Message("CLIENT.talk", "talkwf:"+line.split(" ", 3)[1]+":"+line.split(" ", 3)[2]), false);
 				else
-					response(master,lang,line.split(" ")[1],connection);
+					response(master, lang, line.split(" ")[1], connection);
 				return;
 			} else {
 				MessageSystem.sendClient(master, connection, new Message("CLIENT.talk", "talk:"+line), false);
 				return;
 			}
-		} else if (call.startsWith("#") && ln==Integer.parseInt(call.substring(1))) {
+		} else if (call.startsWith("#")&&ln==Integer.parseInt(call.substring(1))) {
 			in=true;
 		} else if (line.equals(call+":")) {
 			in=true;

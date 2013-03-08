@@ -21,7 +21,7 @@ private ArrayList<String> pages;
 private int page;
 private Image bg;
 
-private boolean inited = false;
+private boolean inited=false;
 
 @Override
 public boolean inited() {
@@ -30,7 +30,7 @@ public boolean inited() {
 
 @Override
 public void ctor(String extd) {
-	pages = new ArrayList<String>();
+	pages=new ArrayList<String>();
 }
 
 public void addPage(String page) {
@@ -40,31 +40,31 @@ public void addPage(String page) {
 @Override
 public void init(GameContainer gc, StateBasedGame sbg, MessageReceiver receiver) throws SlickException {
 	inited=true;
-	bg = new Image("data/ui/book.png",false,0);
+	bg=new Image("data/ui/book.png", false, 0);
 }
 
 @Override
 public void render(GameContainer gc, StateBasedGame sbg, Graphics g, Camera cam, GameClient receiver) throws SlickException {
-	int xoff = (Main.INTERNAL_RESX/2);
-	bg.draw(xoff-320,0);
-	if (Globals.get("debug",false))
-		FontRenderer.drawString(xoff-260,64,(page*2+1)+"/"+(pages.size()),g);
-	drawPage(xoff-248, pages.get(page * 2), g);
+	int xoff=(Main.INTERNAL_RESX/2);
+	bg.draw(xoff-320, 0);
+	if (Globals.get("debug", false))
+		FontRenderer.drawString(xoff-260, 64, (page*2+1)+"/"+(pages.size()), g);
+	drawPage(xoff-248, pages.get(page*2), g);
 	if (pages.size()!=page*2+1)
-		drawPage(xoff+12,pages.get(page*2+1),g);
+		drawPage(xoff+12, pages.get(page*2+1), g);
 }
 
 private void drawPage(int x, String s, Graphics g) {
 	int i=0;
 	for (String ln : s.split("\n")) {
-		FontRenderer.drawString(x, 74 + i * 14, ln, g);
+		FontRenderer.drawString(x, 74+i*14, ln, g);
 		i++;
 	}
 }
 
 @Override
 public void update(GameContainer gc, StateBasedGame sbg, GameClient receiver) {
-	Input in = gc.getInput();
+	Input in=gc.getInput();
 	if (in.isKeyPressed(Input.KEY_LEFT))
 		if (page>0)
 			page--;

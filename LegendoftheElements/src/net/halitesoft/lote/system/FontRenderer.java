@@ -13,14 +13,16 @@ import java.util.HashMap;
 public class FontRenderer {
 
 private static SpriteSheetFont bpfont;
-private static UnicodeFont jpfont = null;
-private static Language lang = Language.EN_US;
-private static Language newlang = lang;
+private static UnicodeFont jpfont=null;
+private static Language lang=Language.EN_US;
+private static Language newlang=lang;
 
-private static HashMap<String,String> i18n_lang;
-private static HashMap<String,String> i18n_backup;
+private static HashMap<String, String> i18n_lang;
+private static HashMap<String, String> i18n_backup;
 
-public enum Language { EN_US, JP };
+public enum Language {EN_US, JP}
+
+;
 
 //public static void drawString(int x, int y, String text) {
 //
@@ -32,12 +34,12 @@ public static void setLang(Language lang) {
 
 public static void reset(GameContainer gc) throws SlickException {
 	lang=newlang;
-	i18n_lang = HashmapLoader.readHashmap("data/lang/"+lang.name());
-	if (jpfont==null && lang==Language.JP) {
-		String fontPath = "data/jp.ttf";
-		UnicodeFont uFont = new UnicodeFont(fontPath , 32, false, false);
+	i18n_lang=HashmapLoader.readHashmap("data/lang/"+lang.name());
+	if (jpfont==null&&lang==Language.JP) {
+		String fontPath="data/jp.ttf";
+		UnicodeFont uFont=new UnicodeFont(fontPath, 32, false, false);
 		uFont.addAsciiGlyphs();
-		uFont.addGlyphs('ぁ','ヿ'); //Hiragana + Katakana
+		uFont.addGlyphs('ぁ', 'ヿ'); //Hiragana + Katakana
 		//uFont.addGlyphs('一','龥'); //Kanji
 		uFont.getEffects().add(new ColorEffect(java.awt.Color.WHITE));
 		uFont.loadGlyphs();
@@ -51,8 +53,8 @@ public static Language getLang() {
 }
 
 public static void initialise(GameContainer gc) throws SlickException {
-	bpfont = new SpriteSheetFont(new SpriteSheet(new org.newdawn.slick.Image("data/font.png",false,0),9,16),' ');
-	i18n_backup = HashmapLoader.readHashmap("data/lang/EN_US");
+	bpfont=new SpriteSheetFont(new SpriteSheet(new org.newdawn.slick.Image("data/font.png", false, 0), 9, 16), ' ');
+	i18n_backup=HashmapLoader.readHashmap("data/lang/EN_US");
 	reset(gc);
 }
 
@@ -88,11 +90,11 @@ public static void drawString(float x, float y, String str, Graphics g) {
 				e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
 			}
 			g.pushTransform();
-			g.scale(0.5f,0.5f);
-			jpfont.drawString(x*2,y*2,str);
+			g.scale(0.5f, 0.5f);
+			jpfont.drawString(x*2, y*2, str);
 			g.popTransform(); break;
 		default:
-			bpfont.drawString(x,y,str); break;
+			bpfont.drawString(x, y, str); break;
 	}
 }
 
@@ -104,14 +106,14 @@ public static void drawString(int x, int y, String str, Color col, Graphics g) {
 			jpfont.drawString(x*2,y*2,str);
 			g.popTransform(); break;*/
 		default:
-			bpfont.drawString(x,y,str,col); break;
+			bpfont.drawString(x, y, str, col); break;
 	}
 }
 
 public static String resolveI18n(String key) {
 	if (key.contains("|")) {
 		String ret="";
-		String[] split = key.split("\\|");
+		String[] split=key.split("\\|");
 		for (String s : split) {
 			if (s.startsWith("$")) {
 				ret=ret+resolveI18n(s.substring(1));
