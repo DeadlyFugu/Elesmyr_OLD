@@ -1,6 +1,5 @@
 package net.halitesoft.lote.world.entity;
 
-import com.esotericsoftware.minlog.Log;
 import net.halitesoft.lote.system.GameServer;
 import net.halitesoft.lote.world.Region;
 
@@ -20,7 +19,7 @@ public class EntitySpawner extends Entity {
 		for (Entity e : region.entities.values())
 			if (e.getClass().getSimpleName().equals(extd.split(",",2)[0]))
 				se++;
-		if (rand.nextInt((int) Math.ceil(Math.pow(se+1,3)/2))==1) {
+		if (rand.nextInt((int) Math.floor(Math.pow(se,3)/2)+1)==0) {
 			region.addEntityServer(extd.split(",",2)[0]+","+x+","+y+","+extd.split(",",2)[1]);
 		}
 	}

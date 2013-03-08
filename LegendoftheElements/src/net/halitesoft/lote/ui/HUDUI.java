@@ -25,13 +25,20 @@ public class HUDUI implements UserInterface {
 	private Image equip;
 	private int updtimer = 10;
 	private ArrayList<EntityPlayer> nearplayers;
-	
+
+private boolean inited = false;
+
+@Override
+public boolean inited() {
+	return inited;
+}
 	public HUDUI() {
 		nearplayers = new ArrayList<EntityPlayer>();
 	}
 	@Override
 	public void init(GameContainer gc, StateBasedGame sbg,
 			MessageReceiver receiver) throws SlickException {
+		inited=true;
 		bart = new Image("data/ui/bar_t.png",false,0);
 		barb = new Image("data/ui/bar_b.png",false,0);
 		bars = new Image("data/ui/bars.png",false,0);

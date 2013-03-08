@@ -19,13 +19,21 @@ public class ChatUI implements UserInterface {
 	private Message recMsg;
 	private int killTimer=-1;
 
+	private boolean inited = false;
+
 	@Override
 	public void ctor(String extd) {
 	}
 
-	@Override
+@Override
+public boolean inited() {
+	return inited;
+}
+
+@Override
 	public void init(GameContainer gc, StateBasedGame sbg,
 			MessageReceiver receiver) throws SlickException {
+	inited=true;
 	}
 
 	@Override

@@ -164,13 +164,18 @@ public class GameClient extends BasicGameState implements MessageReceiver {
 					FontRenderer.drawString(10,Main.INTERNAL_RESY-89-i*18, cm.getMessage(), new Color(1,1,1,cm.getAlpha()), g);
 				i++;
 			}
-			if (ui.peekFirst().blockUpdates()) {
-				alphabg.draw(0,0,Main.INTERNAL_RESX,Main.INTERNAL_RESY);
-				vignette.draw(0,0,Main.INTERNAL_RESX,Main.INTERNAL_RESY);
-			}
 			Iterator<UserInterface> itui = ui.descendingIterator();
 			while (itui.hasNext()) {
-				itui.next().render(gc, sbg, g, cam, this);
+				UserInterface uii = itui.next();
+				if (!uii.inited()) {
+					uii.init(gc,sbg,this);
+					Log.info(uii+" was init-ed");
+				}
+				if (uii.blockUpdates()) {
+					alphabg.draw(0,0,Main.INTERNAL_RESX,Main.INTERNAL_RESY);
+					vignette.draw(0,0,Main.INTERNAL_RESX,Main.INTERNAL_RESY);
+				}
+				uii.render(gc, sbg, g, cam, this);
 			}
 
 			if (showTextField) {
@@ -194,12 +199,16 @@ public class GameClient extends BasicGameState implements MessageReceiver {
 		}
 		if (CLIENT && Globals.get("debug",false) && Globals.get("debugInfo",true)) {
 			//Client debug mode
-			String debugText = 
+			String debugText = "ERROR.";
+			try {
+			debugText =
 					"Pos: X="+player.x+" Y="+player.y+"\n" +
 					"Time raw: "+time+"\n" +
 					"Time norm: "+(int) ((time/60)%12)+":"+(int) (time%60)+"\n" +
 					"FPS: "+gc.getFPS()+"\n" +
 					"Ents: "+player.region.entities.size();
+			} catch (Exception e) {
+			}
 			/*try {
 				debugText = debugText+"Inventory:\n"+((EntityPlayer) player.region.entities.get(player.entid)).pdat.invToString();
 			} catch (Exception e) {
@@ -371,7 +380,15 @@ public class GameClient extends BasicGameState implements MessageReceiver {
 					ui.addFirst(nui);
 				else
 					Log.warn("CLIENT: Could not open UI "+msg.getData());
-			} else {
+			} else if (name.equals("book")) {
+				if (ui.peekFirst() instanceof BookUI) {
+					((BookUI) ui.peekFirst()).addPage(msg.getData());
+				} else {
+					BookUI nui = new BookUI();
+					nui.ctor(null);
+					nui.addPage(msg.getData());
+					ui.addFirst(nui);
+				}} else {
 				Log.warn("CLIENT: Ignored message - unrecognised name: "+msg.toString());
 			}
 		} else if (msg.getTarget().equals("PLAYER")) {

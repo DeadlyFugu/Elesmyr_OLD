@@ -125,8 +125,8 @@ public class GameServer extends Server implements MessageReceiver {
 			timeCheck--;
 		}
 	}
-	
-	private class ServerListener extends Listener {
+
+private class ServerListener extends Listener {
 		public ServerListener() {
 		} 
 
@@ -290,6 +290,17 @@ public class GameServer extends Server implements MessageReceiver {
 
 	public EntityPlayer getPlayerEnt(Connection connection) {
 		return (EntityPlayer) getEntity(playerEnt.get(players.get(connection)));
+	}
+
+	public Connection getPlayerConnection(EntityPlayer player) {
+		String name = player.getName();
+		for (Entry<Connection,String> e : players.entrySet()) {
+			if (e.getValue().equals(name)) {
+				return e.getKey();
+			}
+		}
+		Log.error("SERVER: Could not find corresponding connection for "+name);
+		return null;
 	}
 
 	public Entity getEntity(String string) {

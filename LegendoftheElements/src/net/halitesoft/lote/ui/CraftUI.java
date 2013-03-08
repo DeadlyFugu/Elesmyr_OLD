@@ -102,6 +102,12 @@ public class CraftUI implements UserInterface {
 	private int isel = 0;
 	private int smax = 1;
 
+private boolean inited = false;
+
+@Override
+public boolean inited() {
+	return inited;
+}
 	@Override
 	public void ctor(String extd) {
 		
@@ -110,6 +116,7 @@ public class CraftUI implements UserInterface {
 	@Override
 	public void init(GameContainer gc, StateBasedGame sbg,
 			MessageReceiver receiver) throws SlickException {
+		inited=true;
 	}
 
 	@Override

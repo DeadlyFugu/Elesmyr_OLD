@@ -147,8 +147,14 @@ public class EntityPlayer extends Entity {
 		} else if (msg.getName().equals("use")) {
 			PlayerData.InventoryEntry ie = pdat.inventory.get(Integer.parseInt(msg.getData()));
 			if (ie!=null)
-				if (ie.getItem().onUse((GameServer) server,this));
+				if (ie.getItem().onUse((GameServer) server,this))
 					pdat.removeItem(Integer.parseInt(msg.getData()),region,receiverName);
+		} else if (msg.getName().equals("drop")) {
+			PlayerData.InventoryEntry ie = pdat.inventory.get(Integer.parseInt(msg.getData()));
+			if (ie!=null) {
+				region.addEntityServer("EntityItem,"+x+","+(y+32)+","+ie.getItem().name+","+ie.getExtd());
+				pdat.removeItem(Integer.parseInt(msg.getData()),region,receiverName);
+			}
 		} else if (msg.getName().equals("craftItem")) {
 			CraftUI.getRecipe(Integer.parseInt(msg.getData())).addToPDAT(pdat,region,receiverName);
 		} else if (msg.getName().equals("setPDAT")) {

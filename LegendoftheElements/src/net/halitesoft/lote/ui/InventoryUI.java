@@ -26,9 +26,18 @@ public class InventoryUI implements UserInterface {
 	String[] types = {"All","Weapons","Armor","Potions","Food","Books","Misc"};
 	@Override public void init(GameContainer gc, StateBasedGame sbg,
 			MessageReceiver receiver) throws SlickException {
+		inited=true;
 		bg = new Image("data/ui/inv.png",false,0);
 		invsel = new Image("data/ui/invsel.png",false,0);
 	}
+
+
+private boolean inited = false;
+
+@Override
+public boolean inited() {
+	return inited;
+}
 
 	@Override public void render(GameContainer gc, StateBasedGame sbg, Graphics g,
 			Camera cam, GameClient receiver) throws SlickException {
@@ -87,11 +96,17 @@ public class InventoryUI implements UserInterface {
 				ArrayList<PlayerData.InventoryEntry> inv = ((EntityPlayer) receiver.player.region.entities.get(receiver.player.entid)).pdat.inventory;
 				if (i.getItem().canEquip()) {
 					MessageSystem.sendServer(null,new Message(ep.getReceiverName()+".equip",""+inv.indexOf(i)),false);
-					//ep.pdat.setEquipped(i,receiver.player.region,ep.getReceiverName());
 				} else {
 					MessageSystem.sendServer(null,new Message(ep.getReceiverName()+".use",""+inv.indexOf(i)),false);
-					//i.getItem().onUse(receiver);
 				}
+			}
+		}
+		if (in.isKeyPressed(Input.KEY_Z)) {
+			PlayerData.InventoryEntry i = getItem(isel, receiver);
+			if (i!=null) {
+				EntityPlayer ep = ((EntityPlayer) receiver.player.region.entities.get(receiver.player.entid));
+				ArrayList<PlayerData.InventoryEntry> inv = ((EntityPlayer) receiver.player.region.entities.get(receiver.player.entid)).pdat.inventory;
+				MessageSystem.sendServer(null,new Message(ep.getReceiverName()+".drop",""+inv.indexOf(i)),false);
 			}
 		}
 		if (isel>smax-1)
