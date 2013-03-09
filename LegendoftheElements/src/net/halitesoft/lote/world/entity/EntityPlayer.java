@@ -2,6 +2,7 @@ package net.halitesoft.lote.world.entity;
 
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.minlog.Log;
+import net.halitesoft.lote.Element;
 import net.halitesoft.lote.lighting.Light;
 import net.halitesoft.lote.msgsys.Message;
 import net.halitesoft.lote.msgsys.MessageReceiver;
@@ -46,7 +47,7 @@ public void init(GameContainer gc, StateBasedGame sbg, MessageReceiver receiver)
 		throws SlickException {
 	spr=new SpriteSheet(new Image("data/player/player_reg.png", false, 0), 32, 48);
 	torchLight=new Light(600, 550, 256, 0.8f, 0.5f, 0.2f, 0.4f); //TORCH LIGHT
-	((GameClient) sbg.getState(Main.GAMEPLAYSTATE)).lm.addLight(torchLight);
+	//((GameClient) sbg.getState(Main.GAMEPLAYSTATE)).lm.addLight(torchLight);
 	constantUpdate=true;
 }
 
@@ -148,7 +149,27 @@ public void receiveMessageExt(Message msg, MessageReceiver server) {
 	} else if (msg.getName().equals("drop")) {
 		PlayerData.InventoryEntry ie=pdat.inventory.get(Integer.parseInt(msg.getData()));
 		if (ie!=null) {
-			region.addEntityServer("EntityItem,"+x+","+(y+32)+","+ie.getItem().name+","+ie.getExtd());
+			int dx=x-16;
+			int dy=y-16;
+			if (!ie.getItem().stickyDrops()) {
+				int attempts = 0;
+				do {
+					dx=x-16;
+					dy=y-16;
+					double rnd = Math.random()*Math.PI*2;
+					dx=(int) (dx+(32f*Math.sin(rnd)));
+					dy=(int) (dy+(30f*-Math.cos(rnd)));
+					attempts++;
+				} while (!(region.aiPlaceFree(dx,dy) &&
+						region.aiPlaceFree(dx+32,dy) &&
+						region.aiPlaceFree(dx+32,dy+32) &&
+                        region.aiPlaceFree(dx,dy+32)) && attempts<100);
+				if (attempts==100) {
+					return;
+				}
+			}
+			System.out.println(dx+","+dy);
+			region.addEntityServer("Entity"+(ie.getItem().stickyDrops()?"Placed":"")+"Item,"+dx+","+dy+","+ie.getItem().name+","+ie.getExtd());
 			pdat.removeItem(Integer.parseInt(msg.getData()), region, receiverName);
 		}
 	} else if (msg.getName().equals("craftItem")) {
@@ -159,6 +180,9 @@ public void receiveMessageExt(Message msg, MessageReceiver server) {
 		pdat.fromString(msg.getData());
 	} else if (msg.getName().equals("setHealth")) {
 		pdat.health=Integer.parseInt(msg.getData());
+		pdat.updated(region, receiverName);
+	} else if (msg.getName().equals("setAffinity")) {
+		pdat.affinity=Element.valueOf(msg.getData());
 		pdat.updated(region, receiverName);
 	} else {
 		Log.info("ENTITYPLAYER: Ignored message "+msg.toString());
@@ -179,7 +203,7 @@ public void hurt(Region region, Entity entity, MessageReceiver receiver) {
 		region.receiveMessage(new Message(region.name+".killSERV", this.name), receiver);
 		//((GameServer) receiver).changePlayerRegion("start", 800, 532, connection, true);
 		MessageSystem.sendClient(this, connection, new Message("PLAYER.playerInfo", "start,800,532"), false);
-		pdat.health=60;
+		pdat.health=pdat.healthMax;
 	}
 	pdat.updated(region, receiverName);
 }
@@ -212,6 +236,11 @@ public void setPDat(String data) {
 	if (pdat==null)
 		pdat=new PlayerData(getName(), null);
 	this.pdat.fromString(data);
+}
+
+@Override
+public Element getElement() {
+	return pdat.affinity;
 }
 
 @Override

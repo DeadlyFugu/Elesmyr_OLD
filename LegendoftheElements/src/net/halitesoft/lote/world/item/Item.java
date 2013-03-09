@@ -43,4 +43,12 @@ public Item toItem() {
 }
 
 public Element getElement() { return Element.NEUTRAL; }
+
+public String getName() {
+	return name;
+}
+
+public boolean stickyDrops() {
+	return false;
+}
 }

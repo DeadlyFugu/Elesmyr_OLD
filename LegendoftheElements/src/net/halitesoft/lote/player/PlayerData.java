@@ -1,6 +1,7 @@
 package net.halitesoft.lote.player;
 
 import com.esotericsoftware.kryonet.Connection;
+import net.halitesoft.lote.Element;
 import net.halitesoft.lote.msgsys.Message;
 import net.halitesoft.lote.msgsys.MessageSystem;
 import net.halitesoft.lote.world.Region;
@@ -10,6 +11,7 @@ import net.halitesoft.lote.world.item.ItemFactory;
 import java.util.ArrayList;
 
 public class PlayerData {
+
 public class InventoryEntry {
 	Item item;
 	String extd;
@@ -51,9 +53,13 @@ public class InventoryEntry {
 private String name;
 private Connection connection;
 public ArrayList<InventoryEntry> inventory;
-public int health;
-public int magicka;
-public int stamina;
+public int health = 60;
+public int magicka = 60;
+public int stamina = 60;
+public int healthMax = 60;
+public int magickaMax = 60;
+public int staminaMax = 60;
+public Element affinity = Element.NEUTRAL;
 private InventoryEntry equipped;
 
 public PlayerData(String name, Connection connection) {
@@ -67,6 +73,12 @@ public void addConnection(Connection connection) {
 }
 
 public void updated(Region r, String entRName) {
+	if (health>healthMax)
+		health=healthMax;
+	if (stamina>staminaMax)
+		stamina=staminaMax;
+	if (magicka>magickaMax)
+		magicka=magickaMax;
 	if (connection!=null)
 		MessageSystem.sendClient(null, connection, new Message("PLAYER.setPDAT", this.toString()), false);
 	for (Connection c : r.connections) {
@@ -81,24 +93,28 @@ public String toString() {
 	for (InventoryEntry ie : inventory)
 		inv=inv+"\\"+ie.count+","+ie.item.name+","+ie.extd;
 	if (inv.length()>1)
-		return name+","+health+","+magicka+","+stamina+","+inventory.indexOf(equipped)+","+inv.substring(1);
+		return name+","+health+"/"+healthMax+","+magicka+"/"+magickaMax+","+stamina+"/"+staminaMax+","+affinity.toString()+","+inventory.indexOf(equipped)+","+inv.substring(1);
 	else
-		return name+","+health+","+magicka+","+stamina+","+inventory.indexOf(equipped)+",";
+		return name+","+health+"/"+healthMax+","+magicka+"/"+magickaMax+","+stamina+"/"+staminaMax+","+affinity.toString()+","+inventory.indexOf(equipped)+",";
 }
 
 public void fromString(String str) {
-	String[] parts=str.split(",", 6);
+	String[] parts=str.split(",", 7);
 	name=parts[0];
-	health=Integer.parseInt(parts[1]);
-	magicka=Integer.parseInt(parts[2]);
-	stamina=Integer.parseInt(parts[3]);
+	health=Integer.parseInt(parts[1].split("/")[0]);
+	healthMax=Integer.parseInt(parts[1].split("/")[1]);
+	magicka=Integer.parseInt(parts[2].split("/")[0]);
+	magickaMax=Integer.parseInt(parts[2].split("/")[1]);
+	stamina=Integer.parseInt(parts[3].split("/")[0]);
+	staminaMax=Integer.parseInt(parts[3].split("/")[1]);
+	affinity=Element.valueOf(parts[4]);
 	inventory.clear();
-	if (!parts[5].equals(""))
-		for (String is : parts[5].split("\\\\")) {
+	if (!parts[6].equals(""))
+		for (String is : parts[6].split("\\\\")) {
 			inventory.add(new InventoryEntry(ItemFactory.getItem(is.split(",", 3)[1]), is.split(",", 3)[2], Integer.parseInt(is.split(",", 3)[0])));
 		}
-	if (!parts[4].equals("-1"))
-		equipped=inventory.get(Integer.valueOf(parts[4]));
+	if (!parts[5].equals("-1"))
+		equipped=inventory.get(Integer.valueOf(parts[5]));
 }
 
 public boolean put(Item item, String extd, Region r, String ent) {

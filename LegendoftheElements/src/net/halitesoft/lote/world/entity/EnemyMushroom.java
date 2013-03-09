@@ -1,5 +1,6 @@
 package net.halitesoft.lote.world.entity;
 
+import net.halitesoft.lote.Element;
 import net.halitesoft.lote.msgsys.MessageReceiver;
 import net.halitesoft.lote.player.Camera;
 import net.halitesoft.lote.system.GameClient;
@@ -50,5 +51,10 @@ protected ArrayList<String> getDrops() {
 		else
 			ret.add("Potato,");
 	return ret;
+}
+
+@Override
+public Element getElement() {
+	return Element.EARTH;
 }
 }

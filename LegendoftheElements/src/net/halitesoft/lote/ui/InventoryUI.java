@@ -59,7 +59,7 @@ public void render(GameContainer gc, StateBasedGame sbg, Graphics g,
 						g.fillRect(xoff+67, 116+ir*38, 506, 36);
 					g.setColor(Color.white);
 					iei.spr.draw(xoff+78, 120+ir*38);
-					FontRenderer.drawString(xoff+117, 128+ir*38, "#$item."+iei.name+(ie.equals(pdat.getEquipped())?"| (|$inventory.equip|)":"|"), g);
+					FontRenderer.drawString(xoff+117, 128+ir*38, "#$item."+iei.getName()+(ie.equals(pdat.getEquipped())?"| (|$inventory.equip|)":"|"), g);
 					FontRenderer.drawString(xoff+450, 128+ir*38, ""+ie.getCount(), g);
 					//Main.font.drawString(526,128+ir*40,"$"+ie.getValue()); //TODO: Value thingies
 					FontRenderer.drawString(xoff+526, 128+ir*38, ie.getExtd(), g);
@@ -69,7 +69,7 @@ public void render(GameContainer gc, StateBasedGame sbg, Graphics g,
 			}
 		}
 		smax=i;
-	} catch (Exception e) { e.printStackTrace(); } ;
+	} catch (Exception e) { e.printStackTrace(); }
 }
 
 @Override

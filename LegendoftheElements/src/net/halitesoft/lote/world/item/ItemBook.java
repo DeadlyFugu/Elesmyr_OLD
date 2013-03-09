@@ -24,4 +24,7 @@ public boolean onUse(GameServer receiver, EntityPlayer player) {
 		MessageSystem.sendClient(null, receiver.getPlayerConnection(player), new Message("CLIENT.book", s), false);
 	return false;
 }
+
+@Override
+public String getName() { return "book."+extd; }
 }

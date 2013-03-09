@@ -9,6 +9,8 @@ public String getType() { return "Food"; }
 
 @Override
 public boolean onUse(GameServer receiver, EntityPlayer player) {
+	if (player.pdat.health==player.pdat.healthMax)
+		return false;
 	player.pdat.health+=Integer.parseInt(extd);
 	return true;
 }

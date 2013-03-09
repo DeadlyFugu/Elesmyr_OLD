@@ -114,7 +114,7 @@ public void hurt(Region region, Entity entity, MessageReceiver receiver) {
 		Item i=entity.getEquipped().getItem();
 		if (i instanceof ItemWeapon)
 			dmg=((ItemWeapon) i).getMult(entity.getEquipped().getExtd());
-		dmg*=i.getElement().multAgainst(this.getElement());
+		dmg*=i.getElement().multAgainst(this.getElement())*entity.getElement().multAgainst(this.getElement());
 	}
 	health-=dmg;
 	if (health<=0) {

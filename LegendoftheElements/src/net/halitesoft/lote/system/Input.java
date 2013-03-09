@@ -20,6 +20,19 @@ public static boolean isKeyPressed(GameContainer gc, String name) {
 	return false;
 }
 
+public static boolean isUpPressed(GameContainer gc) {
+	return gc.getInput().isKeyPressed(org.newdawn.slick.Input.KEY_UP);
+}
+public static boolean isDownPressed(GameContainer gc) {
+	return gc.getInput().isKeyPressed(org.newdawn.slick.Input.KEY_DOWN);
+}
+public static boolean isLeftPressed(GameContainer gc) {
+	return gc.getInput().isKeyPressed(org.newdawn.slick.Input.KEY_LEFT);
+}
+public static boolean isRightPressed(GameContainer gc) {
+	return gc.getInput().isKeyPressed(org.newdawn.slick.Input.KEY_RIGHT);
+}
+
 public static void setKey(String name, String value) {
 	Globals.set("IN_"+name, value);
 }

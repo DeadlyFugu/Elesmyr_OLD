@@ -41,6 +41,7 @@ menu.lang,Language
 menu.lang.desc,Change the language
 menu.controls,Controls...
 menu.controls.desc,Configure the controls
+menu.controls.waitkey,Press the key to bind
 
 error.close,Press <ENTER> to close.
 error.unknownhost.prefix,Unknown host "
@@ -102,3 +103,6 @@ item.IronSword,Iron Sword
 item.GoldSword,Gold Sword
 item.GlassSword,Glass Sword
 item.MagicWand,Magic Wand
+
+item.book.testing,Test Book
+item.book.loremipsum,Lorem Ipsum Book

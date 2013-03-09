@@ -253,15 +253,18 @@ private String getDescription(int sub, int sel) {
 					return "#menu.enterip.desc";
 				}
 			return "#$menu.join.lan.prefix|"+showList[sel]+"|$menu.join.lan.suffix";
+		} else if (sub==4) { //controls
+			if (waitingForKeyPress)
+					return "#menu.controls.waitkey";
 		}
 	}
 	return "NO DESC";
 }
 
 public void update(GameContainer gc, StateBasedGame sbg, int delta) throws SlickException {
-	org.newdawn.slick.Input input=gc.getInput();
+	//org.newdawn.slick.Input input=gc.getInput();
 	if (waitingForKeyPress) {
-		if (input.isKeyPressed(org.newdawn.slick.Input.KEY_RETURN)) {    //For some odd reason (bug?), InputListener doesn't receive return key presses
+		if (gc.getInput().isKeyPressed(org.newdawn.slick.Input.KEY_RETURN)) {    //For some odd reason (bug?), InputListener doesn't receive return key presses
 			inKey="KEY_"+org.newdawn.slick.Input.KEY_RETURN;            //So this here checks for them instead.
 			waitingForKeyPress=false;
 		}
@@ -276,22 +279,22 @@ public void update(GameContainer gc, StateBasedGame sbg, int delta) throws Slick
 		}
 		waitingForKeyPress=false;
 		inKey=null;
-		input.removeListener(getKeyListener);
-		input.clearKeyPressedRecord();
+		gc.getInput().removeListener(getKeyListener);
+		gc.getInput().clearKeyPressedRecord();
 		setControlText();
 	}
 
-	if (input.isKeyPressed(org.newdawn.slick.Input.KEY_DOWN)&&!showTextField) {
+	if (Input.isDownPressed(gc)&&!showTextField) {
 		if (selection<entryCount[subMenu]-1) {
 			selection++;
 		}
 	}
-	if (input.isKeyPressed(org.newdawn.slick.Input.KEY_UP)&&!showTextField) {
+	if (Input.isUpPressed(gc)&&!showTextField) {
 		if (selection>0) {
 			selection--;
 		}
 	}
-	if (input.isKeyPressed(org.newdawn.slick.Input.KEY_ESCAPE)) {
+	if (Input.isKeyPressed(gc,"pause")) {
 		if (showTextField) {
 			showTextField=false;
 			textField.setText("");
@@ -309,7 +312,7 @@ public void update(GameContainer gc, StateBasedGame sbg, int delta) throws Slick
 			gc.exit();
 		}
 	}
-	if (input.isKeyPressed(org.newdawn.slick.Input.KEY_ENTER)) {
+	if (Input.isKeyPressed(gc,"sel")) {
 		switch ((subMenu*100)+selection) {
 			case 000: { //Singleplayer
 				selection=0;
@@ -453,8 +456,8 @@ public void update(GameContainer gc, StateBasedGame sbg, int delta) throws Slick
 			case 404:
 			case 405:
 			case 406: { //"Input method: Keyboard/Mouse","Walk: Arrow keys","Interact: Z","Attack: X","Inventory: E","Select: Enter","Back/Pause: Esc","Back"
-				input.clearKeyPressedRecord();
-				input.addListener(getKeyListener);
+				gc.getInput().clearKeyPressedRecord();
+				gc.getInput().addListener(getKeyListener);
 				waitingForKeyPress=true;
 			} break;
 			case 407: {
@@ -550,6 +553,7 @@ public void update(GameContainer gc, StateBasedGame sbg, int delta) throws Slick
 						gc.getInput().clearKeyPressedRecord();
 						sbg.enterState(Main.GAMEPLAYSTATE);
 					} catch (Exception e) {
+						Log.error(e.getLocalizedMessage());
 						gc.getInput().clearKeyPressedRecord();
 						((ErrorState) sbg.getState(Main.ERRORSTATE)).errorText=
 								"#error.bindport";
@@ -579,11 +583,11 @@ public void update(GameContainer gc, StateBasedGame sbg, int delta) throws Slick
 private void setControlText() {
 	entryString[4]=new String[]{"Input method: Keyboard/Mouse",
 			                           "Walk: Arrow keys",
-			                           "Interact: "+resolveKeyName(Globals.get("IN_int", ""+org.newdawn.slick.Input.KEY_Z)),
-			                           "Attack: "+org.newdawn.slick.Input.getKeyName(Integer.parseInt(Globals.get("IN_atk", ""+org.newdawn.slick.Input.KEY_X).split("_")[1])),
-			                           "Inventory: "+org.newdawn.slick.Input.getKeyName(Integer.parseInt(Globals.get("IN_inv", ""+org.newdawn.slick.Input.KEY_E).split("_")[1])),
-			                           "Select: Enter",
-			                           "Back/Pause: Esc",
+			                           "Interact: "+resolveKeyName(Globals.get("IN_int", "KEY_"+org.newdawn.slick.Input.KEY_Z)),
+			                           "Attack: "+resolveKeyName(Globals.get("IN_atk", "KEY_"+org.newdawn.slick.Input.KEY_X)),
+			                           "Inventory: "+resolveKeyName(Globals.get("IN_inv", "KEY_"+org.newdawn.slick.Input.KEY_C)),
+			                           "Select: "+resolveKeyName(Globals.get("IN_sel", "KEY_"+org.newdawn.slick.Input.KEY_ENTER)),
+			                           "Back/Pause: "+resolveKeyName(Globals.get("IN_pause", "KEY_"+org.newdawn.slick.Input.KEY_ESCAPE)),
 			                           "#menu.back"};
 }
 

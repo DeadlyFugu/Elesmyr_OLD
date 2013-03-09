@@ -1,5 +1,6 @@
 package net.halitesoft.lote.ui;
 
+import net.halitesoft.lote.Element;
 import net.halitesoft.lote.msgsys.MessageReceiver;
 import net.halitesoft.lote.msgsys.MessageSystem;
 import net.halitesoft.lote.player.Camera;
@@ -9,10 +10,7 @@ import net.halitesoft.lote.system.Globals;
 import net.halitesoft.lote.system.Main;
 import net.halitesoft.lote.world.entity.Entity;
 import net.halitesoft.lote.world.entity.EntityPlayer;
-import org.newdawn.slick.GameContainer;
-import org.newdawn.slick.Graphics;
-import org.newdawn.slick.Image;
-import org.newdawn.slick.SlickException;
+import org.newdawn.slick.*;
 import org.newdawn.slick.state.StateBasedGame;
 
 import java.util.ArrayList;
@@ -22,6 +20,7 @@ private Image bart;
 private Image barb;
 private Image bars;
 private Image equip;
+private SpriteSheet elements;
 private int updtimer=10;
 private ArrayList<EntityPlayer> nearplayers;
 
@@ -44,6 +43,7 @@ public void init(GameContainer gc, StateBasedGame sbg,
 	barb=new Image("data/ui/bar_b.png", false, 0);
 	bars=new Image("data/ui/bars.png", false, 0);
 	equip=new Image("data/ui/equip.png", false, 0);
+	elements = new SpriteSheet(new Image("data/ui/elements.png",false,0),16,16);
 }
 
 @Override
@@ -61,11 +61,16 @@ public void render(GameContainer gc, StateBasedGame sbg, Graphics g,
 			equip.draw(dx, dy);
 			if (ep.pdat.getEquipped()!=null)
 				ep.pdat.getEquipped().getItem().spr.draw(dx+16, dy+16);
-			FontRenderer.drawString(dx+13, dy+6, ep.getName(), g);
+			FontRenderer.drawString(dx+60, dy+6, ep.getName(), g);
 			bars.startUse();
 			bars.drawEmbedded(dx+57, dy+25, dx+57+104, dy+34, 0, 75, 104, 84);
-			if (ep.pdat!=null)
-				bars.drawEmbedded(dx+57, dy+25, dx+57+(ep.pdat.health/60f)*104, dy+34, 0, 48, (ep.pdat.health/60f)*104, 57);
+			bars.drawEmbedded(dx+57, dy+35, dx+57+104, dy+44, 0, 75, 104, 84);
+			bars.drawEmbedded(dx+57, dy+45, dx+57+104, dy+54, 0, 75, 104, 84);
+			if (ep.pdat!=null) {
+				bars.drawEmbedded(dx+57, dy+25, dx+57+((float) ep.pdat.health/ep.pdat.healthMax)*104, dy+34, 0, 48, ((float) ep.pdat.health/ep.pdat.healthMax)*104, 57);
+				bars.drawEmbedded(dx+57, dy+35, dx+57+((float) ep.pdat.magicka/ep.pdat.magickaMax)*104, dy+44, 0, 57, ((float) ep.pdat.magicka/ep.pdat.magickaMax)*104, 65);
+				bars.drawEmbedded(dx+57, dy+45, dx+57+((float) ep.pdat.stamina/ep.pdat.staminaMax)*104, dy+54, 0, 65, ((float) ep.pdat.stamina/ep.pdat.staminaMax)*104, 74);
+			}
 			bars.endUse();
 			i++;
 		}
@@ -77,13 +82,32 @@ public void render(GameContainer gc, StateBasedGame sbg, Graphics g,
 		if (ep.pdat.getEquipped()!=null)
 			ep.pdat.getEquipped().getItem().spr.draw(dx+16, dy+16);
 		FontRenderer.drawString(dx+62, dy+25, ep.getName(), g);
+		drawElement(dx+64, dy+45, ep.getElement());
+		//FontRenderer.drawString(dx+62, dy+45, "("+ep.getElement().toString()+")", g);
 		int bdx=Main.INTERNAL_RESX-112;
 		bars.startUse();
-		bars.drawEmbedded(bdx, dy+13, bdx+104, dy+25, 0, 75, 104, 84);
-		bars.drawEmbedded(bdx, dy+13, bdx+(ep.pdat.health/60f)*104, dy+25, 0, 0, (ep.pdat.health/60f)*104, 12);
+		//bars.drawEmbedded(bdx, dy+13, bdx+104, dy+25, 0, 75, 104, 84);
+		bars.drawEmbedded(bdx, dy+13, bdx+104, dy+25, 0, 36, 104, 48);
+		bars.drawEmbedded(bdx, dy+26, bdx+104, dy+38, 0, 36, 104, 48);
+		bars.drawEmbedded(bdx, dy+39, bdx+104, dy+51, 0, 36, 104, 48);
+		bars.drawEmbedded(bdx, dy+13, bdx+((float) ep.pdat.health/ep.pdat.healthMax)*104, dy+25, 0, 0, ((float) ep.pdat.health/ep.pdat.healthMax)*104, 12);
+		bars.drawEmbedded(bdx, dy+26, bdx+((float) ep.pdat.magicka/ep.pdat.magickaMax)*104, dy+38, 0, 12, ((float) ep.pdat.magicka/ep.pdat.magickaMax)*104, 24);
+		bars.drawEmbedded(bdx, dy+39, bdx+((float) ep.pdat.stamina/ep.pdat.staminaMax)*104, dy+51, 0, 24, ((float) ep.pdat.stamina/ep.pdat.staminaMax)*104, 36);
+		//bars.drawEmbedded(bdx, dy+13, bdx+(ep.pdat.health/60f)*104, dy+25, 0, 0, (ep.pdat.health/60f)*104, 12);
 		bars.endUse();
 	}
 	//playerInfo.draw(Main.INTERNAL_RESX*0.5f-80,Main.INTERNAL_RESY-64);
+}
+
+private void drawElement(int x, int y, Element element) {
+	switch (element) {
+		case FIRE: elements.getSprite(0,0).draw(x,y); break;
+		case WATER: elements.getSprite(1,0).draw(x,y); break;
+		case EARTH: elements.getSprite(2,0).draw(x,y); break;
+		case AIR: elements.getSprite(3,0).draw(x,y); break;
+		case NEUTRAL: elements.getSprite(0,1).draw(x,y); break;
+		case VOID: elements.getSprite(1,1).draw(x,y); break;
+	}
 }
 
 private static String getTopString() {

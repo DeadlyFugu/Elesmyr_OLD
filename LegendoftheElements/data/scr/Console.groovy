@@ -15,6 +15,7 @@ public class Console {
 			"debug [on/off]: Enable/disable debug (Toggles if passed no args).\n"+
 			"listconf: List all settings and current value.\n"+
 			"health <value>: Sets the health of the player.\n"+
+            "affinity <element>: Sets the elemental affinity of the player.\n"+
 			"weather [type] [strength] [dist]: Changes the weather.\n"+
 			"help: Prints this text."
 	public void call(String cmd, GameClient gc) {
@@ -31,6 +32,7 @@ public class Console {
 		case "debug": Globals.set("debug",parseDebugBool(args)); break;
 		case "listconf": echo(Globals.getString()); break;
 		case "health": sendMsg(getPlayerRName(gc)+".setHealth",args); break;
+        case "affinity": sendMsg(getPlayerRName(gc)+".setAffinity",args); break;
 		case "setires": Main.INTERNAL_RESY = Integer.parseInt(args); Main.INTERNAL_RESX = (int) (Main.INTERNAL_RESY*Main.INTERNAL_ASPECT); break;
 		case "weather": setWeather(args,gc); break;
 		case "help": echo(helpString); break;

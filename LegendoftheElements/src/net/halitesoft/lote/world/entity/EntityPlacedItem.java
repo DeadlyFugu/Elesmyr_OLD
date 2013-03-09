@@ -18,7 +18,7 @@ import org.newdawn.slick.Image;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.state.StateBasedGame;
 
-public class EntityItem extends Entity {
+public class EntityPlacedItem extends Entity {
 Image spr;
 Item item;
 int destTimer=-1;

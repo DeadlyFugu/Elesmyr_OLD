@@ -2,12 +2,12 @@ package net.halitesoft.lote;
 
 public enum Element {
 	//		Neu	Ear	Wat	Fir	Air	Void
-	NEUTRAL(1, 1, 1, 1, 1, 0.25f),
-	EARTH(1, 1, .5f, 2, 1, 0.25f),
-	WATER(1, 2, 1, 1, .5f, 0.25f),
-	FIRE(1, .5f, 1, 1, 2, 0.25f),
-	AIR(1, 1, 2, .5f, 1, 0.25f),
-	VOID(4, 4, 4, 4, 4, 1);            //...-AIR-FIRE-EARTH-WATER-AIR-...
+	NEUTRAL(1, 1, 1, 1, 1, 0.5f),
+	EARTH(1, 1, 2, .5f, 1, 0.5f),
+	WATER(1, .5f, 1, 1, 2, 0.5f),
+	FIRE(1, 2, 1, 1, .5f, 0.5f),
+	AIR(1, 1, .5f, 2, 1, 0.5f),
+	VOID(2, 2, 2, 2, 2, 1);            //...-AIR-FIRE-EARTH-WATER-AIR-...
 
 private float[] multTable;
 
