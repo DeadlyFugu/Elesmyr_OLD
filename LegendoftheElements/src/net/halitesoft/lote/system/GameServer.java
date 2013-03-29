@@ -18,6 +18,7 @@ import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.state.StateBasedGame;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -56,7 +57,10 @@ GameServer(Save save, String hostUName) {
 	players=new ConcurrentHashMap<Connection, String>();
 	playerEnt=new ConcurrentHashMap<String, String>();
 	playerDat=new ConcurrentHashMap<String, PlayerData>();
-	pass=HashmapLoader.readHashmap("pass");
+	if (new File("pass").exists())
+		pass=HashmapLoader.readHashmap("pass");
+	else
+		pass=new HashMap<String, String>();
 	this.hostUName=hostUName;
 	rlStartTime=System.currentTimeMillis();
 }

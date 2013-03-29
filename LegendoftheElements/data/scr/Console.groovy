@@ -11,6 +11,7 @@ public class Console {
 			"echo: Prints the arguments to the chat.\n"+
 			"time [time]: Sets the time (Prints it if passed no args).\n"+
 			"item <name> [amount]: Give the player an item.\n"+
+            "spawn <name> [count] [extd]: Spawns an entity where the player is.\n"+
 			"set <key>=<value>: Change a setting.\n"+
             "get <key>: Retrieve a setting.\n"+
 			"debug [on/off]: Enable/disable debug (Toggles if passed no args).\n"+
@@ -29,6 +30,7 @@ public class Console {
 		case "time": setTime(args,gc); break;
         case "td": echo(new DateTime(gc.date,(int) gc.time).asDetailedString()); break;
 		case "item": giveItem(args,gc); break;
+        case "spawn": spawnEnt(args,gc); break;
 		case "set": Globals.set(args.split("=",2)[0],args.split("=",2)[1]); Globals.save(); break;
         case "get": echo(Globals.retrieve(args)); break;
 		case "debug": Globals.set("debug",parseDebugBool(args)); break;
@@ -42,7 +44,22 @@ public class Console {
 		}
 	}
 
-	private String getPlayerRName(GameClient gc) { return gc.player.regionName+"."+gc.player.entid; }
+    private void spawnEnt(String args, GameClient gc) {
+        String[] parts = args.split(" ");
+        String name = parts[0];
+        int count = 1;
+        String extd = "";
+        if (parts.length>1)
+            count=Integer.valueOf(parts[1])
+        if (parts.length>2)
+            extd=Integer.valueOf(parts[2])
+        while (count>0) {
+            sendMsg(gc.player.regionName+".addEntSERV",name+","+gc.player.x+","+gc.player.y+","+extd);
+            count--;
+        }
+    }
+
+    private String getPlayerRName(GameClient gc) { return gc.player.regionName+"."+gc.player.entid; }
 
 	private String parseDebugBool(String args) {
 		if (args=="")

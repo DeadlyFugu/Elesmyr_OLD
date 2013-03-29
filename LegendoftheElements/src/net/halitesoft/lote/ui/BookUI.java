@@ -57,7 +57,7 @@ public void render(GameContainer gc, StateBasedGame sbg, Graphics g, Camera cam,
 private void drawPage(int x, String s, Graphics g) {
 	int i=0;
 	for (String ln : s.split("\n")) {
-		FontRenderer.drawString(x, 74+i*14, ln, g);
+		FontRenderer.drawStringBook(x, 74+i*14, ln, g);
 		i++;
 	}
 }

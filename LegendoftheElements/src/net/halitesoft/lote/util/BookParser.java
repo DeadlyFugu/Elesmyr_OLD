@@ -1,5 +1,9 @@
 package net.halitesoft.lote.util;
 
+import org.newdawn.slick.SlickException;
+import org.newdawn.slick.UnicodeFont;
+import org.newdawn.slick.font.effects.ColorEffect;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -11,6 +15,19 @@ import java.util.ArrayList;
  * Templates.
  */
 public class BookParser {
+
+private static UnicodeFont bookfont;
+
+static {
+	try {
+	bookfont=new UnicodeFont("data/ui/book.ttf", 32, false, false);
+	bookfont.addAsciiGlyphs();
+	bookfont.getEffects().add(new ColorEffect(java.awt.Color.BLACK));
+	bookfont.loadGlyphs();
+	} catch (SlickException e) {
+		e.printStackTrace();
+	}
+}
 public static ArrayList<String> parseBook(String extd) {
 	ArrayList<String> pages=new ArrayList<String>();
 	String page="";
@@ -35,15 +52,25 @@ public static ArrayList<String> parseBook(String extd) {
 	}
 	String pageout="";
 	String ln="";
+	boolean justified=false;
+	boolean globalj=false;
+	boolean firstLine=true;
 	for (String w : page.split(" ")) {
 		if (w.startsWith("[")) {
 			if (w.equals("[E")) {
+				if ((globalj && !(ln.contains("[C") || ln.contains("[R"))) && firstLine) {
+					pageout+="[tab ";
+				}
 				pageout+=ln+"\n";
 				ln="";
+				justified=false;
+				firstLine=true;
 				if (pageout.split("\n").length==23) {
 					pages.add(pageout);
 					pageout="";
 				}
+			} else if (w.equals("[NOVEL")) {
+				globalj=true;
 			} else {
 				ln+=w+" ";
 			}
@@ -52,11 +79,21 @@ public static ArrayList<String> parseBook(String extd) {
 			pages.add(pageout);
 			ln="";
 			pageout="";
+			justified=false;
+			firstLine=true;
 		} else {
 			String ln2=ln+w+" ";
-			if (ln2.replaceAll("\\[[A-Za-z0-9]+", "").length()>30) {
+			if (bookfont.getWidth(ln2.replaceAll("\\[[A-Za-z0-9] ", ""))>(globalj?480-48:480)) {
+				if ((globalj && !(ln.contains("[C") || ln.contains("[R"))) || justified)
+					pageout+="[J ";
+				if ((globalj && !(ln.contains("[C") || ln.contains("[R"))) && firstLine) {
+					pageout+="[tab ";
+				}
+				if (ln.contains("[J "))
+					justified=true;
 				pageout+=ln+"\n";
 				ln=w+" ";
+				firstLine=false;
 				if (pageout.split("\n").length==23) {
 					pages.add(pageout);
 					pageout="";

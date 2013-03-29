@@ -4,6 +4,7 @@ import net.halitesoft.lote.util.HashmapLoader;
 import org.newdawn.slick.*;
 import org.newdawn.slick.font.effects.ColorEffect;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
@@ -14,6 +15,7 @@ public class FontRenderer {
 
 private static SpriteSheetFont bpfont;
 private static UnicodeFont jpfont=null;
+private static UnicodeFont bookfont=null;
 private static Language lang=Language.EN_US;
 private static Language newlang=lang;
 
@@ -55,6 +57,10 @@ public static Language getLang() {
 public static void initialise(GameContainer gc) throws SlickException {
 	bpfont=new SpriteSheetFont(new SpriteSheet(new org.newdawn.slick.Image("data/font.png", false, 0), 9, 16), ' ');
 	i18n_backup=HashmapLoader.readHashmap("data/lang/EN_US");
+	bookfont=new UnicodeFont("data/ui/book.ttf", 32, false, false);
+	bookfont.addAsciiGlyphs();
+	bookfont.getEffects().add(new ColorEffect(java.awt.Color.BLACK));
+	bookfont.loadGlyphs();
 	reset(gc);
 }
 
@@ -108,6 +114,64 @@ public static void drawString(int x, int y, String str, Color col, Graphics g) {
 		default:
 			bpfont.drawString(x, y, str, col); break;
 	}
+}
+
+public static void drawStringBook(int x, int y, String str, Graphics g) {
+	String parts[] = str.split(" ");
+	ArrayList<String> toRender = new ArrayList<String>();
+	boolean bold = false;
+	byte alignment = 0; //0=left, 1=center, 2=right
+	boolean justify=false;
+	for (String s : parts) {
+		if (s.startsWith("[") && s.length()==2) {
+			if (s.equals("[B"))
+				bold=true;
+			else if (s.equals("[C"))
+				alignment=1;
+			else if (s.equals("[R"))
+				alignment=2;
+			else if (s.equals("[J"))
+				justify=true;
+			else
+				toRender.add(s);
+		} else {
+			toRender.add(s);
+		}
+	}
+	g.pushTransform();
+	g.scale(0.5f, 0.5f);
+	int spacing=6;
+	if (justify) {
+		int addSpace=0;
+		String out = "";
+		for (String s : toRender) {
+			if (s.equals("[tab"))
+				addSpace+=24;
+			else
+				out+=s;
+		}
+		spacing=(472-(bookfont.getWidth(out)+addSpace))/(Math.max(1,toRender.size()-1))/2;
+	}
+	int xdsofar = 0;
+	if (alignment!=0) {
+		String out = "";
+		for (String s : toRender) {
+			out+=s;
+		}
+		xdsofar=(472-bookfont.getWidth(out))/2;
+		if (alignment==1) {
+			xdsofar/=2;
+		}
+	}
+	for (String s : toRender) {
+		if (s.equals("[tab"))
+			xdsofar+=24;
+		else {
+		bookfont.drawString((x+xdsofar)*2, y*2, s);
+		xdsofar+=bookfont.getWidth(s)/2+spacing;
+		}
+	}
+	g.popTransform();
 }
 
 public static String resolveI18n(String key) {
