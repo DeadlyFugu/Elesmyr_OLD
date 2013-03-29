@@ -1,10 +1,10 @@
-import net.halitesoft.lote.DateTime
-import net.halitesoft.lote.msgsys.Message
-import net.halitesoft.lote.msgsys.MessageSystem
-import net.halitesoft.lote.system.GameClient
-import net.halitesoft.lote.system.Globals
-import net.halitesoft.lote.system.Main
-import net.halitesoft.lote.world.WeatherSystem.WeatherType
+import net.halite.lote.DateTime
+import net.halite.lote.msgsys.Message
+import net.halite.lote.msgsys.MessageSystem
+import net.halite.lote.system.GameClient
+import net.halite.lote.system.Globals
+import net.halite.lote.system.Main
+import net.halite.lote.world.WeatherSystem.WeatherType
 
 public class Console {
 	private static final helpString = "Commands:\n"+
