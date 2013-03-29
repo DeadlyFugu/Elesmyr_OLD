@@ -143,7 +143,7 @@ public void receiveMessage(Message msg, MessageReceiver receiver) {
 			EntityPlayer ep=((GameServer) receiver).getPlayerEnt(msg.getConnection());
 			PlayerData.InventoryEntry ie=ep.pdat.getEquipped();
 			if (ie!=null)
-				if (ie.getItem().onUse((GameServer) receiver, ep))
+				if (ie.getItem().onUse((GameServer) receiver, ep, ie))
 					ep.pdat.removeItem(ep.pdat.inventory.indexOf(ie), ep.region, ep.getReceiverName());
 			for (Entity e : getEntitiesAt(Integer.parseInt(msg.getData().split(",", 2)[0]), Integer.parseInt(msg.getData().split(",", 2)[1]))) {
 				if (e!=ep||(Globals.get("debug", false)&&Globals.get("selfHit", true)))

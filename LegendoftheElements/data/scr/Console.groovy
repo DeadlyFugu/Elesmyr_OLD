@@ -1,3 +1,4 @@
+import net.halitesoft.lote.DateTime
 import net.halitesoft.lote.msgsys.Message
 import net.halitesoft.lote.msgsys.MessageSystem
 import net.halitesoft.lote.system.GameClient
@@ -26,6 +27,7 @@ public class Console {
 		switch (func) {
 		case "echo": echo(args); break;
 		case "time": setTime(args,gc); break;
+        case "td": echo(new DateTime(gc.date,(int) gc.time).asDetailedString()); break;
 		case "item": giveItem(args,gc); break;
 		case "set": Globals.set(args.split("=",2)[0],args.split("=",2)[1]); Globals.save(); break;
         case "get": echo(Globals.retrieve(args)); break;

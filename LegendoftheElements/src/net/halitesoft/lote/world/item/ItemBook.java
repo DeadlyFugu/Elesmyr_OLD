@@ -2,6 +2,7 @@ package net.halitesoft.lote.world.item;
 
 import net.halitesoft.lote.msgsys.Message;
 import net.halitesoft.lote.msgsys.MessageSystem;
+import net.halitesoft.lote.player.PlayerData;
 import net.halitesoft.lote.system.GameServer;
 import net.halitesoft.lote.util.BookParser;
 import net.halitesoft.lote.world.entity.EntityPlayer;
@@ -18,7 +19,7 @@ public class ItemBook extends Item {
 public String getType() { return "Books"; }
 
 @Override
-public boolean onUse(GameServer receiver, EntityPlayer player) {
+public boolean onUse(GameServer receiver, EntityPlayer player, PlayerData.InventoryEntry entry) {
 	ArrayList<String> pages=BookParser.parseBook(extd);
 	for (String s : pages)
 		MessageSystem.sendClient(null, receiver.getPlayerConnection(player), new Message("CLIENT.book", s), false);
@@ -26,5 +27,5 @@ public boolean onUse(GameServer receiver, EntityPlayer player) {
 }
 
 @Override
-public String getName() { return "book."+extd; }
+public String getName(PlayerData.InventoryEntry entry) { return "book."+extd; }
 }

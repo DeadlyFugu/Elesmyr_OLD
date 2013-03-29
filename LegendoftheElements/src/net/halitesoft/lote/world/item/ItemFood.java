@@ -1,5 +1,6 @@
 package net.halitesoft.lote.world.item;
 
+import net.halitesoft.lote.player.PlayerData;
 import net.halitesoft.lote.system.GameServer;
 import net.halitesoft.lote.world.entity.EntityPlayer;
 
@@ -8,7 +9,7 @@ public class ItemFood extends Item {
 public String getType() { return "Food"; }
 
 @Override
-public boolean onUse(GameServer receiver, EntityPlayer player) {
+public boolean onUse(GameServer receiver, EntityPlayer player, PlayerData.InventoryEntry entry) {
 	if (player.pdat.health==player.pdat.healthMax)
 		return false;
 	player.pdat.health+=Integer.parseInt(extd);

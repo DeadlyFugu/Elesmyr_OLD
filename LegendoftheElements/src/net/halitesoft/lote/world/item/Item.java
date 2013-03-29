@@ -1,6 +1,7 @@
 package net.halitesoft.lote.world.item;
 
 import net.halitesoft.lote.Element;
+import net.halitesoft.lote.player.PlayerData;
 import net.halitesoft.lote.system.GameServer;
 import net.halitesoft.lote.world.entity.EntityPlayer;
 import org.newdawn.slick.Image;
@@ -33,7 +34,7 @@ public boolean canEquip() {
 	return false;
 }
 
-public boolean onUse(GameServer reciever, EntityPlayer player) {
+public boolean onUse(GameServer reciever, EntityPlayer player, PlayerData.InventoryEntry entry) {
 	return false;
 }
 
@@ -44,11 +45,15 @@ public Item toItem() {
 
 public Element getElement() { return Element.NEUTRAL; }
 
-public String getName() {
+public String getName(PlayerData.InventoryEntry entry) {
 	return name;
 }
 
 public boolean stickyDrops() {
 	return false;
+}
+
+public boolean stackable() {
+	return true;
 }
 }

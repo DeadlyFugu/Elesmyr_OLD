@@ -71,8 +71,9 @@ private World world;
 public Camera cam;
 public LightMap lm;
 
-private float time=-20; //in-game time in minutes
+public float time=-20; //in-game time in minutes
 private float servtime=-20; //time according to server
+public int date; //in-game date
 
 private LinkedList<ChatMessage> chat;
 private TextField textField;
@@ -367,7 +368,8 @@ public boolean receiveMessage(Message msg) {
 			error=msg.getData();
 		} else if (name.equals("time")) {
 			float oltime=servtime;
-			servtime=Float.parseFloat(msg.getData());
+			servtime=Float.parseFloat(msg.getData().split(":",2)[0]);
+			date=Integer.parseInt(msg.getData().split(":",2)[1]);
 			if (servtime>oltime+10||servtime<oltime-10) {
 				Log.info("Time skip");
 				lm.skipFade(servtime/60f, player.region);

@@ -34,10 +34,11 @@ private HashMap<String, String> pass;
 
 private int timeCheck=20;
 
+private int date;
 private float time; //In-game minutes
 private long rlStartTime;
 private int igStartTime;
-private int timescale=50; //Default = 20
+private static final int timescale=50; //Default = 50
 
 private String hostUName="";
 
@@ -64,6 +65,7 @@ public void load() {
 	world=new World();
 	world.load(save);
 	igStartTime=Integer.valueOf(save.get("gen.time"));
+	date=Integer.valueOf(save.get("gen.date"));
 	for (Entry<String, String> e : save.getEntries())
 		if (e.getKey().startsWith("pdat.")) {
 			PlayerData pdat=new PlayerData(e.getKey().substring(5), null);
@@ -77,6 +79,7 @@ public void save() {
 	HashmapLoader.writeHashmap("pass", pass);
 	world.save(save);
 	save.put("gen.time", String.valueOf((int) time));
+	save.put("gen.date", String.valueOf((int) date));
 	for (Entry<String, PlayerData> e : playerDat.entrySet())
 		save.put("pdat."+e.getKey(), e.getValue().toString());
 	save.write(); //Write to disk
@@ -90,12 +93,20 @@ public void gameUpdate() {
 		rlStartTime=System.currentTimeMillis();
 		time=time-1440;
 		igStartTime=0;
+		date++;
 	}
 
 	MessageSystem.receiveMessageServer();
 
 	//World
 	world.update(null, this);
+
+	for (Entry<String,PlayerData> entry : playerDat.entrySet()) {
+		if (entry.getValue().reqUpdate()) {
+			String pEnt = playerEnt.get(entry.getKey());
+			entry.getValue().updated(world.getRegion(pEnt.split("\\.")[0]),pEnt);
+		}
+	}
 
 	//Check stuff
 	if (timeCheck==0) {
@@ -117,7 +128,7 @@ public void gameUpdate() {
 			}
 
 			//Send time packet
-			MessageSystem.sendClient(null, c, new Message("CLIENT.time", String.valueOf(time)), true);
+			MessageSystem.sendClient(null, c, new Message("CLIENT.time", String.valueOf(time)+":"+String.valueOf(date)), true);
 		}
 	} else {
 		timeCheck--;
@@ -247,7 +258,7 @@ public void changePlayerRegion(String data, int x, int y, Connection connection,
 	playerEnt.put(players.get(connection), data+"."+entid); //Put the entities name into playerEnt
 	MessageSystem.sendClient(null, connection, new Message("PLAYER.setID", ""+entid), false); //Send a message to the client notifying it of its entity's ID.
 	MessageSystem.sendClient(null, connection, new Message("PLAYER.setPDAT", pdat.toString()), false); //Send client PDAT
-	MessageSystem.sendClient(null, connection, new Message("CLIENT.time", String.valueOf(time)), false); //Send the client the time
+	MessageSystem.sendClient(null, connection, new Message("CLIENT.time", String.valueOf(time)+":"+String.valueOf(date)), false); //Send the client the time
 	for (Entity e : world.getRegion(data).entities.values()) {
 		if (e instanceof EntityPlayer)
 			((EntityPlayer) e).pdat.updated(world.getRegion(data), e.getReceiverName());

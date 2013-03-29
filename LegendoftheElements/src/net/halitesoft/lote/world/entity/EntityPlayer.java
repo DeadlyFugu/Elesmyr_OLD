@@ -144,7 +144,7 @@ public void receiveMessageExt(Message msg, MessageReceiver server) {
 	} else if (msg.getName().equals("use")) {
 		PlayerData.InventoryEntry ie=pdat.inventory.get(Integer.parseInt(msg.getData()));
 		if (ie!=null)
-			if (ie.getItem().onUse((GameServer) server, this))
+			if (ie.getItem().onUse((GameServer) server, this, ie))
 				pdat.removeItem(Integer.parseInt(msg.getData()), region, receiverName);
 	} else if (msg.getName().equals("drop")) {
 		PlayerData.InventoryEntry ie=pdat.inventory.get(Integer.parseInt(msg.getData()));

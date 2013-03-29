@@ -42,6 +42,8 @@ public class InventoryEntry {
 
 	public String getExtd() {return extd;}
 
+	public void setExtd(String extd) {this.extd=extd;}
+
 	@Override
 	public boolean equals(Object other) {
 		if (other==null)
@@ -61,6 +63,15 @@ public int magickaMax = 60;
 public int staminaMax = 60;
 public Element affinity = Element.NEUTRAL;
 private InventoryEntry equipped;
+private boolean updated = false;
+
+public void markUpdate() {
+	updated=true;
+}
+
+public boolean reqUpdate() {
+	return updated;
+}
 
 public PlayerData(String name, Connection connection) {
 	this.name=name;
@@ -120,7 +131,7 @@ public void fromString(String str) {
 public boolean put(Item item, String extd, Region r, String ent) {
 	try {
 		InventoryEntry ieo=new InventoryEntry(item, extd, 1);
-		if (inventory.contains(ieo))
+		if (item.stackable() && inventory.contains(ieo))
 			inventory.get(inventory.indexOf(ieo)).upCount();
 		else
 			inventory.add(new InventoryEntry(item, extd, 1));

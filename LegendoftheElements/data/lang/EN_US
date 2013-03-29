@@ -103,6 +103,9 @@ item.IronSword,Iron Sword
 item.GoldSword,Gold Sword
 item.GlassSword,Glass Sword
 item.MagicWand,Magic Wand
+item.Torch,Torch
+item.FishingRod,Fishing Rod
+item.FishingRod.cast,Cast
 
 item.book.testing,Test Book
 item.book.loremipsum,Lorem Ipsum Book

@@ -9,6 +9,9 @@ import org.newdawn.slick.SlickException;
 import org.newdawn.slick.state.StateBasedGame;
 import org.newdawn.slick.util.LogSystem;
 
+import java.io.File;
+import java.util.HashMap;
+
 /**
  * Godai no Densetsu/Legend of the Elements/LotE Main class
  *
@@ -52,7 +55,10 @@ public static void main(String[] args) throws SlickException {
 
 	org.newdawn.slick.util.Log.setLogSystem(new SlickToMinLogSystem());
 
-	Globals.setMap(HashmapLoader.readHashmap("conf"));
+	if (new File("conf").exists())
+		Globals.setMap(HashmapLoader.readHashmap("conf"));
+	else
+		Globals.setMap(new HashMap<String,String>());
 
 	ScriptRunner.init();
 
