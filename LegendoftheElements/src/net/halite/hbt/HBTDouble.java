@@ -16,7 +16,7 @@ public class HBTDouble extends HBTTag {
 
     @Override
     public String toString() {
-        return "Double "+getName()+": "+data;
+        return "double "+getName()+" = "+data;
     }
 
     public double getData() {

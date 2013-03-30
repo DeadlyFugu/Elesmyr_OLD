@@ -1,7 +1,10 @@
 package net.halite.lote.system;
 
 import com.esotericsoftware.minlog.Log;
+import net.halite.hbt.HBTOutputStream;
+import net.halite.hbt.HBTTag;
 import net.halite.lote.ScriptRunner;
+import net.halite.lote.util.FileHandler;
 import net.halite.lote.util.HashmapLoader;
 import org.newdawn.slick.AppGameContainer;
 import org.newdawn.slick.GameContainer;
@@ -10,6 +13,8 @@ import org.newdawn.slick.state.StateBasedGame;
 import org.newdawn.slick.util.LogSystem;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.HashMap;
 
 /**
@@ -61,6 +66,17 @@ public static void main(String[] args) throws SlickException {
 		Globals.setMap(new HashMap<String,String>());
 
 	ScriptRunner.init();
+
+	try {
+		HBTOutputStream os = new HBTOutputStream(new FileOutputStream("save/TestOut.hbtc"),true);
+	for (HBTTag tag : FileHandler.readHBT("save/TestOut")) {
+		System.out.println(tag);
+		os.write(tag);
+	}
+		os.close();
+	} catch (IOException e) {
+		e.printStackTrace();
+	}
 
 	AppGameContainer app=new AppGameContainer(new Main());
 

@@ -24,18 +24,12 @@ public class HBTInputStream implements Closeable {
             this.is=new DataInputStream(is);
     }
 
-    public HBTCompound read() throws IOException {
-        HBTCompound root;
-        int header = is.readInt();
+    public HBTTag read() throws IOException {
+        /*int header = is.readInt();
         if (header!=HBTOutputStream.MAGIC_HEADER) {
             throw new IOException("Bad magic header "+Integer.toHexString(header)+", "+Integer.toHexString(HBTOutputStream.MAGIC_HEADER)+" expected");
-        }
-        try {
-            root=(HBTCompound) readTag();
-        } catch (EOFException e) {
-            throw new IOException("Premature EOF");
-        }
-        return root;
+        }*/
+        return readTag();
     }
 
     private HBTTag readTag() throws IOException {
@@ -52,6 +46,8 @@ public class HBTInputStream implements Closeable {
             case 7: return readByteArray(name);
             case 8: return new HBTString(name,is.readUTF());
             case 10: return readCompound(name);
+	        case 11: return new HBTComment(name);
+	        case 12: return new HBTFlag(name,is.readByte());
             default: throw new IOException("Unrecognised type "+Integer.toHexString(type));
         }
     }

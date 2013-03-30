@@ -16,7 +16,7 @@ public class HBTInt extends HBTTag {
 
     @Override
     public String toString() {
-        return "Int "+getName()+": "+data;
+        return "int "+getName()+" = "+data;
     }
 
     public int getData() {

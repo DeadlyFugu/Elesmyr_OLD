@@ -16,7 +16,7 @@ public class HBTLong extends HBTTag {
 
     @Override
     public String toString() {
-        return "Long "+getName()+": "+data;
+        return "long "+getName()+" = "+data;
     }
 
     public long getData() {

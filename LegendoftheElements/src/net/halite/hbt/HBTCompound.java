@@ -52,10 +52,11 @@ public class HBTCompound extends HBTTag implements Iterable<HBTTag> {
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
-        builder.append("Compound "+getName() + ":");
+        builder.append(getName() + " {");
         for(HBTTag tag : this) {
             builder.append("\n    " + tag.toString().replaceAll("\n", "\n    "));
         }
+	    builder.append("\n}");
         return builder.toString();
     }
 

@@ -16,7 +16,7 @@ public class HBTByte extends HBTTag {
 
     @Override
     public String toString() {
-        return "Byte "+getName()+": "+String.format("0x%02X", data) ;
+        return "byte "+getName()+" = "+String.format("0x%02X", data) ;
     }
 
     public byte getData() {

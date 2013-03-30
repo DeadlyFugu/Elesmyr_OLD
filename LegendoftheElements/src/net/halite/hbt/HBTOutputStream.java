@@ -1,7 +1,9 @@
 package net.halite.hbt;
 
-import java.io.*;
-import java.util.zip.GZIPInputStream;
+import java.io.Closeable;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.zip.GZIPOutputStream;
 
 /**
@@ -26,9 +28,9 @@ public class HBTOutputStream implements Closeable {
             this.os=new DataOutputStream(os);
     }
 
-    public void write(HBTCompound root) throws IOException {
-        os.writeInt(MAGIC_HEADER);
-        writeCompound(root);
+    public void write(HBTTag root) throws IOException {
+        //os.writeInt(MAGIC_HEADER);
+        writeTag(root);
     }
 
     private void writeTag(HBTTag tag) throws IOException {
@@ -68,6 +70,13 @@ public class HBTOutputStream implements Closeable {
             os.writeUTF(((HBTString) tag).getData());
         } else if (type==HBTCompound.class) {
             writeCompound((HBTCompound) tag);
+        } else if (type==HBTComment.class) {
+	        os.writeByte(11);
+	        os.writeUTF(tag.getName());
+        } else if (type==HBTFlag.class) {
+	        os.writeByte(12);
+	        os.writeUTF(tag.getName());
+	        os.writeByte(((HBTFlag) tag).getData());
         } else {
             throw new IOException("Unrecognised type "+type);
         }

@@ -16,7 +16,7 @@ public class HBTShort extends HBTTag {
 
     @Override
     public String toString() {
-        return "Short "+getName()+": "+data;
+        return "short "+getName()+" = "+data;
     }
 
     public short getData() {

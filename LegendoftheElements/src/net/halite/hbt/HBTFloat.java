@@ -16,7 +16,7 @@ public class HBTFloat extends HBTTag {
 
     @Override
     public String toString() {
-        return "Float "+getName()+": "+data;
+        return "float "+getName()+" = "+data;
     }
 
     public float getData() {

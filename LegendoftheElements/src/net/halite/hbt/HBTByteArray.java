@@ -17,7 +17,7 @@ public class HBTByteArray extends HBTTag {
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
-        builder.append("ByteArray "+getName() + ": ");
+        builder.append("data "+getName() + " = ");
         for(int i=0; i<data.length; i++) {
             builder.append(String.format("%02X", data[i]));
         }
