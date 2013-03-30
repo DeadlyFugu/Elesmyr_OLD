@@ -33,7 +33,12 @@ public class HBTInputStream implements Closeable {
     }
 
     private HBTTag readTag() throws IOException {
-        byte type = is.readByte();
+	    byte type;
+	    try {
+            type = is.readByte();
+	    } catch (EOFException e) {
+		    return null;
+	    }
         if (type==0) return null;
         String name = is.readUTF();
         switch (type) {

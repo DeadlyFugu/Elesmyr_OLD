@@ -553,12 +553,17 @@ public void update(GameContainer gc, StateBasedGame sbg, int delta) throws Slick
 						gc.getInput().clearKeyPressedRecord();
 						sbg.enterState(Main.GAMEPLAYSTATE);
 					} catch (Exception e) {
-						Log.error(e.getLocalizedMessage());
-						gc.getInput().clearKeyPressedRecord();
-						((ErrorState) sbg.getState(Main.ERRORSTATE)).errorText=
-								"#error.bindport";
-						sbg.enterState(Main.ERRORSTATE);
-						return;
+						if (e.getLocalizedMessage().equals("__BIND_EXCEPTION")) {
+							Log.error(e.getLocalizedMessage());
+							gc.getInput().clearKeyPressedRecord();
+							((ErrorState) sbg.getState(Main.ERRORSTATE)).errorText=
+									"#error.bindport";
+							sbg.enterState(Main.ERRORSTATE);
+							return;
+						} else {
+							Main.handleCrash(e);
+							gc.exit();
+						}
 					}
 				} else if (subMenu==3) {
 					try {
@@ -566,10 +571,10 @@ public void update(GameContainer gc, StateBasedGame sbg, int delta) throws Slick
 						((GameClient) sbg.getState(Main.GAMEPLAYSTATE)).init(gc, sbg);
 						gc.getInput().clearKeyPressedRecord();
 						sbg.enterState(Main.LOGINSTATE);
-					} catch (Exception e) {
+					} catch (IOException e) {
 						gc.getInput().clearKeyPressedRecord();
 						((ErrorState) sbg.getState(Main.ERRORSTATE)).errorText=
-								"Exception caught joining server:\n"+
+								"IOException caught joining server:\n"+
 										e.getLocalizedMessage();
 						sbg.enterState(Main.ERRORSTATE);
 						return;

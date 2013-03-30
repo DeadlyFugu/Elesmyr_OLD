@@ -10,7 +10,13 @@ import java.util.HashMap;
 
 public class HashmapLoader {
 
-public static void writeHashmap(String filename, HashMap<String, String> hashMap) {
+/**
+ * Writes a hashmap to a file.
+ * @deprecated Use {@link net.halite.lote.util.FileHandler#writeMap(java.io.File, java.util.Map)} instead.
+ * @param filename
+ * @param hashMap
+ */
+@Deprecated public static void writeHashmap(String filename, HashMap<String, String> hashMap) {
 	File file=new File(filename);
 	try {
 		BufferedWriter bw=new BufferedWriter(new FileWriter(file));
@@ -26,7 +32,13 @@ public static void writeHashmap(String filename, HashMap<String, String> hashMap
 	}
 }
 
-public static HashMap<String, String> readHashmap(String filename) {
+/**
+ * Read a hashmap from a file.
+ * @deprecated Use {@link net.halite.lote.util.FileHandler#readMap(String)} instead.
+ * @param filename the name of the file to read from
+ * @return the HashMap read
+ */
+@Deprecated public static HashMap<String, String> readHashmap(String filename) {
 	HashMap<String, String> hashMap=new HashMap<String, String>();
 	File file=new File(filename);
 	try {

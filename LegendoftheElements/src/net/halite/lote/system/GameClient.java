@@ -417,7 +417,7 @@ public void loadSave(GameContainer gc, String saveName, boolean serverOnly, Stat
 			try {
 				server.bind(37020, 37021);
 			} catch (java.net.BindException be) { //For some reason, I can't directly throw a BindException.
-				throw new Exception();
+				throw new Exception("__BIND_EXCEPTION");
 			}
 			server.getKryo().register(Message.class);
 		}
@@ -429,7 +429,7 @@ public void loadSave(GameContainer gc, String saveName, boolean serverOnly, Stat
 			client.addListener(new ClientListener());
 		}
 	} catch (IOException ioe) {
-		ioe.printStackTrace();
+
 		gc.exit();
 	}
 	MessageSystem.initialise(CLIENT?this:null, SERVER?server:null);

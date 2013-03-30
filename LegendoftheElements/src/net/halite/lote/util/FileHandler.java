@@ -1,13 +1,9 @@
 package net.halite.lote.util;
 
 import net.halite.hbt.*;
-import net.halite.hbt.HBTFlag;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Stack;
+import java.util.*;
 
 /**
  * Class to handle all file IO.
@@ -30,8 +26,8 @@ private static final String[] HBT_EXTENSIONS={"hbtx","hbt","hbtc"};
  */
 private static List<String> parseFileName(String name, String[] extension) {
 	List<String> found = new ArrayList<String>();
+	File f;
 	for (String s : extension) {
-		File f;
 		f = new File("data/"+name.replaceAll("\\.","/")+"."+s);
 		if (f.exists())
 			found.add(f.getPath());
@@ -57,7 +53,7 @@ public static List<HBTTag> readHBT(String name) throws IOException {
 }
 
 /**
- * Returns all root-level HBTCompounds within a HBT,HBTC or HBTX file at path.
+ * Returns all root-level HBTCompounds within a HBT,HBTC or HBTX file.
  * @param path Path to the file
  * @return ArrayList of root-level HBTTags found in the file.
  * @throws IOException
@@ -68,11 +64,11 @@ private static List<HBTTag> readHBTFile(String path) throws IOException {
 	if (extension.equals("hbt") || extension.equals("hbtc")) {
 		HBTInputStream inputStream = new HBTInputStream(new FileInputStream(path),extension.equals("hbtc"));
 		while (true) {
-			try {
-				ret.add(inputStream.read());
-			} catch (EOFException e) {
+			HBTTag tag = inputStream.read();
+			if (tag!=null)
+				ret.add(tag);
+			else
 				break;
-			}
 		}
 		inputStream.close();
 	} else if (extension.equals("hbtx")) {
@@ -162,12 +158,58 @@ private static byte[] parseByteArray(String str) {
 }
 
 /**
- * Reads a ASCII-format hashmap matching name
+ * Reads a text formatted map from a file
+ *
+ * Reads a map from a file.
+ * The map must be formated as such:
+ *     KEY,VALUE
+ *     KEY,VALUE
+ *     ...
+ *
  * @param name
- * @return
+ * @return A map
  */
-public static HashMap<String,String> readMap(String name) throws IOException {
+public static Map<String,String> readMap(String name) throws IOException {
 	List<String> paths = parseFileName(name,new String[] {});
-	return null;
+	Map<String, String> map=new HashMap<String, String>();
+	for (String path : paths) {
+	File file=new File(path);
+		BufferedReader br=new BufferedReader(new InputStreamReader(new FileInputStream(file)));
+		String l;
+		while ((l=br.readLine())!=null) {
+			String[] args=l.split("[,]", 2);
+			if (args.length!=2) continue;
+			String p=args[0];
+			String b=args[1];
+			map.put(p, b);
+		}
+		br.close();
+	}
+	return map;
+}
+
+/**
+ * Writes a text formatted map to a file
+ *
+ * Writes a map to a file.
+ * See {@link #readMap(String)} for how the file is formatted.
+ *
+ * @param file The file to write to.
+ * @param map The map to write.
+ * @return A map
+ */
+public static void writeMap(File file,Map<String,String> map) throws IOException {
+	try {
+		BufferedWriter bw=new BufferedWriter(new FileWriter(file));
+		for (String k : map.keySet()) {
+			bw.write(k+","+map.get(k));
+			bw.newLine();
+		}
+		bw.flush();
+		bw.close();
+	} catch (Exception e) {
+		e.printStackTrace();
+		System.exit(1);
+	}
 }
 }

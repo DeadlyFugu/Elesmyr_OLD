@@ -6,15 +6,16 @@ import net.halite.hbt.HBTTag;
 import net.halite.lote.ScriptRunner;
 import net.halite.lote.util.FileHandler;
 import net.halite.lote.util.HashmapLoader;
-import org.newdawn.slick.AppGameContainer;
-import org.newdawn.slick.GameContainer;
-import org.newdawn.slick.SlickException;
+import org.lwjgl.opengl.Display;
+import org.newdawn.slick.*;
+import org.newdawn.slick.opengl.renderer.SGL;
 import org.newdawn.slick.state.StateBasedGame;
 import org.newdawn.slick.util.LogSystem;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import javax.swing.*;
+import java.io.*;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 
 /**
@@ -56,6 +57,13 @@ public Main() {
 public static void main(String[] args) throws SlickException {
 	Log.info("LotE version "+verRelease+" "+verNum);
 
+	Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
+		public void uncaughtException(Thread t, Throwable e) {
+			Main.handleCrash(e);
+			System.exit(1);
+		}
+	});
+
 	System.setProperty("org.lwjgl.librarypath", System.getProperty("user.dir")+"/lib/native");
 
 	org.newdawn.slick.util.Log.setLogSystem(new SlickToMinLogSystem());
@@ -68,7 +76,7 @@ public static void main(String[] args) throws SlickException {
 	ScriptRunner.init();
 
 	try {
-		HBTOutputStream os = new HBTOutputStream(new FileOutputStream("save/TestOut.hbtc"),true);
+		HBTOutputStream os = new HBTOutputStream(new FileOutputStream("save/TestOut2.hbtc"),true);
 	for (HBTTag tag : FileHandler.readHBT("save/TestOut")) {
 		System.out.println(tag);
 		os.write(tag);
@@ -78,7 +86,7 @@ public static void main(String[] args) throws SlickException {
 		e.printStackTrace();
 	}
 
-	AppGameContainer app=new AppGameContainer(new Main());
+	AppGameContainer app=new CustomAppGameContainer(new Main());
 
 	MainMenuState.disx[3]=app.getScreenWidth();
 	MainMenuState.disy[3]=app.getScreenHeight();
@@ -87,6 +95,44 @@ public static void main(String[] args) throws SlickException {
 	app.setIcons(new String[]{"data/icon32.tga", "data/icon16.tga"});
 
 	app.start();
+}
+
+public static void handleCrash(Throwable e) {
+	System.err.println("LotE crashed");
+	StringWriter writer = new StringWriter(256);
+	e.printStackTrace(new PrintWriter(writer));
+	try {
+		BufferedWriter bw=new BufferedWriter(new FileWriter("LOTE_CRASH_LOG"));
+		bw.write("LOTE CRASH LOG\n");
+		bw.write(writer.toString());
+		bw.write("at "+(new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(new Date())));
+		bw.flush();
+		bw.close();
+	} catch (IOException e2) {
+		e2.printStackTrace();
+	}
+	try {
+		String[] parts = writer.toString().trim().split("\n");
+		String out = parts[0];
+		boolean ellipsisYet=false;
+		boolean ignoreRest=false;
+		for (int i=1; i<parts.length; i++) {
+			String s=parts[i];
+			if (s.trim().startsWith("at ")&&!(ignoreRest|s.trim().startsWith("at java.")||s.trim().startsWith("at sun."))) {
+				out=out+"\n    "+s.trim();
+				ellipsisYet=false;
+				if (s.trim().matches("at net\\.halite\\.lote\\.system\\.(GameClient|GameServer|.*State).*"))
+					ignoreRest=true;
+			} else if (!ellipsisYet) {
+				out=out+"\n    ...";
+				ellipsisYet=true;
+			}
+		}
+		JOptionPane.showMessageDialog(null, "Info for geeks:\n"+out+"\nA full log can be found at ./LOTE_CRASH_LOG", "LotE just kinda stopped working. :(", JOptionPane.ERROR_MESSAGE);
+	} catch (Exception e2) {
+		e2.printStackTrace();
+	}
+	e.printStackTrace();
 }
 
 @Override
@@ -132,5 +178,81 @@ private static class SlickToMinLogSystem implements LogSystem {
 		Log.warn(arg0, arg1);
 	}
 
+}
+
+private static class CustomAppGameContainer extends AppGameContainer {
+	public CustomAppGameContainer(Game game) throws SlickException {super(game);}
+	protected void updateAndRender(int delta) throws SlickException {
+		if (smoothDeltas) {
+			if (getFPS() != 0) {
+				delta = 1000 / getFPS();
+			}
+		}
+
+		input.poll(width, height);
+
+		Music.poll(delta);
+		if (!paused) {
+			storedDelta += delta;
+
+			if (storedDelta >= minimumLogicInterval) {
+				try {
+					if (maximumLogicInterval != 0) {
+						long cycles = storedDelta / maximumLogicInterval;
+						for (int i=0;i<cycles;i++) {
+							game.update(this, (int) maximumLogicInterval);
+						}
+
+						int remainder = (int) (storedDelta % maximumLogicInterval);
+						if (remainder > minimumLogicInterval) {
+							game.update(this, (int) (remainder % maximumLogicInterval));
+							storedDelta = 0;
+						} else {
+							storedDelta = remainder;
+						}
+					} else {
+						game.update(this, (int) storedDelta);
+						storedDelta = 0;
+					}
+
+				} catch (Throwable e) {
+					running=false;
+					Main.handleCrash(e);
+				}
+			}
+		} else {
+			game.update(this, 0);
+		}
+
+		if (hasFocus() || getAlwaysRender()) {
+			if (clearEachFrame) {
+				GL.glClear(SGL.GL_COLOR_BUFFER_BIT | SGL.GL_DEPTH_BUFFER_BIT);
+			}
+
+			GL.glLoadIdentity();
+			Graphics graphics = getGraphics();
+			graphics.resetTransform();
+			graphics.resetFont();
+			graphics.resetLineWidth();
+			graphics.setAntiAlias(false);
+			try {
+				game.render(this, graphics);
+			} catch (Throwable e) {
+				running=false;
+				Main.handleCrash(e);
+			}
+			graphics.resetTransform();
+
+			//if (this.isShowingFPS()) {
+			//	this.getDefaultFont().drawString(10, 10, "FPS: "+recordedFPS);
+			//}
+
+			GL.flush();
+		}
+
+		if (targetFPS != -1) {
+			Display.sync(targetFPS);
+		}
+	}
 }
 }
