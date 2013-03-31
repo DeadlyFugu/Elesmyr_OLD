@@ -1,8 +1,6 @@
 package net.halite.lote.system;
 
 import com.esotericsoftware.kryonet.Connection;
-import com.esotericsoftware.kryonet.Listener;
-import com.esotericsoftware.kryonet.Server;
 import com.esotericsoftware.minlog.Log;
 import net.halite.lote.Save;
 import net.halite.lote.msgsys.Message;
@@ -25,7 +23,7 @@ import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class GameServer extends Server implements MessageReceiver {
+public class GameServer implements MessageReceiver {
 private Save save;
 /** Server-side world; */
 private World world;
@@ -50,10 +48,8 @@ private ConcurrentHashMap<String, String> playerEnt;
 
 private ConcurrentHashMap<String, PlayerData> playerDat;
 
-GameServer(Save save, String hostUName) {
-	super();
+public GameServer(Save save, String hostUName) {
 	this.save=save;
-	this.addListener(new ServerListener());
 	players=new ConcurrentHashMap<Connection, String>();
 	playerEnt=new ConcurrentHashMap<String, String>();
 	playerDat=new ConcurrentHashMap<String, PlayerData>();
@@ -136,26 +132,6 @@ public void gameUpdate() {
 		}
 	} else {
 		timeCheck--;
-	}
-}
-
-private class ServerListener extends Listener {
-	public ServerListener() {
-	}
-
-	public void received(Connection connection, Object object) {
-		try {
-			if (object instanceof Message) {
-				((Message) object).addConnection(connection);
-				MessageSystem.receiveServer((Message) object);
-			} else if (!(object instanceof com.esotericsoftware.kryonet.FrameworkMessage.KeepAlive)) {
-				Log.warn("SERVER: Ignored unrecognised message type: "+object.getClass().getName()+", from: "+connection.getID()+" toString: "+object.toString());
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-			MessageSystem.sendClient(null, connection, new Message("CLIENT.chat", "Internal error occured processing "+object.toString()), false);
-			MessageSystem.sendClient(null, connection, new Message("CLIENT.chat", "Error: "+e.toString()), false);
-		}
 	}
 }
 
@@ -271,6 +247,10 @@ public void changePlayerRegion(String data, int x, int y, Connection connection,
 
 public void sendChat(String msg) {
 	MessageSystem.sendClient(null, new ArrayList<Connection>(Arrays.asList(getConnections())), new Message("CLIENT.chat", msg), false);
+}
+
+private Connection[] getConnections() {
+	return MessageSystem.getConnections();
 }
 
 public void render(GameContainer gc, StateBasedGame sbg, Graphics g, boolean overlay) {

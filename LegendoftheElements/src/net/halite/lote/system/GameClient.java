@@ -1,8 +1,5 @@
 package net.halite.lote.system;
 
-import com.esotericsoftware.kryonet.Client;
-import com.esotericsoftware.kryonet.Connection;
-import com.esotericsoftware.kryonet.Listener;
 import com.esotericsoftware.minlog.Log;
 import net.halite.lote.Save;
 import net.halite.lote.ScriptObject;
@@ -23,7 +20,6 @@ import org.newdawn.slick.gui.TextField;
 import org.newdawn.slick.state.BasicGameState;
 import org.newdawn.slick.state.StateBasedGame;
 
-import java.io.IOException;
 import java.net.InetAddress;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -57,14 +53,10 @@ public class ChatMessage {
 
 int stateID=-1;
 private GameServer server;
-public Client client;
 //private ConcurrentLinkedQueue<Message> msgList;
 public boolean regionLoaded=false;
 
 public PlayerClient player; //Client player controller.
-
-public static boolean CLIENT;
-public static boolean SERVER;
 
 /** Client-side world */
 private World world;
@@ -133,7 +125,7 @@ public void render(GameContainer gc, StateBasedGame sbg, Graphics g) throws Slic
 		//g.setColor(Color.black);
 		//g.fillRect(0,0,Main.INTERNAL_RESX,Main.INTERNAL_RESY);
 		//g.setColor(Color.white);
-	} else if (CLIENT) {
+	} else if (MessageSystem.CLIENT) {
 		g.pushTransform();
 		renderMap(player.region, false);
 		world.render(gc, sbg, g, cam, this);
@@ -187,17 +179,17 @@ public void render(GameContainer gc, StateBasedGame sbg, Graphics g) throws Slic
 		g.fillRect(0, 0, Main.INTERNAL_RESX, Main.INTERNAL_RESY);
 		g.setColor(Color.white);
 	}
-	if (!CLIENT)
-		FontRenderer.drawString(0, 0, "#$bar.title| |"+Main.version+": "+(CLIENT?"|$bar.client| ":"")+(SERVER?"|$bar.server| ":"")+(MessageSystem.fastLink?"|$bar.fastlink| ":""), g);
-	if (SERVER&&(!CLIENT||(Globals.get("debug", false)&&Globals.get("showConnections", true)))) {
-		if (!CLIENT) {
+	if (!MessageSystem.CLIENT)
+		FontRenderer.drawString(0, 0, "#$bar.title| |"+Main.version+": "+(MessageSystem.CLIENT?"|$bar.client| ":"")+(MessageSystem.SERVER?"|$bar.server| ":"")+(MessageSystem.fastLink?"|$bar.fastlink| ":""), g);
+	if (MessageSystem.SERVER&&(!MessageSystem.CLIENT||(Globals.get("debug", false)&&Globals.get("showConnections", true)))) {
+		if (!MessageSystem.CLIENT) {
 			g.setColor(Color.black);
 			g.fillRect(0, 0, Main.INTERNAL_RESX, Main.INTERNAL_RESY);
 			g.setColor(Color.white);
 		}
-		server.render(gc, sbg, g, CLIENT);
+		server.render(gc, sbg, g, MessageSystem.CLIENT);
 	}
-	if (CLIENT&&Globals.get("debug", false)&&Globals.get("debugInfo", true)) {
+	if (MessageSystem.CLIENT&&Globals.get("debug", false)&&Globals.get("debugInfo", true)) {
 		//Client debug mode
 		String debugText="ERROR.";
 		try {
@@ -244,16 +236,7 @@ public void update(GameContainer gc, StateBasedGame sbg, int delta) throws Slick
 		} else if (ui.peekFirst().blockUpdates()) {
 			ui.removeFirst();
 		} else {
-			if (CLIENT) {
-				if (!SERVER)
-					MessageSystem.sendServer(null, new Message("SERVER.close", ""), false);
-				client.close();
-			}
-			if (SERVER) {
-				server.save();
-				server.broadcastKill();
-				server.close();
-			}
+			MessageSystem.close();
 			//gc.exit();
 			gc.getInput().clearKeyPressedRecord();
 			sbg.enterState(Main.MENUSTATE);
@@ -296,22 +279,18 @@ public void update(GameContainer gc, StateBasedGame sbg, int delta) throws Slick
 			ui.addFirst(inv);
 		}
 	}
-	if (SERVER) {
+	if (MessageSystem.SERVER) {
 		server.gameUpdate();
 	}
-	if (CLIENT) {
+	if (MessageSystem.CLIENT) {
 		MessageSystem.receiveMessageClient();
 
-		if (!client.isConnected())
+		if (!MessageSystem.clientConnected())
 			error="Lost connection to server.";
 
 		if (error!=null) {
 			gc.getInput().clearKeyPressedRecord();
-			client.close();
-			if (SERVER) {
-				server.save();
-				server.close();
-			}
+			MessageSystem.close();
 			((ErrorState) sbg.getState(Main.ERRORSTATE)).errorText=error;
 			sbg.enterState(Main.ERRORSTATE);
 		}
@@ -404,53 +383,18 @@ public boolean receiveMessage(Message msg) {
 public void loadSave(GameContainer gc, String saveName, boolean serverOnly, StateBasedGame sbg) throws Exception {
 	Save save=new Save(saveName);
 	if (serverOnly) {
-		SERVER=true;
-		CLIENT=false;
+		MessageSystem.SERVER=true;
+		MessageSystem.CLIENT=false;
 	} else {
-		SERVER=true;
-		CLIENT=true;
+		MessageSystem.SERVER=true;
+		MessageSystem.CLIENT=true;
 	}
-	try {
-		if (SERVER) {
-			server=new GameServer(save, CLIENT?Globals.get("name", "Player"):"");
-			server.start();
-			try {
-				server.bind(37020, 37021);
-			} catch (java.net.BindException be) { //For some reason, I can't directly throw a BindException.
-				throw new Exception("__BIND_EXCEPTION");
-			}
-			server.getKryo().register(Message.class);
-		}
-		if (CLIENT) {
-			client=new Client(8192, 4096);
-			client.start();
-			client.connect(5000, "localhost", 37020, 37021);
-			client.getKryo().register(Message.class);
-			client.addListener(new ClientListener());
-		}
-	} catch (IOException ioe) {
-
-		gc.exit();
-	}
-	MessageSystem.initialise(CLIENT?this:null, SERVER?server:null);
-	if (SERVER)
+	MessageSystem.initialise(MessageSystem.CLIENT?this:null, MessageSystem.SERVER,InetAddress.getLocalHost(),save);
+	this.server=MessageSystem.server;
+	if (MessageSystem.SERVER)
 		server.load();
-	if (CLIENT) {
+	if (MessageSystem.CLIENT) {
 		MessageSystem.sendServer(null, new Message("SERVER.wantPlayer", Globals.get("name", "Player")+","+Integer.toHexString("".hashCode())), false);
-	}
-}
-
-private class ClientListener extends Listener {
-
-	public void received(Connection connection, Object object) {
-		//if (! (object instanceof Message) || !((Message) object).getName().equals("move"))
-		//	Log.info("Client received: "+object.toString());
-		if (object instanceof Message) {
-			((Message) object).addConnection(connection);
-			MessageSystem.receiveClient((Message) object);
-		} else if (!(object instanceof com.esotericsoftware.kryonet.FrameworkMessage.KeepAlive)) {
-			Log.warn("CLIENT: Ignored message, unrecognised type "+object.getClass().getName()+", toString: "+object.toString());
-		}
 	}
 }
 
@@ -458,15 +402,11 @@ public PlayerClient getPlayer() {
 	return player;
 }
 
-public void join(InetAddress hostaddr) throws java.io.IOException {
-	SERVER=false;
-	CLIENT=true;
-	client=new Client(8192, 4096);
-	client.start();
-	client.connect(5000, hostaddr, 37020, 37021);
-	client.getKryo().register(Message.class);
-	client.addListener(new ClientListener());
-	MessageSystem.initialise(this, null);
+public void join(InetAddress hostaddr) throws Exception {
+	MessageSystem.SERVER=false;
+	MessageSystem.CLIENT=true;
+	MessageSystem.startClient(hostaddr);
+	MessageSystem.initialise(this, false, hostaddr, null);
 }
 
 public void sendMessage(String name, String data) {

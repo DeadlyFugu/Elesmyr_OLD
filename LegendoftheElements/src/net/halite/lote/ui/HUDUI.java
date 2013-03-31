@@ -113,8 +113,8 @@ private void drawElement(int x, int y, Element element) {
 private static String getTopString() {
 	//FontRenderer.drawString(0, 0, "#LotE |"+Main.version+": "+(CLIENT?"|$bar.client| ":"")+(SERVER?"|$bar.server| ":"")+(MessageSystem.fastLink?"|$bar.fastlink| ":""), g);
 	return "#$bar.title| |"+Main.version+":"+
-			       (GameClient.CLIENT?" |$bar.client|":"")+
-			       (GameClient.SERVER?" |$bar.server|":"")+
+			       (MessageSystem.CLIENT?" |$bar.client|":"")+
+			       (MessageSystem.SERVER?" |$bar.server|":"")+
 			       (MessageSystem.fastLink?" |$bar.fastlink|":"")+
 			       (Globals.get("debug", false)?" |$menu.debug|":"");
 }

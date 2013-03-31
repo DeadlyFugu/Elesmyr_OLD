@@ -536,6 +536,9 @@ public void update(GameContainer gc, StateBasedGame sbg, int delta) throws Slick
 						gc.getInput().clearKeyPressedRecord();
 						((ErrorState) sbg.getState(Main.ERRORSTATE)).errorText="#$error.joinioe.prefix|"+textField.getText()+"|$error.joinioe.suffix";
 						sbg.enterState(Main.ERRORSTATE);
+					} catch (Exception e) {
+						Main.handleCrash(e);
+						gc.exit();
 					}
 					showList[1]=entryString[3][1];
 					showTextField=false;
@@ -553,7 +556,7 @@ public void update(GameContainer gc, StateBasedGame sbg, int delta) throws Slick
 						gc.getInput().clearKeyPressedRecord();
 						sbg.enterState(Main.GAMEPLAYSTATE);
 					} catch (Exception e) {
-						if (e.getLocalizedMessage().equals("__BIND_EXCEPTION")) {
+						if (e.getLocalizedMessage()!=null && e.getLocalizedMessage().equals("__BIND_EXCEPTION")) {
 							Log.error(e.getLocalizedMessage());
 							gc.getInput().clearKeyPressedRecord();
 							((ErrorState) sbg.getState(Main.ERRORSTATE)).errorText=
@@ -578,6 +581,9 @@ public void update(GameContainer gc, StateBasedGame sbg, int delta) throws Slick
 										e.getLocalizedMessage();
 						sbg.enterState(Main.ERRORSTATE);
 						return;
+					} catch (Exception e) {
+						Main.handleCrash(e);
+						gc.exit();
 					}
 				}
 			}
