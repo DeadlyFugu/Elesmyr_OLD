@@ -1,6 +1,8 @@
 package net.halite.lote.msgsys;
 
+import com.esotericsoftware.minlog.Log;
 import net.halite.hbt.HBTCompound;
+import net.halite.lote.system.Main;
 
 import java.io.IOException;
 import java.net.InetAddress;
@@ -12,13 +14,22 @@ import java.net.Socket;
  */
 public class Client {
 private Connection connection;
+private boolean running = true;
 
 public void sendUDP(Message msg) {
-	connection.sendUDP(msg);
+	try {
+		connection.sendUDP(msg);
+	} catch (Exception e) {
+		if (running) Main.handleError(e);
+	}
 }
 
 public void sendTCP(Message msg) {
-	connection.sendTCP(msg);
+	try {
+		connection.sendTCP(msg);
+	} catch (Exception e) {
+		if (running) Main.handleError(e);
+	}
 }
 
 public void received(Message msg) {
@@ -30,35 +41,34 @@ public void start() {
 }
 
 public void connect(int i, InetAddress address, int port, int port2) throws IOException {
-	try {
-		Thread.sleep(2000,0);
-	} catch (InterruptedException e) {
-		e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-	}
-	System.out.println(address);
 	Socket socket = new Socket(address, port);
-	System.out.println("socket created");
+	Log.info("msgsys", "Client connected to "+socket.toString());
 	connection = new Connection(-1,socket);
 	new Thread() {
 		public void run() {
-			while (true) {
+			while (running) {
 				try {
-					System.out.println("Client waiting for message");
 					received(connection.readMsg());
 				} catch (HBTCompound.TagNotFoundException e) {
-					System.err.println("Badly formed message received.");
+					Log.error("Badly formed message received.");
 					e.printStackTrace();
-				} catch (IOException e) {
-					System.err.println("IOException occured");
-					e.printStackTrace();
-					break;
+				} catch (Exception e) {
+					if (running) {
+						Main.handleCrash(e);
+						System.exit(1);
+					}
 				}
 			}
 		}
 	}.start();
 }
 
+public void stop() {
+	running = false;
+}
+
 public void close() throws IOException {
+	connection.close();
 }
 
 public boolean isConnected() {

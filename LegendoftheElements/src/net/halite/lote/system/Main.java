@@ -39,6 +39,9 @@ public static final String verNum="0.2.0";
 public static final String verRelease="PRE-ALPHA";
 public static final String version="$version.prealpha| "+verNum; //0.0.1 = DEC 16
 
+private static GameContainer gc;
+private static StateBasedGame sbg;
+
 public Main() {
 	super("LotE");
 
@@ -98,7 +101,7 @@ public static void main(String[] args) throws SlickException {
 }
 
 public static void handleCrash(Throwable e) {
-	System.err.println("LotE crashed");
+	Log.info("LotE crashed");
 	StringWriter writer = new StringWriter(256);
 	e.printStackTrace(new PrintWriter(writer));
 	try {
@@ -139,6 +142,18 @@ public static void handleCrash(Throwable e) {
 public void initStatesList(GameContainer gameContainer) throws SlickException {
 	FontRenderer.setLang(FontRenderer.Language.valueOf(Globals.get("lang", "EN_US")));
 	FontRenderer.initialise(gameContainer);
+	Main.gc=gameContainer;
+	Main.sbg=this;
+}
+
+public static void handleError(Exception e) {
+	handleError(e.getLocalizedMessage());
+}
+
+public static void handleError(String error) {
+	gc.getInput().clearKeyPressedRecord();
+	((ErrorState) sbg.getState(Main.ERRORSTATE)).errorText=error;
+	sbg.enterState(Main.ERRORSTATE);
 }
 
 private static class SlickToMinLogSystem implements LogSystem {

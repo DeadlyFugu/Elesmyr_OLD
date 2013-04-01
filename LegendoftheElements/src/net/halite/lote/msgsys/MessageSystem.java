@@ -20,11 +20,12 @@ private static HashMap<String, GameElement> clientReceivers;
 private static HashMap<String, GameElement> serverReceivers;
 public static GameClient client;
 public static GameServer server;
-public static boolean fastLink=false;
 private static ConcurrentLinkedQueue<Message> serverMsgQueue;
 private static ConcurrentLinkedQueue<Message> clientMsgQueue;
 private static Client netClient;
 private static Server netServer;
+public static boolean fastLink=false;
+private static int fastlinkedID;
 
 public static void sendServer(GameElement sender, Message msg, boolean udp) {
 	if (sender!=null)
@@ -41,7 +42,7 @@ public static void sendServer(GameElement sender, Message msg, boolean udp) {
 public static void sendClient(GameElement sender, int connection, Message msg, boolean udp) {
 	if (sender!=null)
 		msg.setSender(sender.getReceiverName());
-	if (fastLink&&connection==1)
+	if (fastLink&&connection==fastlinkedID)
 		receiveClient(msg);
 	else if (udp)
 		netServer.sendUDP(connection, msg);
@@ -146,19 +147,29 @@ public static void startServer(Save save) throws Exception {
 }
 
 public static void close() {
+	if (CLIENT)
+		netClient.stop();
+	if (SERVER)
+		netServer.stop();
 	if (CLIENT) {
 		if (server==null)
 			MessageSystem.sendServer(null, new Message("SERVER.close", ""), false);
 		try {
-		netClient.close();
+			netClient.close();
 		} catch (IOException e) {
-			//TODO: handle IOException.
+			Log.error("Error closing client.");
+			e.printStackTrace();
 		}
 	}
 	if (SERVER) {
 		server.save();
 		server.broadcastKill();
-		netServer.close();
+		try {
+			netServer.close();
+		} catch (IOException e) {
+			Log.error("Error closing client.");
+			e.printStackTrace();
+		}
 	}
 }
 
@@ -166,5 +177,9 @@ public static boolean clientConnected() {return netClient.isConnected();}
 
 public static List<Connection> getConnections() {
 	return netServer.getConnections();
+}
+
+public static void setFastlink(Connection connection) {
+	MessageSystem.fastlinkedID=connection.getID();
 }
 }

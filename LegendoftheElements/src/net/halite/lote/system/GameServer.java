@@ -143,10 +143,10 @@ public boolean receiveMessage(Message msg) {
 		if (name.equals("wantPlayer")) {
 			String uname=data.split(",", 2)[0];
 			String upass=data.split(",", 2)[1];
-			Log.info("wantPlayer "+uname+" from "+connection.toString());
 			if (pass.containsKey(uname)) {
 				if (!pass.get(uname).equals(upass)&&!uname.equals(hostUName)) {
 					MessageSystem.sendClient(null, connection, new Message("CLIENT.error", "Password incorrect!"), false);
+					Log.info("server",connection.toString()+" failed password for "+uname);
 					try {
 					connection.close();
 					} catch (IOException e) {
@@ -162,6 +162,7 @@ public boolean receiveMessage(Message msg) {
 				MessageSystem.sendClient(null, connection, new Message("CLIENT.error", "There is already a player called "+uname+" on that server!"), false);
 			} else {
 				sendChat("SERVER: "+uname+" joined the game.");
+				Log.info("server",connection.toString()+" logged in as "+uname);
 				players.put(connection, uname);
 				String pInfo=save.get("players."+uname);
 				if (pInfo!=null) {

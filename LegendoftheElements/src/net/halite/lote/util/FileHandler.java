@@ -1,6 +1,7 @@
 package net.halite.lote.util;
 
 import net.halite.hbt.*;
+import net.halite.lote.system.Main;
 
 import java.io.*;
 import java.util.*;
@@ -208,7 +209,7 @@ public static void writeMap(File file,Map<String,String> map) throws IOException
 		bw.flush();
 		bw.close();
 	} catch (Exception e) {
-		e.printStackTrace();
+		Main.handleCrash(e);
 		System.exit(1);
 	}
 }

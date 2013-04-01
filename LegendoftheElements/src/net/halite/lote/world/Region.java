@@ -13,6 +13,7 @@ import net.halite.lote.player.PlayerData;
 import net.halite.lote.system.GameClient;
 import net.halite.lote.system.GameServer;
 import net.halite.lote.system.Globals;
+import net.halite.lote.system.Main;
 import net.halite.lote.world.entity.*;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
@@ -268,7 +269,7 @@ public ArrayList<Light> getLights() {
 		}
 		br.close();
 	} catch (Exception e) {
-		e.printStackTrace();
+		Main.handleCrash(e);
 		System.exit(1);
 	}
 	return ret;

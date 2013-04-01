@@ -17,6 +17,7 @@ private int id;
 private Socket socket = null;
 private HBTOutputStream out;
 private HBTInputStream in;
+private boolean fastlinked = false;
 
 public Connection(int id, Socket clientSocket) throws IOException {
 	this.socket = clientSocket;
@@ -39,19 +40,15 @@ public void close() throws IOException {
 	socket.close();
 }
 
-void sendTCP(Message msg) {
+void sendTCP(Message msg) throws IOException {
 	HBTCompound msgc = new HBTCompound("");
 	msgc.addTag(new HBTString("t",msg.getTarget()));
 	msgc.addTag(new HBTString("n",msg.getName()));
 	msgc.addTag(new HBTString("d",msg.getData()));
-	try {
 	out.write(msgc);
-	} catch (IOException e) {
-		e.printStackTrace();
-	}
 }
 
-void sendUDP(Message msg) {
+void sendUDP(Message msg) throws IOException {
 	sendTCP(msg);
 }
 
@@ -60,5 +57,17 @@ Message readMsg() throws IOException, HBTCompound.TagNotFoundException {
 	return new Message(((HBTString) msgc.getTag("t")).getData()+"."+
 			                   ((HBTString) msgc.getTag("n")).getData(),
 			                  ((HBTString) msgc.getTag("d")).getData());
+}
+
+void setFastlinked() {
+	fastlinked=true;
+}
+
+boolean getFastlinked() {
+	return fastlinked;
+}
+
+@Override public String toString() {
+	return socket.toString();
 }
 }

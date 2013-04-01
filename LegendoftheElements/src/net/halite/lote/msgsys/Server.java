@@ -1,6 +1,8 @@
 package net.halite.lote.msgsys;
 
+import com.esotericsoftware.minlog.Log;
 import net.halite.hbt.HBTCompound;
+import net.halite.lote.system.Main;
 
 import java.io.IOException;
 import java.net.BindException;
@@ -16,17 +18,27 @@ import java.util.List;
 public class Server {
 private ArrayList<Connection> connections;
 private ServerSocket serverSocket;
+private boolean running = true;
 
 public List<Connection> getConnections() {
 	return connections;
 }
 
 public void sendUDP(int connection, Message msg) {
-	connections.get(connection).sendUDP(msg);
+	try {
+		connections.get(connection).sendUDP(msg);
+	} catch (Exception e) {
+		if (running) Main.handleError(e);
+	}
 }
 
 public void sendTCP(int connection, Message msg) {
-	connections.get(connection).sendTCP(msg);}
+	try {
+	connections.get(connection).sendTCP(msg);
+	} catch (Exception e) {
+		if (running) Main.handleError(e);
+	}
+}
 
 public void start() {
 	connections = new ArrayList<Connection>();
@@ -35,27 +47,34 @@ public void start() {
 public void bind(int port, int port2) throws BindException {
 	try {
 		serverSocket = new ServerSocket(port);
+		Log.info("msgsys", "Server bound to port "+port);
 	}
 	catch (IOException e) {
-		System.out.println("Could not listen on port: "+port);
-		System.exit(-1);
+		Log.error("msgsys","Could not listen on port: "+port);
+		throw new BindException();
 	}
 
 	new Thread() {
 		public void run() {
 			int i = 0;
-			while (true) {
+			while (running) {
 				Socket clientSocket = null;
 				try {
-					System.out.println("Server waiting for connection");
 					clientSocket = serverSocket.accept();
 					Connection connection = new Connection(i,clientSocket);
+					if (connections.size()==0 && MessageSystem.CLIENT) {
+						connection.setFastlinked();
+						MessageSystem.setFastlink(connection);
+					}
 					connections.add(connection);
 					createListenerThread(connection);
+					Log.info("msgsys", "Server connected to "+clientSocket.toString());
 					i++;
-				} catch (IOException e) {
-					System.out.println("Accept failed.");
-					System.exit(-1);
+				} catch (Exception e) {
+					if (running) {
+						Main.handleCrash(e);
+						System.exit(1);
+					}
 				}
 			}
 		}
@@ -65,17 +84,17 @@ public void bind(int port, int port2) throws BindException {
 private void createListenerThread(final Connection connection) {
 	new Thread() {
 		public void run() {
-			while (connection.isConnected()) {
+			while (running) {
 				try {
-					System.out.println("Server waiting for message");
 					received(connection,connection.readMsg());
 				} catch (HBTCompound.TagNotFoundException e) {
-					System.err.println("Badly formed message received.");
+					Log.error("msgsys","Badly formed message received.");
 					e.printStackTrace();
-				} catch (IOException e) {
-					System.err.println("IOException occured");
-					e.printStackTrace();
-					break;
+				} catch (Exception e) {
+					if (running) {
+						Main.handleCrash(e);
+						System.exit(1);
+					}
 				}
 			}
 		}
@@ -87,7 +106,14 @@ public void received(Connection connection, Message msg) {
 	MessageSystem.receiveServer(msg);
 }
 
-public void close() {
-	//To change body of created methods use File | Settings | File Templates.
+public void stop() {
+	running=false;
+}
+
+public void close() throws IOException {
+	for (Connection c : connections) {
+		c.close();
+	}
+	serverSocket.close();
 }
 }
