@@ -1,6 +1,5 @@
 package net.halite.lote.world.entity;
 
-import com.esotericsoftware.kryonet.Connection;
 import net.halite.lote.lighting.Light;
 import net.halite.lote.msgsys.Message;
 import net.halite.lote.msgsys.MessageReceiver;
@@ -68,7 +67,7 @@ public void update(Region region, GameServer receiver) {
 }
 
 @Override
-public void interact(Region region, EntityPlayer entityPlayer, MessageReceiver receiver, Connection connection) {
+public void interact(Region region, EntityPlayer entityPlayer, MessageReceiver receiver, Message msg) {
 	if (destTimer==-1)
 		if (entityPlayer.putItem(item, extd.split(",", 2)[1])) {
 			destTimer=40;

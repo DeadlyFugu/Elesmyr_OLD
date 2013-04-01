@@ -1,6 +1,5 @@
 package net.halite.lote.world.entity;
 
-import com.esotericsoftware.kryonet.Connection;
 import net.halite.lote.msgsys.Message;
 import net.halite.lote.msgsys.MessageReceiver;
 import net.halite.lote.msgsys.MessageSystem;
@@ -31,7 +30,7 @@ public void render(GameContainer gc, StateBasedGame sbg, Graphics g,
 }
 
 @Override
-public void interact(Region region, EntityPlayer entityPlayer, MessageReceiver receiver, Connection connection) {
-	MessageSystem.sendClient(this, connection, new Message("CLIENT.openUI", extd.split(",", 2)[1]), false);
+public void interact(Region region, EntityPlayer entityPlayer, MessageReceiver receiver, Message msg) {
+	MessageSystem.sendClient(this, msg.getConnection(), new Message("CLIENT.openUI", extd.split(",", 2)[1]), false);
 }
 }

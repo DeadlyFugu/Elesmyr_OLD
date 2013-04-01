@@ -1,8 +1,8 @@
 package net.halite.lote.system;
 
-import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.minlog.Log;
 import net.halite.lote.Save;
+import net.halite.lote.msgsys.Connection;
 import net.halite.lote.msgsys.Message;
 import net.halite.lote.msgsys.MessageReceiver;
 import net.halite.lote.msgsys.MessageSystem;
@@ -17,9 +17,9 @@ import org.newdawn.slick.Graphics;
 import org.newdawn.slick.state.StateBasedGame;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -147,7 +147,10 @@ public boolean receiveMessage(Message msg) {
 			if (pass.containsKey(uname)) {
 				if (!pass.get(uname).equals(upass)&&!uname.equals(hostUName)) {
 					MessageSystem.sendClient(null, connection, new Message("CLIENT.error", "Password incorrect!"), false);
+					try {
 					connection.close();
+					} catch (IOException e) {
+					}
 					return false;
 				}
 			} else if (hostUName=="") {
@@ -246,10 +249,10 @@ public void changePlayerRegion(String data, int x, int y, Connection connection,
 }
 
 public void sendChat(String msg) {
-	MessageSystem.sendClient(null, new ArrayList<Connection>(Arrays.asList(getConnections())), new Message("CLIENT.chat", msg), false);
+	MessageSystem.sendClient(null, getConnections(), new Message("CLIENT.chat", msg), false);
 }
 
-private Connection[] getConnections() {
+private List<Connection> getConnections() {
 	return MessageSystem.getConnections();
 }
 
@@ -307,6 +310,6 @@ public boolean isServer() {
 }
 
 public void broadcastKill() {
-	MessageSystem.sendClient(null, new ArrayList<Connection>(Arrays.asList(getConnections())), new Message("CLIENT.error", "Server has been closed."), false);
+	MessageSystem.sendClient(null, getConnections(), new Message("CLIENT.error", "Server has been closed."), false);
 }
 }

@@ -1,6 +1,5 @@
 package net.halite.lote.world.entity;
 
-import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.minlog.Log;
 import net.halite.lote.Element;
 import net.halite.lote.GameElement;
@@ -141,9 +140,9 @@ public void hurt(Region region, Entity entity, MessageReceiver receiver) {
  * @param region
  * 		Region the entity is in
  * @param entityPlayer
- * 		Player entity that interacted
+ * @param msg
  */
-public void interact(Region region, EntityPlayer entityPlayer, MessageReceiver receiver, Connection connection) {
+public void interact(Region region, EntityPlayer entityPlayer, MessageReceiver receiver, Message msg) {
 }
 
 protected ArrayList<String> getDrops() {

@@ -1,15 +1,18 @@
 package net.halite.lote.world.entity;
 
-import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.minlog.Log;
 import net.halite.lote.Element;
 import net.halite.lote.lighting.Light;
+import net.halite.lote.msgsys.Connection;
 import net.halite.lote.msgsys.Message;
 import net.halite.lote.msgsys.MessageReceiver;
 import net.halite.lote.msgsys.MessageSystem;
 import net.halite.lote.player.Camera;
 import net.halite.lote.player.PlayerData;
-import net.halite.lote.system.*;
+import net.halite.lote.system.FontRenderer;
+import net.halite.lote.system.GameClient;
+import net.halite.lote.system.GameServer;
+import net.halite.lote.system.Globals;
 import net.halite.lote.ui.CraftUI;
 import net.halite.lote.world.Region;
 import net.halite.lote.world.item.Item;

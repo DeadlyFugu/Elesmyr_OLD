@@ -1,7 +1,7 @@
 package net.halite.lote.world.entity;
 
-import com.esotericsoftware.kryonet.Connection;
 import net.halite.lote.GameElement;
+import net.halite.lote.msgsys.Connection;
 import net.halite.lote.msgsys.Message;
 import net.halite.lote.msgsys.MessageSystem;
 import net.halite.lote.system.FontRenderer;

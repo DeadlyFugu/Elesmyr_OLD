@@ -1,10 +1,10 @@
 package net.halite.lote.world;
 
-import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.minlog.Log;
 import net.halite.lote.GameElement;
 import net.halite.lote.Save;
 import net.halite.lote.lighting.Light;
+import net.halite.lote.msgsys.Connection;
 import net.halite.lote.msgsys.Message;
 import net.halite.lote.msgsys.MessageReceiver;
 import net.halite.lote.msgsys.MessageSystem;
@@ -32,7 +32,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class Region implements GameElement {
 public String name;
 public ConcurrentHashMap<Integer, Entity> entities;
-public ArrayList<Connection> connections;
+public ArrayList<net.halite.lote.msgsys.Connection> connections;
 public TiledMap map;
 public int mapColLayer=0; //Layer containing collision tiles
 public int mapColTOff=0; //Offset of first collision tile
@@ -151,12 +151,12 @@ public void receiveMessage(Message msg, MessageReceiver receiver) {
 			}
 		} else if (msg.getName().equals("intAt")) {
 			for (Entity e : getEntitiesAt(Integer.parseInt(msg.getData().split(",", 2)[0]), Integer.parseInt(msg.getData().split(",", 2)[1]))) {
-				e.interact(this, ((GameServer) receiver).getPlayerEnt(msg.getConnection()), receiver, msg.getConnection());
+				e.interact(this, ((GameServer) receiver).getPlayerEnt(msg.getConnection()), receiver, msg);
 			}
 		} else if (msg.getName().equals("pickupAt")) {
 			for (Entity e : getEntitiesAt(Integer.parseInt(msg.getData().split(",", 2)[0]), Integer.parseInt(msg.getData().split(",", 2)[1]))) {
 				if (e instanceof EntityItem)
-					e.interact(this, ((GameServer) receiver).getPlayerEnt(msg.getConnection()), receiver, msg.getConnection());
+					e.interact(this, ((GameServer) receiver).getPlayerEnt(msg.getConnection()), receiver, msg);
 			}
 		}
 	} else if (entities.containsKey(Integer.valueOf(msg.getTarget().split("\\.", 2)[1]))) {

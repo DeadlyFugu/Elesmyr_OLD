@@ -1,7 +1,7 @@
 package net.halite.lote.player;
 
-import com.esotericsoftware.kryonet.Connection;
 import net.halite.lote.Element;
+import net.halite.lote.msgsys.Connection;
 import net.halite.lote.msgsys.Message;
 import net.halite.lote.msgsys.MessageSystem;
 import net.halite.lote.world.Region;
@@ -92,7 +92,7 @@ public void updated(Region r, String entRName) {
 		magicka=magickaMax;
 	if (connection!=null)
 		MessageSystem.sendClient(null, connection, new Message("PLAYER.setPDAT", this.toString()), false);
-	for (Connection c : r.connections) {
+	for (net.halite.lote.msgsys.Connection c : r.connections) {
 		if (c!=connection)
 			MessageSystem.sendClient(null, c, new Message(entRName+".setPDAT", this.toString()), false);
 	}

@@ -1,6 +1,5 @@
 package net.halite.lote.msgsys;
 
-import com.esotericsoftware.kryonet.Connection;
 import net.halite.lote.GameElement;
 
 public class Message {
