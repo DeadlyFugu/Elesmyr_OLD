@@ -20,7 +20,7 @@ private static UnicodeFont bookfont;
 
 static {
 	try {
-	bookfont=new UnicodeFont(FileHandler.parse("data/ui/book.ttf",ResourceType.FONT), 32, false, false);
+	bookfont=new UnicodeFont(FileHandler.parse("ui.book",ResourceType.FONT), 32, false, false);
 	bookfont.addAsciiGlyphs();
 	bookfont.getEffects().add(new ColorEffect(java.awt.Color.BLACK));
 	bookfont.loadGlyphs();
@@ -31,7 +31,7 @@ static {
 public static ArrayList<String> parseBook(String extd) {
 	ArrayList<String> pages=new ArrayList<String>();
 	String page="";
-	File file=new File("data/book/"+extd);
+	File file=new File(FileHandler.parse("book."+extd,ResourceType.PLAIN));
 	if (!file.exists()) {
 		pages.add("INTERNAL SERVER ERROR:\nRequested book file '"+file+" was not found");
 	} else {

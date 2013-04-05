@@ -8,7 +8,9 @@ import net.halite.lote.player.PlayerData;
 import net.halite.lote.system.FontRenderer;
 import net.halite.lote.system.GameClient;
 import net.halite.lote.system.Main;
+import net.halite.lote.util.FileHandler;
 import net.halite.lote.util.HashmapLoader;
+import net.halite.lote.util.ResourceType;
 import net.halite.lote.world.Region;
 import net.halite.lote.world.entity.EntityPlayer;
 import net.halite.lote.world.item.ItemFactory;
@@ -96,7 +98,7 @@ private static ArrayList<Craftable> recipes;
 
 static {
 	recipes=new ArrayList<Craftable>();
-	for (Entry<String, String> e : HashmapLoader.readHashmap("data/craft_def").entrySet()) //TODO: use HBT here
+	for (Entry<String, String> e : HashmapLoader.readHashmap(FileHandler.parse("craft_def", ResourceType.PLAIN)).entrySet()) //TODO: use HBT here
 		recipes.add(new Craftable(e.getKey(), e.getValue()));
 }
 
