@@ -4,6 +4,7 @@ import net.halite.lote.Element;
 import net.halite.lote.msgsys.MessageReceiver;
 import net.halite.lote.player.Camera;
 import net.halite.lote.system.GameClient;
+import net.halite.lote.util.FileHandler;
 import org.newdawn.slick.*;
 import org.newdawn.slick.state.StateBasedGame;
 
@@ -24,7 +25,7 @@ public EnemyMushroom() {
 @Override
 public void init(GameContainer gc, StateBasedGame sbg, MessageReceiver receiver)
 		throws SlickException {
-	spr=new SpriteSheet(new Image("data/ent/mushroom_enemy.png", false, 0), 32, 32);
+	spr=new SpriteSheet(FileHandler.getImage("ent.mushroom_enemy"), 32, 32);
 }
 
 @Override

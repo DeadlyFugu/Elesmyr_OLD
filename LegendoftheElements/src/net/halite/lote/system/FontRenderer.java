@@ -1,6 +1,8 @@
 package net.halite.lote.system;
 
+import net.halite.lote.util.FileHandler;
 import net.halite.lote.util.HashmapLoader;
+import net.halite.lote.util.ResourceType;
 import org.newdawn.slick.*;
 import org.newdawn.slick.font.effects.ColorEffect;
 
@@ -36,9 +38,9 @@ public static void setLang(Language lang) {
 
 public static void reset(GameContainer gc) throws SlickException {
 	lang=newlang;
-	i18n_lang=HashmapLoader.readHashmap("data/lang/"+lang.name());
+	i18n_lang=HashmapLoader.readHashmap(FileHandler.parse("lang."+lang.name(), ResourceType.PLAIN));
 	if (jpfont==null&&lang==Language.JP) {
-		String fontPath="data/jp.ttf";
+		String fontPath=FileHandler.parse("font.jp", ResourceType.FONT);
 		UnicodeFont uFont=new UnicodeFont(fontPath, 32, false, false);
 		uFont.addAsciiGlyphs();
 		uFont.addGlyphs('ぁ', 'ヿ'); //Hiragana + Katakana
@@ -55,9 +57,9 @@ public static Language getLang() {
 }
 
 public static void initialise(GameContainer gc) throws SlickException {
-	bpfont=new SpriteSheetFont(new SpriteSheet(new org.newdawn.slick.Image("data/font.png", false, 0), 9, 16), ' ');
-	i18n_backup=HashmapLoader.readHashmap("data/lang/EN_US");
-	bookfont=new UnicodeFont("data/ui/book.ttf", 32, false, false);
+	bpfont=new SpriteSheetFont(new SpriteSheet(new org.newdawn.slick.Image(FileHandler.parse("font.font", ResourceType.FONT), false, 0), 9, 16), ' ');
+	i18n_backup=HashmapLoader.readHashmap(FileHandler.parse("lang.EN_US", ResourceType.PLAIN));
+	bookfont=new UnicodeFont(FileHandler.parse("font.book", ResourceType.FONT), 32, false, false);
 	bookfont.addAsciiGlyphs();
 	bookfont.getEffects().add(new ColorEffect(java.awt.Color.BLACK));
 	bookfont.loadGlyphs();

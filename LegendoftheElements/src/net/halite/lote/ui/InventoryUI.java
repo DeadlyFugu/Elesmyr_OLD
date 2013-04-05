@@ -9,6 +9,7 @@ import net.halite.lote.player.PlayerData.InventoryEntry;
 import net.halite.lote.system.FontRenderer;
 import net.halite.lote.system.GameClient;
 import net.halite.lote.system.Main;
+import net.halite.lote.util.FileHandler;
 import net.halite.lote.world.entity.EntityPlayer;
 import net.halite.lote.world.item.Item;
 import org.newdawn.slick.*;
@@ -28,8 +29,8 @@ String[] types={"All", "Weapons", "Armor", "Potions", "Food", "Books", "Misc"};
 public void init(GameContainer gc, StateBasedGame sbg,
                  MessageReceiver receiver) throws SlickException {
 	inited=true;
-	bg=new Image("data/ui/inv.png", false, 0);
-	invsel=new Image("data/ui/invsel.png", false, 0);
+	bg=FileHandler.getImage("ui.inv");
+	invsel=FileHandler.getImage("ui.invsel");
 }
 
 private boolean inited=false;

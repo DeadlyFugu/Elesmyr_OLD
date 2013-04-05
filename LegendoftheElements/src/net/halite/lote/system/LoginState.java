@@ -1,5 +1,6 @@
 package net.halite.lote.system;
 
+import net.halite.lote.util.FileHandler;
 import org.newdawn.slick.*;
 import org.newdawn.slick.Input;
 import org.newdawn.slick.gui.TextField;
@@ -27,7 +28,7 @@ public int getID() {
 
 public void init(GameContainer gc, StateBasedGame sbg)
 		throws SlickException {
-	overlay=new Image("data/menu/error.png");
+	overlay=FileHandler.getImage("menu.error");
 	tfUser=new TextField(gc, FontRenderer.getFont(), (Main.INTERNAL_RESX/4)-64, 90, 256, 16);
 	tfUser.setBorderColor(null);
 	tfUser.setBackgroundColor(null);

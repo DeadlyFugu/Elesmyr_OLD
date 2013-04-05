@@ -6,6 +6,7 @@ import net.halite.lote.system.FontRenderer;
 import net.halite.lote.system.GameClient;
 import net.halite.lote.system.Globals;
 import net.halite.lote.system.Main;
+import net.halite.lote.util.FileHandler;
 import org.newdawn.slick.*;
 import org.newdawn.slick.state.StateBasedGame;
 
@@ -40,7 +41,7 @@ public void addPage(String page) {
 @Override
 public void init(GameContainer gc, StateBasedGame sbg, MessageReceiver receiver) throws SlickException {
 	inited=true;
-	bg=new Image("data/ui/book.png", false, 0);
+	bg=FileHandler.getImage("ui.book");
 }
 
 @Override

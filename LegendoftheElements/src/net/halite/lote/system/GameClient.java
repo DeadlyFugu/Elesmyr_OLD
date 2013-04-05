@@ -10,6 +10,7 @@ import net.halite.lote.msgsys.MessageSystem;
 import net.halite.lote.player.Camera;
 import net.halite.lote.player.PlayerClient;
 import net.halite.lote.ui.*;
+import net.halite.lote.util.FileHandler;
 import net.halite.lote.world.Region;
 import net.halite.lote.world.World;
 import net.halite.lote.world.entity.Entity;
@@ -106,8 +107,8 @@ public void init(GameContainer gc, StateBasedGame sbg) throws SlickException {
 	player.init(gc, sbg, this);
 	cam=new Camera(10, 10);
 	lm=new LightMap(true, (int) (MainMenuState.lres*Main.INTERNAL_ASPECT), MainMenuState.lres);
-	vignette=new Image("data/ui/vignette.png", false, 1);
-	alphabg=new Image("data/ui/alphabg.png", false, 0);
+	vignette=FileHandler.getImage("ui.vignette");
+	alphabg=FileHandler.getImageBlurry("ui.alphabg");
 	System.gc();
 
 	textField=new TextField(gc, FontRenderer.getFont(), 10, Main.INTERNAL_RESY-84, 530, 16);

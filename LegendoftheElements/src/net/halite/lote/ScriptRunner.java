@@ -3,11 +3,11 @@ package net.halite.lote;
 import com.esotericsoftware.minlog.Log;
 import groovy.lang.GroovyClassLoader;
 import groovy.lang.GroovyObject;
+import net.halite.lote.util.FileHandler;
 import org.codehaus.groovy.control.CompilationFailedException;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 
 public class ScriptRunner {
@@ -18,19 +18,8 @@ public static void init() {
 	//Setup GroovyClassLoader
 	GroovyClassLoader loader=new GroovyClassLoader();
 
-	//Read each file in
-	ArrayList<File> temp=new ArrayList<File>();
-	File[] fileList=new File("data/scr").listFiles();
-
-	for (int i=0; i<fileList.length; i++) {
-		File choose=fileList[i];
-		if (choose.isFile()&&!temp.contains(choose)) {
-			temp.add(choose);
-		}
-	}
-
 	//Loop through files
-	for (File f : temp) {
+	for (File f : FileHandler.getDataFolderContents("scr")) {
 		Class tclass=null;
 		try {
 			tclass=loader.parseClass(f);

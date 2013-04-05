@@ -7,6 +7,7 @@ import net.halite.lote.msgsys.MessageSystem;
 import net.halite.lote.player.Camera;
 import net.halite.lote.system.GameClient;
 import net.halite.lote.system.GameServer;
+import net.halite.lote.util.FileHandler;
 import net.halite.lote.world.Region;
 import net.halite.lote.world.item.Item;
 import net.halite.lote.world.item.ItemWeapon;
@@ -39,7 +40,7 @@ public void initSERV() {
 @Override
 public void init(GameContainer gc, StateBasedGame sbg, MessageReceiver receiver)
 		throws SlickException {
-	spr=new Image("data/ent/enemy.png", false, 0);
+	spr=FileHandler.getImage("ent.enemy");
 }
 
 @Override

@@ -20,7 +20,7 @@ private static UnicodeFont bookfont;
 
 static {
 	try {
-	bookfont=new UnicodeFont("data/ui/book.ttf", 32, false, false);
+	bookfont=new UnicodeFont(FileHandler.parse("data/ui/book.ttf",ResourceType.FONT), 32, false, false);
 	bookfont.addAsciiGlyphs();
 	bookfont.getEffects().add(new ColorEffect(java.awt.Color.BLACK));
 	bookfont.loadGlyphs();

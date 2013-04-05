@@ -14,6 +14,7 @@ import net.halite.lote.system.GameClient;
 import net.halite.lote.system.GameServer;
 import net.halite.lote.system.Globals;
 import net.halite.lote.ui.CraftUI;
+import net.halite.lote.util.FileHandler;
 import net.halite.lote.world.Region;
 import net.halite.lote.world.item.Item;
 import net.halite.lote.world.item.ItemFactory;
@@ -48,7 +49,7 @@ public void setSERVDAT(Connection connection, PlayerData pdat) {
 @Override
 public void init(GameContainer gc, StateBasedGame sbg, MessageReceiver receiver)
 		throws SlickException {
-	spr=new SpriteSheet(new Image("data/player/player_reg.png", false, 0), 32, 48);
+	spr=new SpriteSheet(FileHandler.getImage("player.player_reg"), 32, 48);
 	torchLight=new Light(600, 550, 256, 0.8f, 0.5f, 0.2f, 0.4f); //TORCH LIGHT
 	//((GameClient) sbg.getState(Main.GAMEPLAYSTATE)).lm.addLight(torchLight);
 	constantUpdate=true;

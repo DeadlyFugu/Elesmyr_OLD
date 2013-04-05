@@ -3,6 +3,7 @@ package net.halite.lote.world.entity;
 import net.halite.lote.msgsys.MessageReceiver;
 import net.halite.lote.player.Camera;
 import net.halite.lote.system.GameClient;
+import net.halite.lote.util.FileHandler;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
@@ -16,7 +17,7 @@ Image spr;
 @Override
 public void init(GameContainer gc, StateBasedGame sbg, MessageReceiver receiver)
 		throws SlickException {
-	spr=new Image("data/ent/bigtree.png", false, 0);
+	spr=FileHandler.getImage("ent.bigtree");
 }
 
 @Override

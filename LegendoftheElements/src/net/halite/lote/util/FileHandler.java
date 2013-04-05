@@ -2,6 +2,8 @@ package net.halite.lote.util;
 
 import net.halite.hbt.*;
 import net.halite.lote.system.Main;
+import org.newdawn.slick.Image;
+import org.newdawn.slick.SlickException;
 
 import java.io.*;
 import java.util.*;
@@ -16,8 +18,22 @@ private static HBTCompound data;
 
 private static  List<String> packs;
 
-public String parse(String name, ResourceType type) {
+public static String parseExt(String name, ResourceType type) throws FileNotFoundException {
+	try {
 	return parseFileName(name,type.getExtensions(),true).get(0);
+	} catch (IndexOutOfBoundsException e) {
+		throw new FileNotFoundException(name);
+	}
+}
+
+public static String parse(String name, ResourceType type) {
+	try {
+		return parseFileName(name,type.getExtensions(),true).get(0);
+	} catch (IndexOutOfBoundsException e) {
+		Main.handleCrash(new FileNotFoundException(name));
+		System.exit(0);
+	}
+	return null;
 }
 
 /**
@@ -34,14 +50,19 @@ public String parse(String name, ResourceType type) {
 private static List<String> parseFileName(String name, String[] extension, boolean dataFile) {
 	List<String> found = new ArrayList<String>();
 	File f;
-	for (String s : extension) {
-		if (dataFile) {
-			for (String pack : packs) {
-				f = new File(pack+"/"+name.replaceAll("\\.","/")+"."+s);
+	if (dataFile) {
+		for (String pack : packs) {
+			for (String s : extension) {
+				if (!s.equals("")) {
+					s="."+s; //TODO: Remove this and files without extensions (To .hm for hashmap files maybe?)
+				}
+				f = new File(pack+"/"+name.replaceAll("\\.","/")+s);
 				if (f.exists())
 					found.add(f.getPath());
 			}
-		} else {
+		}
+	} else {
+		for (String s : extension) {
 			f = new File(name.replaceAll("\\.","/")+"."+s);
 			if (f.exists())
 				found.add(f.getPath());
@@ -57,7 +78,7 @@ public static void readData() throws IOException {
 			for (HBTTag packentry : ((HBTCompound) tag)) {
 				if (packentry instanceof HBTFlag) {
 					if (((HBTFlag) packentry).isTrue()) {
-						packs.add(packentry.getName());
+						packs.add("pack/"+packentry.getName());
 					}
 				}
 			}
@@ -273,16 +294,19 @@ public static void writeMap(File file,Map<String,String> map) throws IOException
 	}
 }
 
-private static enum ResourceType {
-	IMAGE("png","jpg","bmp","tga"),
-	HBT("hbtx","hbt","hbtc"),
-	PLAIN("","txt");
-	private String[] exts;
-	private ResourceType(String ... exts) {
-		this.exts=exts;
+public static Image getImage(String s) throws SlickException {
+	return new Image(FileHandler.parse(s, ResourceType.IMAGE),false,0);
+}
+
+public static Image getImageBlurry(String s) throws SlickException {
+	return new Image(FileHandler.parse(s, ResourceType.IMAGE),false,1);
+}
+
+public static List<File> getDataFolderContents(String name) {
+	ArrayList<File> ret = new ArrayList<File>();
+	for (String folder : parseFileName(name,new String[] {""},true)) {
+		ret.addAll(getAllFiles(new File(folder)));
 	}
-	public String[] getExtensions() {
-		return exts;
-	}
+	return ret;
 }
 }

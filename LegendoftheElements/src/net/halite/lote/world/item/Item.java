@@ -3,6 +3,7 @@ package net.halite.lote.world.item;
 import net.halite.lote.Element;
 import net.halite.lote.player.PlayerData;
 import net.halite.lote.system.GameServer;
+import net.halite.lote.util.FileHandler;
 import net.halite.lote.world.entity.EntityPlayer;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.SlickException;
@@ -16,7 +17,7 @@ public Item ctor(String name, String img, String extd) {
 	this.name=name;
 	this.extd=extd;
 	try {
-		spr=new Image("data/item/"+img+".png", false, 0);
+		spr=FileHandler.getImage("item."+img);
 	} catch (SlickException e) {}
 	return this;
 }

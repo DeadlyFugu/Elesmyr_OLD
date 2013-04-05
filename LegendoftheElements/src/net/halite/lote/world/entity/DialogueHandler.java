@@ -5,6 +5,8 @@ import net.halite.lote.msgsys.Connection;
 import net.halite.lote.msgsys.Message;
 import net.halite.lote.msgsys.MessageSystem;
 import net.halite.lote.system.FontRenderer;
+import net.halite.lote.util.FileHandler;
+import net.halite.lote.util.ResourceType;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -29,7 +31,7 @@ public DialogueHandler(String fname) {
 }
 
 private void loadDiag(String fname, String lang, boolean ignorable) {
-	File file=new File("data/npc/"+lang+"/"+fname);
+	File file=new File(FileHandler.parse("npc."+lang+"."+fname, ResourceType.PLAIN));
 	afname=file.toString();
 	ArrayList<String> diagInL=new ArrayList<String>();
 	if (!file.exists()) {
@@ -53,7 +55,7 @@ private void loadDiag(String fname, String lang, boolean ignorable) {
 	dialogue.put(lang, diagInL);
 }
 
-public void response(GameElement master, String lang, String call, Connection connection) {
+public void response(GameElement master, String lang, String call, Connection connection) { //TODO: fix tresponse getting ignored
 	int ln=1;
 	boolean in=false;
 	boolean askmode=false;

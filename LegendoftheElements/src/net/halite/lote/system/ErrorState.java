@@ -1,5 +1,7 @@
 package net.halite.lote.system;
 
+import net.halite.lote.util.FileHandler;
+import net.halite.lote.util.ResourceType;
 import org.newdawn.slick.*;
 import org.newdawn.slick.Input;
 import org.newdawn.slick.state.BasicGameState;
@@ -25,7 +27,7 @@ public int getID() {
 
 public void init(GameContainer gc, StateBasedGame sbg)
 		throws SlickException {
-	overlay=new Image("data/menu/error.png", false, 0);
+	overlay=new Image(FileHandler.parse("menu.error", ResourceType.IMAGE), false, 0);
 }
 
 public void render(GameContainer gc, StateBasedGame sbg, Graphics g)

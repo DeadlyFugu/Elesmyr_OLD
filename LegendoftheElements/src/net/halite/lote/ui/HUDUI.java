@@ -8,6 +8,7 @@ import net.halite.lote.system.FontRenderer;
 import net.halite.lote.system.GameClient;
 import net.halite.lote.system.Globals;
 import net.halite.lote.system.Main;
+import net.halite.lote.util.FileHandler;
 import net.halite.lote.world.entity.Entity;
 import net.halite.lote.world.entity.EntityPlayer;
 import org.newdawn.slick.*;
@@ -39,11 +40,11 @@ public HUDUI() {
 public void init(GameContainer gc, StateBasedGame sbg,
                  MessageReceiver receiver) throws SlickException {
 	inited=true;
-	bart=new Image("data/ui/bar_t.png", false, 0);
-	barb=new Image("data/ui/bar_b.png", false, 0);
-	bars=new Image("data/ui/bars.png", false, 0);
-	equip=new Image("data/ui/equip.png", false, 0);
-	elements = new SpriteSheet(new Image("data/ui/elements.png",false,0),16,16);
+	bart=FileHandler.getImage("ui.bar_t");
+	barb=FileHandler.getImage("ui.bar_b");
+	bars=FileHandler.getImage("ui.bars");
+	equip=FileHandler.getImage("ui.equip");
+	elements = new SpriteSheet(FileHandler.getImage("ui.elements"),16,16);
 }
 
 @Override

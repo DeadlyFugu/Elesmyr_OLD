@@ -1,5 +1,6 @@
 package net.halite.lote.system;
 
+import net.halite.lote.util.FileHandler;
 import org.newdawn.slick.*;
 import org.newdawn.slick.state.BasicGameState;
 import org.newdawn.slick.state.StateBasedGame;
@@ -28,12 +29,12 @@ public int getID() {
 
 public void init(GameContainer gc, StateBasedGame sbg)
 		throws SlickException {
-	intro1=new Image("data/menu/intro1.png"); //Halite
-	intro2=new Image("data/menu/intro2.png"); //Alachie
-	intro3=new Image("data/menu/intro3.png"); //Legend of the Elements
-	menubg=new Image("data/menu/bg.png"); //Menu image (BG)
-	bg2=new Image("data/menu/bg2.png", false, 0); //Menu image (Halitesoft)
-	bg3=new Image("data/menu/bg3.png", false, 0); //Menu image (LotE/Alachie)
+	intro1=FileHandler.getImage("menu.intro1"); //Halite
+	intro2=FileHandler.getImage("menu.intro2"); //Alachie
+	intro3=FileHandler.getImage("menu.intro3"); //Legend of the Elements
+	menubg=FileHandler.getImage("menu.bg"); //Menu image (BG)
+	bg2=FileHandler.getImage("menu.bg2"); //Menu image (Halitesoft)
+	bg3=FileHandler.getImage("menu.bg3"); //Menu image (LotE/Alachie)
 	gc.setVSync(true); //True in release
 	gc.setVerbose(false); //False in release
 	gc.setClearEachFrame(false); //Set to false in release!

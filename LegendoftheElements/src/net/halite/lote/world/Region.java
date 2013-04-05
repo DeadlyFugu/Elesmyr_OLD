@@ -14,6 +14,8 @@ import net.halite.lote.system.GameClient;
 import net.halite.lote.system.GameServer;
 import net.halite.lote.system.Globals;
 import net.halite.lote.system.Main;
+import net.halite.lote.util.FileHandler;
+import net.halite.lote.util.ResourceType;
 import net.halite.lote.world.entity.*;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
@@ -48,7 +50,7 @@ public Region(String name) {
 
 public void init(GameContainer gc, StateBasedGame sbg, MessageReceiver receiver) throws SlickException {
 	try {
-		map=new TiledMap("data/region/"+name+".tmx");
+		map=new TiledMap(FileHandler.parse("region."+name,ResourceType.MAP));
 		mapColLayer=map.getLayerIndex("col");
 		int tsid=Integer.parseInt(map.getLayerProperty(mapColLayer, "tileset", "0"));
 		mapColTOff=map.getTileSet(tsid).firstGID;
@@ -61,7 +63,7 @@ public void render(GameContainer gc, StateBasedGame sbg, Graphics g, Camera cam,
 	//Map is rendered in GameplayState
 	List<Entity> list=new ArrayList<Entity>(entities.values());
 	try {
-		Collections.sort(list); //TODO: Occasionally throws IllegalArgumentException: Comparison methood violates its general contract! May be fixed?
+		Collections.sort(list); //TODO: Occasionally throws IllegalArgumentException: Comparison methood violates its general contract! May be fixed? 99% sure it's fixed.
 	} catch (Exception e) {
 		e.printStackTrace();
 	}
@@ -260,7 +262,7 @@ public boolean aiPlaceFreeRect(int x, int y, int x2, int y2) {
 
 public ArrayList<Light> getLights() {
 	ArrayList<Light> ret=new ArrayList<Light>();
-	File file=new File("data/region/"+name+".lm");
+	File file=new File(FileHandler.parse("region."+name, ResourceType.LIGHTMAP));
 	try {
 		BufferedReader br=new BufferedReader(new InputStreamReader(new FileInputStream(file)));
 		String l;

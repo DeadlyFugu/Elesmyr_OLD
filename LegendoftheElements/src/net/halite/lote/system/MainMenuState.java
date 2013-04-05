@@ -3,6 +3,7 @@ package net.halite.lote.system;
 import com.esotericsoftware.kryonet.FrameworkMessage;
 import com.esotericsoftware.kryonet.KryoSerialization;
 import com.esotericsoftware.minlog.Log;
+import net.halite.lote.util.FileHandler;
 import org.newdawn.slick.*;
 import org.newdawn.slick.gui.TextField;
 import org.newdawn.slick.state.BasicGameState;
@@ -97,9 +98,9 @@ private ArrayList<File> getSubs(File cur) {
 }
 
 public void init(GameContainer gc, StateBasedGame sbg) throws SlickException {
-	background=new Image("data/menu/bg.png");
-	bg2=new Image("data/menu/bg2.png", false, 0);
-	bg3=new Image("data/menu/bg3.png", false, 0);
+	background=FileHandler.getImage("menu.bg");
+	bg2=FileHandler.getImage("menu.bg2");
+	bg3=FileHandler.getImage("menu.bg3");
 
 	ArrayList<File> files=getSubs(new File("save"));
 	levels=new String[files.size()+2];
@@ -116,7 +117,7 @@ public void init(GameContainer gc, StateBasedGame sbg) throws SlickException {
 	lres=Integer.parseInt(Globals.get("lres", "24"));
 	debug=Globals.get("debug", false);
 
-	Image temp=new Image("data/menu/button.png", false, 0);
+	Image temp=FileHandler.getImage("menu.button");
 	button[0]=temp.getSubImage(0, 1, 256, 32);
 	button[1]=temp.getSubImage(0, 33, 256, 32);
 	//temp.destroy();

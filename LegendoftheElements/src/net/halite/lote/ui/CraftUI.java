@@ -96,7 +96,7 @@ private static ArrayList<Craftable> recipes;
 
 static {
 	recipes=new ArrayList<Craftable>();
-	for (Entry<String, String> e : HashmapLoader.readHashmap("data/craft_def").entrySet())
+	for (Entry<String, String> e : HashmapLoader.readHashmap("data/craft_def").entrySet()) //TODO: use HBT here
 		recipes.add(new Craftable(e.getKey(), e.getValue()));
 }
 

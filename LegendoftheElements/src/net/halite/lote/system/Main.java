@@ -68,7 +68,7 @@ public static void main(String[] args) throws SlickException {
 		}
 	});
 
-	if (!new File("data").exists()) {
+	if (!new File("pack").exists()) {
 		Log.error("Please run this from the correct directory");
 		System.exit(0);
 	}
@@ -81,8 +81,6 @@ public static void main(String[] args) throws SlickException {
 		Globals.setMap(HashmapLoader.readHashmap("conf"));
 	else
 		Globals.setMap(new HashMap<String,String>());
-
-	ScriptRunner.init();
 
 	try {
 		HBTOutputStream os = new HBTOutputStream(new FileOutputStream("save/TestOut2.hbtc"),true);
@@ -97,13 +95,15 @@ public static void main(String[] args) throws SlickException {
 		e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
 	}
 
+	ScriptRunner.init();
+
 	AppGameContainer app=new CustomAppGameContainer(new Main());
 
 	MainMenuState.disx[3]=app.getScreenWidth();
 	MainMenuState.disy[3]=app.getScreenHeight();
 
 	app.setDisplayMode(MainMenuState.disx[0], MainMenuState.disy[0], false);
-	app.setIcons(new String[]{"data/icon32.tga", "data/icon16.tga"});
+	//app.setIcons(new String[]{"data/icon32.tga", "data/icon16.tga"}); //TODO: Make this work
 
 	app.start();
 }
