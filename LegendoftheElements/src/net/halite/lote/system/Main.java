@@ -36,7 +36,7 @@ public static float INTERNAL_ASPECT=(4/3f);
 public static int INTERNAL_RESY=480; //Internal resolution y
 public static int INTERNAL_RESX=(int) (INTERNAL_RESY*INTERNAL_ASPECT); //Internal resolution x
 
-public static final String verNum="0.2.0";
+public static final String verNum="0.2.1";
 public static final String verRelease="PRE-ALPHA";
 public static final String version="$version.prealpha| "+verNum; //0.0.1 = DEC 16
 
@@ -87,7 +87,7 @@ public static void main(String[] args) throws SlickException {
 	try {
 		HBTOutputStream os = new HBTOutputStream(new FileOutputStream("save/TestOut2.hbtc"),true);
 		FileHandler.readData();
-		HBTTag tag = FileHandler.getTag("items.Apple");
+		HBTTag tag = FileHandler.getTag("items");
 		System.out.println(tag);
 		os.write(tag);
 		os.close();

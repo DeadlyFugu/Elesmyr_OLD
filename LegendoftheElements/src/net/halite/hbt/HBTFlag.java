@@ -9,16 +9,17 @@ import org.newdawn.slick.util.Log;
  */
 public class HBTFlag extends HBTTag {
 private static final String[] VALUES={
-		"TRUE",
-		"FALSE",
-		"NEUTRAL",
-		"EARTH",
-		"WATER",
-		"FIRE",
-		"AIR",
-		"VOID"
+		                                     "TRUE",
+		                                     "FALSE",
+		                                     "NEUTRAL",
+		                                     "EARTH",
+		                                     "WATER",
+		                                     "FIRE",
+		                                     "AIR",
+		                                     "VOID"
 };
 private byte data;
+
 public HBTFlag(String name, byte data) {
 	super(name);
 	this.data=data;
@@ -41,7 +42,7 @@ private byte stringToByte(String data) {
 
 @Override
 public String toString() {
-	return "flag "+getName()+" = "+VALUES[data] ;
+	return "flag "+getName()+" = "+VALUES[data];
 }
 
 public byte getData() {

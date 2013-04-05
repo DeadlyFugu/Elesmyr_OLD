@@ -12,9 +12,14 @@ import java.util.*;
  */
 public class FileHandler {
 
-private static final String[] HBT_EXTENSIONS={"hbtx","hbt","hbtc"};
-
 private static HBTCompound data;
+
+private static  List<String> packs;
+
+public String parse(String name, ResourceType type) {
+	return parseFileName(name,type.getExtensions(),true).get(0);
+}
+
 /**
  * Returns paths to all files matching 'name'
  * Examples:
@@ -26,31 +31,51 @@ private static HBTCompound data;
  * @param extension The acceptable extensions
  * @return The file's path
  */
-private static List<String> parseFileName(String name, String[] extension) {
+private static List<String> parseFileName(String name, String[] extension, boolean dataFile) {
 	List<String> found = new ArrayList<String>();
 	File f;
 	for (String s : extension) {
-		f = new File("data/"+name.replaceAll("\\.","/")+"."+s);
-		if (f.exists())
-			found.add(f.getPath());
-		f = new File(name.replaceAll("\\.","/")+"."+s);
-		if (f.exists())
-			found.add(f.getPath());
+		if (dataFile) {
+			for (String pack : packs) {
+				f = new File(pack+"/"+name.replaceAll("\\.","/")+"."+s);
+				if (f.exists())
+					found.add(f.getPath());
+			}
+		} else {
+			f = new File(name.replaceAll("\\.","/")+"."+s);
+			if (f.exists())
+				found.add(f.getPath());
+		}
 	}
 	return found;
 }
 
 public static void readData() throws IOException {
-	data = new HBTCompound("data");
-	for (File f : getAllFiles(new File("data/"))) {
-		if (f.getName().matches(".*\\.hbt(|x|c)"))
-			try {
-				for (HBTTag tag : readHBTFile(f.getPath())) {
-					data.addTag(tag);
+	packs = new ArrayList<String>();
+	for (HBTTag tag : readHBTFile("pack/packs.hbtx")) {
+		if (tag.getName().equals("packs")) {
+			for (HBTTag packentry : ((HBTCompound) tag)) {
+				if (packentry instanceof HBTFlag) {
+					if (((HBTFlag) packentry).isTrue()) {
+						packs.add(packentry.getName());
+					}
 				}
-			} catch (IOException e) {
-				throw new IOException("in file "+f.getPath()+":",e);
 			}
+		}
+	}
+
+	data = new HBTCompound("data");
+	for (String pack : packs) {
+		for (File f : getAllFiles(new File(pack+"/"))) {
+			if (f.getName().matches(".*\\.hbt(|x|c)"))
+				try {
+					for (HBTTag tag : readHBTFile(f.getPath())) {
+						data.addTag(tag);
+					}
+				} catch (IOException e) {
+					throw new IOException("in file "+f.getPath()+":",e);
+				}
+		}
 	}
 }
 
@@ -71,8 +96,8 @@ private static List<File> getAllFiles(File parent) {
  * @param name
  * @return array of HBTCompounds, Usually one per file matched.
  */
-private static List<HBTTag> readHBT(String name) throws IOException {
-	List<String> paths = parseFileName(name,HBT_EXTENSIONS);
+private static List<HBTTag> readHBT(String name, boolean dataFile) throws IOException {
+	List<String> paths = parseFileName(name,ResourceType.HBT.getExtensions(),dataFile);
 	List<HBTTag> out = new ArrayList<HBTTag>();
 	for (String path : paths) {
 		out.addAll(readHBTFile(path));
@@ -204,8 +229,8 @@ private static byte[] parseByteArray(String str) {
  * @param name
  * @return A map
  */
-public static Map<String,String> readMap(String name) throws IOException {
-	List<String> paths = parseFileName(name,new String[] {});
+public static Map<String,String> readMap(String name,boolean dataFile) throws IOException {
+	List<String> paths = parseFileName(name,new String[] {},dataFile);
 	Map<String, String> map=new HashMap<String, String>();
 	for (String path : paths) {
 	File file=new File(path);
@@ -227,7 +252,7 @@ public static Map<String,String> readMap(String name) throws IOException {
  * Writes a text formatted map to a file
  *
  * Writes a map to a file.
- * See {@link #readMap(String)} for how the file is formatted.
+ * See {@link #readMap(String,boolean)} for how the file is formatted.
  *
  * @param file The file to write to.
  * @param map The map to write.
@@ -245,6 +270,19 @@ public static void writeMap(File file,Map<String,String> map) throws IOException
 	} catch (Exception e) {
 		Main.handleCrash(e);
 		System.exit(1);
+	}
+}
+
+private static enum ResourceType {
+	IMAGE("png","jpg","bmp","tga"),
+	HBT("hbtx","hbt","hbtc"),
+	PLAIN("","txt");
+	private String[] exts;
+	private ResourceType(String ... exts) {
+		this.exts=exts;
+	}
+	public String[] getExtensions() {
+		return exts;
 	}
 }
 }
