@@ -649,17 +649,17 @@ public List<InetAddress> discoverHosts(int udpPort, int timeoutMillis) {
 				}*/
 			//} catch (Exception e) { e.printStackTrace();}
 		}
-		if (Log.DEBUG) Log.debug("kryonet", "Broadcasted host discovery on port: "+udpPort);
+		Log.debug("Broadcasted host discovery on port: "+udpPort);
 		socket.setSoTimeout(timeoutMillis);
 		while (true) {
 			DatagramPacket packet=new DatagramPacket(new byte[0], 0);
 			try {
 				socket.receive(packet);
 			} catch (SocketTimeoutException ex) {
-				if (Log.INFO) Log.info("kryonet", "Host discovery timed out.");
+				Log.info("Host discovery timed out.");
 				return hosts;
 			}
-			if (Log.INFO) Log.info("kryonet", "Discovered server: "+packet.getAddress());
+			Log.info("Discovered server: "+packet.getAddress());
 			hosts.add(packet.getAddress());
 		}
 	} catch (IOException ex) {

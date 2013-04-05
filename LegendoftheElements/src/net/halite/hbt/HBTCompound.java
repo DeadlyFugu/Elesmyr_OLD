@@ -1,5 +1,7 @@
 package net.halite.hbt;
 
+import net.halite.lote.system.Main;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -19,7 +21,19 @@ public class HBTCompound extends HBTTag implements Iterable<HBTTag> {
     }
 
     public void addTag(HBTTag tag) {
-        data.add(tag);
+	    boolean hasAlready = false;
+	    for (HBTTag tag1 : data) {
+		    if (tag1.getName().equals(tag.getName())) hasAlready=true;
+	    }
+	    if (hasAlready) {
+		    if (tag instanceof HBTCompound) {
+			    merge((HBTCompound) tag);
+		    } else {
+			    Main.handleCrash(new Exception("Two definitions for tag "+getName()+" exist:\n    "+this.toString()+"\n    "+tag.toString()));
+		    }
+	    } else {
+		    data.add(tag);
+        }
     }
 
     public HBTTag getTag(String name) throws TagNotFoundException {
@@ -60,7 +74,13 @@ public class HBTCompound extends HBTTag implements Iterable<HBTTag> {
         return builder.toString();
     }
 
-    public class TagNotFoundException extends Exception {
+public void merge(HBTCompound other) {
+		for (HBTTag tag : other) {
+			this.addTag(tag);
+		}
+	}
+
+public class TagNotFoundException extends Exception {
         public TagNotFoundException(String name) {
             super(name);
         }

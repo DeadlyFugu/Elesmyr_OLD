@@ -405,7 +405,6 @@ public PlayerClient getPlayer() {
 public void join(InetAddress hostaddr) throws Exception {
 	MessageSystem.SERVER=false;
 	MessageSystem.CLIENT=true;
-	MessageSystem.startClient(hostaddr);
 	MessageSystem.initialise(this, false, hostaddr, null);
 }
 

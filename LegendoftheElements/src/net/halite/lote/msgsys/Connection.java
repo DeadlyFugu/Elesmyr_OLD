@@ -68,6 +68,6 @@ boolean getFastlinked() {
 }
 
 @Override public String toString() {
-	return socket.toString();
+	return socket.getInetAddress().getCanonicalHostName();
 }
 }

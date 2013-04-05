@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.net.BindException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,7 +17,7 @@ import java.util.List;
  * Templates.
  */
 public class Server {
-private ArrayList<Connection> connections;
+private final ArrayList<Connection> connections = new ArrayList<Connection>();
 private ServerSocket serverSocket;
 private boolean running = true;
 
@@ -26,7 +27,11 @@ public List<Connection> getConnections() {
 
 public void sendUDP(int connection, Message msg) {
 	try {
-		connections.get(connection).sendUDP(msg);
+		synchronized (connections) {
+			connections.get(connection).sendUDP(msg);
+		}
+	} catch (IndexOutOfBoundsException be) {
+		Log.warn("Tried to send a message to disconnected connection "+connection);
 	} catch (Exception e) {
 		if (running) Main.handleError(e);
 	}
@@ -34,14 +39,17 @@ public void sendUDP(int connection, Message msg) {
 
 public void sendTCP(int connection, Message msg) {
 	try {
-	connections.get(connection).sendTCP(msg);
+		synchronized (connections) {
+			connections.get(connection).sendTCP(msg);
+		}
+	} catch (IndexOutOfBoundsException be) {
+		Log.warn("Tried to send a message to disconnected connection "+connection);
 	} catch (Exception e) {
 		if (running) Main.handleError(e);
 	}
 }
 
 public void start() {
-	connections = new ArrayList<Connection>();
 }
 
 public void bind(int port, int port2) throws BindException {
@@ -56,20 +64,21 @@ public void bind(int port, int port2) throws BindException {
 
 	new Thread() {
 		public void run() {
-			int i = 0;
+			this.setName("[server] Request listener");
 			while (running) {
 				Socket clientSocket = null;
 				try {
 					clientSocket = serverSocket.accept();
-					Connection connection = new Connection(i,clientSocket);
+					Connection connection = new Connection(connections.size(),clientSocket);
 					if (connections.size()==0 && MessageSystem.CLIENT) {
 						connection.setFastlinked();
 						MessageSystem.setFastlink(connection);
 					}
-					connections.add(connection);
+					synchronized (connections) {
+						connections.add(connection);
+					}
 					createListenerThread(connection);
 					Log.info("msgsys", "Server connected to "+clientSocket.toString());
-					i++;
 				} catch (Exception e) {
 					if (running) {
 						Main.handleCrash(e);
@@ -84,18 +93,36 @@ public void bind(int port, int port2) throws BindException {
 private void createListenerThread(final Connection connection) {
 	new Thread() {
 		public void run() {
+			this.setName("[server] "+connection.toString()+" listener");
 			while (running) {
 				try {
 					received(connection,connection.readMsg());
 				} catch (HBTCompound.TagNotFoundException e) {
 					Log.error("msgsys","Badly formed message received.");
 					e.printStackTrace();
+				} catch (NullPointerException npe) {
+					npe.printStackTrace();
+					break;
+				} catch (SocketException e) {
+					e.printStackTrace();
+					break;
 				} catch (Exception e) {
-					if (running) {
+					if (!connection.isConnected()) {
+						break;
+					} else if (running) {
 						Main.handleCrash(e);
 						System.exit(1);
 					}
 				}
+			}
+			synchronized (connections) {
+				connections.remove(connection);
+			}
+			try {
+				connection.close();
+			} catch (IOException e) {
+				Main.handleCrash(e);
+				System.exit(1);
 			}
 		}
 	}.start();

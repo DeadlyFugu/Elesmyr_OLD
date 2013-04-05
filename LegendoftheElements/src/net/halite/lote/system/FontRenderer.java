@@ -175,6 +175,8 @@ public static void drawStringBook(int x, int y, String str, Graphics g) {
 }
 
 public static String resolveI18n(String key) {
+	if (key.startsWith("#"))
+		key=key.substring(1);
 	if (key.contains("|")) {
 		String ret="";
 		String[] split=key.split("\\|");

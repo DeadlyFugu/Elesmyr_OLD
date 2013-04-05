@@ -14,6 +14,7 @@ public class FileHandler {
 
 private static final String[] HBT_EXTENSIONS={"hbtx","hbt","hbtc"};
 
+private static HBTCompound data;
 /**
  * Returns paths to all files matching 'name'
  * Examples:
@@ -39,18 +40,51 @@ private static List<String> parseFileName(String name, String[] extension) {
 	return found;
 }
 
+public static void readData() throws IOException {
+	data = new HBTCompound("data");
+	for (File f : getAllFiles(new File("data/"))) {
+		if (f.getName().matches(".*\\.hbt(|x|c)"))
+			try {
+				for (HBTTag tag : readHBTFile(f.getPath())) {
+					data.addTag(tag);
+				}
+			} catch (IOException e) {
+				throw new IOException("in file "+f.getPath()+":",e);
+			}
+	}
+}
+
+private static List<File> getAllFiles(File parent) {
+	ArrayList<File> ret = new ArrayList<File>();
+	for (File f : parent.listFiles()) {
+		if (f.isFile()) {
+			ret.add(f);
+		} else {
+			ret.addAll(getAllFiles(f));
+		}
+	}
+	return ret;
+}
+
 /**
  * Reads a HBT matching name
  * @param name
  * @return array of HBTCompounds, Usually one per file matched.
  */
-public static List<HBTTag> readHBT(String name) throws IOException {
+private static List<HBTTag> readHBT(String name) throws IOException {
 	List<String> paths = parseFileName(name,HBT_EXTENSIONS);
 	List<HBTTag> out = new ArrayList<HBTTag>();
 	for (String path : paths) {
 		out.addAll(readHBTFile(path));
 	}
 	return out;
+}
+
+/**
+ * Returns the HBTTag at name
+ */
+public static HBTTag getTag(String name) throws HBTCompound.TagNotFoundException {
+	return data.getTag(name);
 }
 
 /**

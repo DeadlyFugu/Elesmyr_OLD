@@ -1,6 +1,7 @@
 package net.halite.lote.system;
 
 import com.esotericsoftware.minlog.Log;
+import net.halite.hbt.HBTCompound;
 import net.halite.hbt.HBTOutputStream;
 import net.halite.hbt.HBTTag;
 import net.halite.lote.ScriptRunner;
@@ -67,6 +68,11 @@ public static void main(String[] args) throws SlickException {
 		}
 	});
 
+	if (!new File("data").exists()) {
+		Log.error("Please run this from the correct directory");
+		System.exit(0);
+	}
+
 	System.setProperty("org.lwjgl.librarypath", System.getProperty("user.dir")+"/lib/native");
 
 	org.newdawn.slick.util.Log.setLogSystem(new SlickToMinLogSystem());
@@ -80,13 +86,15 @@ public static void main(String[] args) throws SlickException {
 
 	try {
 		HBTOutputStream os = new HBTOutputStream(new FileOutputStream("save/TestOut2.hbtc"),true);
-	for (HBTTag tag : FileHandler.readHBT("save/TestOut")) {
+		FileHandler.readData();
+		HBTTag tag = FileHandler.getTag("items.Apple");
 		System.out.println(tag);
 		os.write(tag);
-	}
 		os.close();
 	} catch (IOException e) {
 		e.printStackTrace();
+	} catch (HBTCompound.TagNotFoundException e) {
+		e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
 	}
 
 	AppGameContainer app=new CustomAppGameContainer(new Main());
@@ -147,6 +155,7 @@ public void initStatesList(GameContainer gameContainer) throws SlickException {
 }
 
 public static void handleError(Exception e) {
+	e.printStackTrace();
 	handleError(e.getLocalizedMessage());
 }
 

@@ -7,6 +7,7 @@ import net.halite.lote.system.Main;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.net.SocketException;
 
 /**
  * Created with IntelliJ IDEA. User: matt Date: 1/04/13 Time: 9:25 AM To change this template use File | Settings | File
@@ -38,6 +39,7 @@ public void received(Message msg) {
 }
 
 public void start() {
+	running=true;
 }
 
 public void connect(int i, InetAddress address, int port, int port2) throws IOException {
@@ -46,12 +48,19 @@ public void connect(int i, InetAddress address, int port, int port2) throws IOEx
 	connection = new Connection(-1,socket);
 	new Thread() {
 		public void run() {
+			this.setName("[client] listener");
 			while (running) {
 				try {
 					received(connection.readMsg());
 				} catch (HBTCompound.TagNotFoundException e) {
-					Log.error("Badly formed message received.");
+					Log.error("msgsys","Badly formed message received.");
 					e.printStackTrace();
+				} catch (NullPointerException npe) {
+					//Gets thrown when client is stopped
+					running=false;
+				} catch (SocketException e) {
+					//Gets thrown when client is stopped
+					running=false;
 				} catch (Exception e) {
 					if (running) {
 						Main.handleCrash(e);
@@ -64,6 +73,7 @@ public void connect(int i, InetAddress address, int port, int port2) throws IOEx
 }
 
 public void stop() {
+	Log.info("client","Client stopped");
 	running = false;
 }
 
@@ -72,6 +82,6 @@ public void close() throws IOException {
 }
 
 public boolean isConnected() {
-	return connection.isConnected();
+	return running && connection.isConnected();
 }
 }
