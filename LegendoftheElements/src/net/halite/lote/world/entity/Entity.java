@@ -1,6 +1,9 @@
 package net.halite.lote.world.entity;
 
 import com.esotericsoftware.minlog.Log;
+import net.halite.hbt.HBTCompound;
+import net.halite.hbt.HBTInt;
+import net.halite.hbt.HBTString;
 import net.halite.lote.Element;
 import net.halite.lote.GameElement;
 import net.halite.lote.Save;
@@ -90,6 +93,21 @@ void receiveMessageExt(Message msg, MessageReceiver receiver) {
 
 @Override
 public void save(Save save) {
+}
+
+@Override public void fromHBT(HBTCompound tag) {
+	x=tag.getInt("x",0);
+	y=tag.getInt("y",0);
+	extd=tag.getString("extd","");
+}
+
+@Override public HBTCompound toHBT() {
+	HBTCompound ret = new HBTCompound(name);
+	ret.addTag(new HBTString("class",this.getClass().getName().substring("net.halite.lote.world.entity.".length())));
+	ret.addTag(new HBTInt("x",x));
+	ret.addTag(new HBTInt("y",y));
+	ret.addTag(new HBTString("extd",extd));
+	return ret;
 }
 
 @Override

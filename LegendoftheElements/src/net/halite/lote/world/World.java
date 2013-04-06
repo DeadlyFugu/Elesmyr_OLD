@@ -1,6 +1,7 @@
 package net.halite.lote.world;
 
 import com.esotericsoftware.minlog.Log;
+import net.halite.hbt.HBTCompound;
 import net.halite.lote.GameElement;
 import net.halite.lote.Save;
 import net.halite.lote.msgsys.Message;
@@ -148,7 +149,20 @@ public void loadRegion(String name) {
 public void save(Save save) {
 	for (Region r : regions.values()) {
 		r.save(save);
+		save.putTag("world",this.toHBT());
 	}
+}
+
+@Override public void fromHBT(HBTCompound tag) {
+	//What I do here?
+}
+
+@Override public HBTCompound toHBT() {
+	HBTCompound ret = new HBTCompound("world");
+	for (Region r : regions.values()) {
+		ret.addTag(r.toHBT());
+	}
+	return ret;
 }
 
 public Region getRegion(String name) {

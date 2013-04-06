@@ -244,8 +244,9 @@ public void changePlayerRegion(String data, int x, int y, Connection connection,
 	MessageSystem.sendClient(null, connection, new Message("PLAYER.setPDAT", pdat.toString()), false); //Send client PDAT
 	MessageSystem.sendClient(null, connection, new Message("CLIENT.time", String.valueOf(time)+":"+String.valueOf(date)), false); //Send the client the time
 	for (Entity e : world.getRegion(data).entities.values()) {
-		if (e instanceof EntityPlayer)
+		if (e instanceof EntityPlayer) {
 			((EntityPlayer) e).pdat.updated(world.getRegion(data), e.getReceiverName());
+		}
 	}
 }
 

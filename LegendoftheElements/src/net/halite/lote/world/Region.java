@@ -1,6 +1,8 @@
 package net.halite.lote.world;
 
 import com.esotericsoftware.minlog.Log;
+import net.halite.hbt.HBTCompound;
+import net.halite.hbt.HBTTag;
 import net.halite.lote.GameElement;
 import net.halite.lote.Save;
 import net.halite.lote.lighting.Light;
@@ -74,12 +76,14 @@ public void render(GameContainer gc, StateBasedGame sbg, Graphics g, Camera cam,
 
 @Override
 public void load(Save save) {
-	if (save.get("region."+name)!=null)
-		this.parseEntityStringGenIDs(save.get("region."+name), false);
+	//if (save.get("region."+name)!=null)
+	//	this.parseEntityStringGenIDs(save.get("region."+name), false);
+	fromHBT(save.getCompound("world."+name));
 }
 
 @Override
 public void save(Save save) {
+	save.getCompound("world").setTag(toHBTSave());
 	String ret="";
 	int id=0;
 	for (Entity e : entities.values()) {
@@ -97,6 +101,31 @@ public void save(Save save) {
 		save.put("region."+name, ret.substring(1));
 	else
 		save.put("region."+name, ret);
+}
+
+@Override public void fromHBT(HBTCompound tag) {
+	for (HBTTag sub : tag) {
+		if (sub instanceof HBTCompound) {
+			addEntityServer((HBTCompound) sub);
+		}
+	}
+}
+
+public HBTCompound toHBTSave() {
+	HBTCompound ret = new HBTCompound(name);
+	for (Entity e : entities.values()) {
+		if (!(e instanceof EntityPlayer)) //Don't save EntityPlayers. They break things.
+			ret.addTag(e.toHBT());
+	}
+	return ret;
+}
+
+@Override public HBTCompound toHBT() {
+	HBTCompound ret = new HBTCompound(name);
+	for (Entity e : entities.values()) {
+		ret.addTag(e.toHBT());
+	}
+	return ret;
 }
 
 @Override
@@ -240,6 +269,22 @@ public int addEntityServer(String data) {
 	//	c.sendTCP(new Message(name+".addEnt",data.split(",",2)[0]+","+(idmax+1)+","+data.split(",",2)[1]));
 	MessageSystem.sendClient(this, connections, new Message(name+".addEnt", data.split(",", 2)[0]+","+(idmax+1)+","+data.split(",", 2)[1]), false);
 	Entity ent=EntityFactory.getEntity(data.split(",", 2)[0]+","+(idmax+1)+","+data.split(",", 2)[1], this);
+	if (ent!=null) {
+		entities.put(idmax+1, ent);
+		MessageSystem.registerReceiverServer(ent);
+		return idmax+1;
+	} else
+		return -1;
+}
+
+public int addEntityServer(HBTCompound data) {
+	int idmax=0;
+	for (Integer name : entities.keySet())
+		if (name>idmax) idmax=name;
+	//for (Connection c : connections)
+	//	c.sendTCP(new Message(name+".addEnt",data.split(",",2)[0]+","+(idmax+1)+","+data.split(",",2)[1]));
+	MessageSystem.sendClient(this, connections, new Message(name+".addEnt", data.getString("class","Entity")+","+(idmax+1)+","+data.getInt("x",0)+","+data.getInt("y",0)+","+data.getString("extd","")), false);
+	Entity ent=EntityFactory.getEntity(data.getString("class","Entity")+","+(idmax+1)+","+data.getInt("x",0)+","+data.getInt("y",0)+","+data.getString("extd",""), this);
 	if (ent!=null) {
 		entities.put(idmax+1, ent);
 		MessageSystem.registerReceiverServer(ent);

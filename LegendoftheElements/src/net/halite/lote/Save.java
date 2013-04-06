@@ -9,6 +9,8 @@ import net.halite.lote.world.entity.Entity;
 import org.newdawn.slick.util.Log;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -42,7 +44,7 @@ public Save(String name) {
 
 	hbtData = new HBTCompound("saveroot");
 	try {
-		for (HBTTag tag : FileHandler.readHBT("save/"+name+"/data",false)) {
+		for (HBTTag tag : FileHandler.readHBT("save/"+name+"/data",false)) { //TODO: dataunc = outputted data; make dataunc work.
 			hbtData.addTag(tag);
 		}
 	} catch (IOException e) {
@@ -50,11 +52,11 @@ public Save(String name) {
 	}
 }
 
-public String get(String key) {
+@Deprecated public String get(String key) {
 	return data.get(key);
 }
 
-public void put(String key, String value) {
+@Deprecated public void put(String key, String value) {
 	data.put(key, value);
 }
 
@@ -174,6 +176,17 @@ public void write() {
 	}
 	for (Entry<String, HashMap<String, String>> e : dataHSep.entrySet()) {
 		HashmapLoader.writeHashmap("save/"+name+"/"+e.getKey(), e.getValue());
+	}
+	System.out.println(hbtData);
+	try {
+		HBTOutputStream os = new HBTOutputStream(new FileOutputStream("save/"+name+"/dataunc.hbt"),false);
+		for (HBTTag tag : hbtData)
+			os.write(tag);
+		os.close();
+	} catch (FileNotFoundException e) {
+		e.printStackTrace();
+	} catch (IOException e) {
+		e.printStackTrace();
 	}
 }
 

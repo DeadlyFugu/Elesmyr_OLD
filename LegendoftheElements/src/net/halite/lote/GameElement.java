@@ -1,5 +1,6 @@
 package net.halite.lote;
 
+import net.halite.hbt.HBTCompound;
 import net.halite.lote.msgsys.Message;
 import net.halite.lote.msgsys.MessageReceiver;
 import net.halite.lote.player.Camera;
@@ -51,6 +52,10 @@ public void receiveMessage(Message msg, MessageReceiver receiver);
 
 /** Save data Server-side */
 public void save(Save save);
+
+public void fromHBT(HBTCompound tag);
+
+public HBTCompound toHBT();
 
 public String getReceiverName();
 }

@@ -65,12 +65,8 @@ private HBTCompound getCompoundTouch(String name) {
 
 public HBTTag getTag(String name) {
 	if (name.contains(".")) {
-		String[] parts=name.split("\\.");
-		HBTTag parent=this;
-		for (String s : parts) {
-			parent=((HBTCompound) parent).getTag(s);
-		}
-		return parent;
+		String[] parts=name.split("\\.",2);
+		return getCompoundTouch(parts[0]).getTag(parts[1]);
 	} else {
 		for (HBTTag tag : this) {
 			if (tag.getName().equals(name)) {

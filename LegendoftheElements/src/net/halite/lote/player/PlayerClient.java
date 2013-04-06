@@ -1,6 +1,7 @@
 package net.halite.lote.player;
 
 import com.esotericsoftware.minlog.Log;
+import net.halite.hbt.HBTCompound;
 import net.halite.lote.GameElement;
 import net.halite.lote.Save;
 import net.halite.lote.msgsys.Message;
@@ -284,6 +285,15 @@ public void receiveMessage(Message msg, MessageReceiver receiver) {
 
 @Override
 public void save(Save save) {
+}
+
+@Override
+public void fromHBT(HBTCompound tag) {
+}
+
+@Override
+public HBTCompound toHBT() {
+	return null;
 }
 
 public String getRegionName() {
