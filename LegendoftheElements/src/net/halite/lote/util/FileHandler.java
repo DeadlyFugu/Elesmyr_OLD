@@ -4,6 +4,7 @@ import net.halite.hbt.*;
 import net.halite.lote.system.Main;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.SlickException;
+import org.newdawn.slick.util.Log;
 
 import java.io.*;
 import java.util.*;
@@ -94,7 +95,7 @@ public static void readData() throws IOException {
 						data.addTag(tag);
 					}
 				} catch (IOException e) {
-					throw new IOException("in file "+f.getPath()+":",e);
+					Log.error(e.getLocalizedMessage()+" in file "+f.getPath()+"");
 				}
 		}
 	}
@@ -131,6 +132,66 @@ private static List<HBTTag> readHBT(String name, boolean dataFile) throws IOExce
  */
 public static HBTTag getTag(String name) throws HBTCompound.TagNotFoundException {
 	return data.getTag(name);
+}
+
+public static HBTCompound getCompound(String name) {
+	try {return (HBTCompound) getTag(name);}
+	catch (ClassCastException e) {Log.warn("tag:"+name,e); return new HBTCompound(name);}
+	catch (HBTCompound.TagNotFoundException e) {return new HBTCompound(name);}
+}
+
+public static byte getByte(String name, byte def) {
+	try {return ((HBTByte) getTag(name)).getData();}
+	catch (ClassCastException e) {Log.warn("tag:"+name,e); return def;}
+	catch (HBTCompound.TagNotFoundException e) {return def;}
+}
+
+public static short getShort(String name, short def) {
+	try {return ((HBTShort) getTag(name)).getData();}
+	catch (ClassCastException e) {Log.warn("tag:"+name,e); return def;}
+	catch (HBTCompound.TagNotFoundException e) {return def;}
+}
+
+public static int getInt(String name, int def) {
+	try {return ((HBTInt) getTag(name)).getData();}
+	catch (ClassCastException e) {Log.warn("tag:"+name,e); return def;}
+	catch (HBTCompound.TagNotFoundException e) {return def;}
+}
+
+public static long getLong(String name, long def) {
+	try {return ((HBTLong) getTag(name)).getData();}
+	catch (ClassCastException e) {Log.warn("tag:"+name,e); return def;}
+	catch (HBTCompound.TagNotFoundException e) {return def;}
+}
+
+public static float getFloat(String name, float def) {
+	try {return ((HBTFloat) getTag(name)).getData();}
+	catch (ClassCastException e) {Log.warn("tag:"+name,e); return def;}
+	catch (HBTCompound.TagNotFoundException e) {return def;}
+}
+
+public static double getDouble(String name, double def) {
+	try {return ((HBTDouble) getTag(name)).getData();}
+	catch (ClassCastException e) {Log.warn("tag:"+name,e); return def;}
+	catch (HBTCompound.TagNotFoundException e) {return def;}
+}
+
+public static String getString(String name, String def) {
+	try {return ((HBTString) getTag(name)).getData();}
+	catch (ClassCastException e) {Log.warn("tag:"+name,e); return def;}
+	catch (HBTCompound.TagNotFoundException e) {return def;}
+}
+
+public static byte[] getByteArray(String name, byte[] def) {
+	try {return ((HBTByteArray) getTag(name)).getData();}
+	catch (ClassCastException e) {Log.warn("tag:"+name,e); return def;}
+	catch (HBTCompound.TagNotFoundException e) {return def;}
+}
+
+public static HBTFlag getFlag(String name, String def) {
+	try {return (HBTFlag) getTag(name);}
+	catch (ClassCastException e) {Log.warn("tag:"+name,e); return new HBTFlag(name, def);}
+	catch (HBTCompound.TagNotFoundException e) {return new HBTFlag(name, def);}
 }
 
 /**

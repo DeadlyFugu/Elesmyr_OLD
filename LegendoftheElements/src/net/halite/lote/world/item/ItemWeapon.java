@@ -10,7 +10,7 @@ public boolean canEquip() { return true; }
 
 public float getMult(String iextd) {
 	try {
-		return Float.parseFloat(extd);
+		return extd.getFloat("dmg",1);
 	} catch (Exception e) {
 		return 1;
 	}

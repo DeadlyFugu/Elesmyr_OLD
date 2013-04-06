@@ -1,5 +1,6 @@
 package net.halite.lote.world.item;
 
+import net.halite.hbt.HBTCompound;
 import net.halite.lote.Element;
 import net.halite.lote.player.PlayerData;
 import net.halite.lote.system.GameServer;
@@ -11,9 +12,9 @@ import org.newdawn.slick.SlickException;
 public class Item {
 public Image spr;
 public String name;
-protected String extd;
+protected HBTCompound extd;
 
-public Item ctor(String name, String img, String extd) {
+public Item ctor(String name, String img, HBTCompound extd) {
 	this.name=name;
 	this.extd=extd;
 	try {

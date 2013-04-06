@@ -20,7 +20,7 @@ public String getType() { return "Books"; }
 
 @Override
 public boolean onUse(GameServer receiver, EntityPlayer player, PlayerData.InventoryEntry entry) {
-	ArrayList<String> pages=BookParser.parseBook(extd);
+	ArrayList<String> pages=BookParser.parseBook(extd.getString("extd","testing"));
 	for (String s : pages)
 		MessageSystem.sendClient(null, receiver.getPlayerConnection(player), new Message("CLIENT.book", s), false);
 	return false;

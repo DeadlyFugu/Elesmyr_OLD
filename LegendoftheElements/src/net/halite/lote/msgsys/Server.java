@@ -101,10 +101,8 @@ private void createListenerThread(final Connection connection) {
 					Log.error("msgsys","Badly formed message received.");
 					e.printStackTrace();
 				} catch (NullPointerException npe) {
-					npe.printStackTrace();
 					break;
 				} catch (SocketException e) {
-					e.printStackTrace();
 					break;
 				} catch (Exception e) {
 					if (!connection.isConnected()) {

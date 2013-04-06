@@ -12,7 +12,7 @@ public String getType() { return "Food"; }
 public boolean onUse(GameServer receiver, EntityPlayer player, PlayerData.InventoryEntry entry) {
 	if (player.pdat.health==player.pdat.healthMax)
 		return false;
-	player.pdat.health+=Integer.parseInt(extd);
+	player.pdat.health+=extd.getInt("heal",0);
 	return true;
 }
 

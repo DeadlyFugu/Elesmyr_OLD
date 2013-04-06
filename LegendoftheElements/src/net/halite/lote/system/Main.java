@@ -2,8 +2,6 @@ package net.halite.lote.system;
 
 import com.esotericsoftware.minlog.Log;
 import net.halite.hbt.HBTCompound;
-import net.halite.hbt.HBTOutputStream;
-import net.halite.hbt.HBTTag;
 import net.halite.lote.ScriptRunner;
 import net.halite.lote.util.FileHandler;
 import net.halite.lote.util.HashmapLoader;
@@ -36,7 +34,7 @@ public static float INTERNAL_ASPECT=(4/3f);
 public static int INTERNAL_RESY=480; //Internal resolution y
 public static int INTERNAL_RESX=(int) (INTERNAL_RESY*INTERNAL_ASPECT); //Internal resolution x
 
-public static final String verNum="0.2.1";
+public static final String verNum="0.2.2";
 public static final String verRelease="PRE-ALPHA";
 public static final String version="$version.prealpha| "+verNum; //0.0.1 = DEC 16
 
@@ -83,16 +81,12 @@ public static void main(String[] args) throws SlickException {
 		Globals.setMap(new HashMap<String,String>());
 
 	try {
-		HBTOutputStream os = new HBTOutputStream(new FileOutputStream("save/TestOut2.hbtc"),true);
+		//HBTOutputStream os = new HBTOutputStream(new FileOutputStream("save/TestOut2.hbtc"),true);
 		FileHandler.readData();
-		HBTTag tag = FileHandler.getTag("items");
-		System.out.println(tag);
-		os.write(tag);
-		os.close();
-	} catch (IOException e) {
-		e.printStackTrace();
 	} catch (HBTCompound.TagNotFoundException e) {
 		e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+	} catch (IOException e) {
+		e.printStackTrace();
 	}
 
 	ScriptRunner.init();
