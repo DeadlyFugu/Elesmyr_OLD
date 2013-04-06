@@ -1,11 +1,15 @@
 package net.halite.lote;
 
+import net.halite.hbt.*;
+import net.halite.lote.util.FileHandler;
 import net.halite.lote.util.HashmapLoader;
 import net.halite.lote.world.Region;
 import net.halite.lote.world.World;
 import net.halite.lote.world.entity.Entity;
+import org.newdawn.slick.util.Log;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map.Entry;
@@ -15,6 +19,7 @@ public class Save {
 
 String name;
 HashMap<String, String> data;
+HBTCompound hbtData;
 
 public Save(String name) {
 	this.name=name;
@@ -24,7 +29,7 @@ public Save(String name) {
 
 	for (int i=0; i<fileList.length; i++) {
 		File choose=fileList[i];
-		if (choose.isFile()&&!temp.contains(choose)) {
+		if (choose.isFile()&&!temp.contains(choose)&&!choose.getName().matches("(data\\.hbt(|x|c)|)")) {
 			temp.add(choose);
 		}
 	}
@@ -34,6 +39,15 @@ public Save(String name) {
 	for (File f : temp) {
 		data.putAll(HashmapLoader.readHashmapWHeader(f.getName()+".", f.getPath()));
 	}
+
+	hbtData = new HBTCompound("saveroot");
+	try {
+		for (HBTTag tag : FileHandler.readHBT("save/"+name+"/data",false)) {
+			hbtData.addTag(tag);
+		}
+	} catch (IOException e) {
+		e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+	}
 }
 
 public String get(String key) {
@@ -42,6 +56,111 @@ public String get(String key) {
 
 public void put(String key, String value) {
 	data.put(key, value);
+}
+
+public HBTTag getTag(String name) throws HBTCompound.TagNotFoundException {
+	return hbtData.getTag(name);
+}
+
+public HBTCompound getCompound(String name) {
+	try {return (HBTCompound) getTag(name);}
+	catch (ClassCastException e) {Log.warn("tag:"+name, e); return new HBTCompound(name);}
+	catch (HBTCompound.TagNotFoundException e) {return new HBTCompound(name);}
+}
+
+public byte getByte(String name, byte def) {
+	try {return ((HBTByte) getTag(name)).getData();}
+	catch (ClassCastException e) {Log.warn("tag:"+name,e); return def;}
+	catch (HBTCompound.TagNotFoundException e) {return def;}
+}
+
+public short getShort(String name, short def) {
+	try {return ((HBTShort) getTag(name)).getData();}
+	catch (ClassCastException e) {Log.warn("tag:"+name,e); return def;}
+	catch (HBTCompound.TagNotFoundException e) {return def;}
+}
+
+public int getInt(String name, int def) {
+	try {return ((HBTInt) getTag(name)).getData();}
+	catch (ClassCastException e) {Log.warn("tag:"+name,e); return def;}
+	catch (HBTCompound.TagNotFoundException e) {return def;}
+}
+
+public long getLong(String name, long def) {
+	try {return ((HBTLong) getTag(name)).getData();}
+	catch (ClassCastException e) {Log.warn("tag:"+name,e); return def;}
+	catch (HBTCompound.TagNotFoundException e) {return def;}
+}
+
+public float getFloat(String name, float def) {
+	try {return ((HBTFloat) getTag(name)).getData();}
+	catch (ClassCastException e) {Log.warn("tag:"+name,e); return def;}
+	catch (HBTCompound.TagNotFoundException e) {return def;}
+}
+
+public double getDouble(String name, double def) {
+	try {return ((HBTDouble) getTag(name)).getData();}
+	catch (ClassCastException e) {Log.warn("tag:"+name,e); return def;}
+	catch (HBTCompound.TagNotFoundException e) {return def;}
+}
+
+public String getString(String name, String def) {
+	try {return ((HBTString) getTag(name)).getData();}
+	catch (ClassCastException e) {Log.warn("tag:"+name,e); return def;}
+	catch (HBTCompound.TagNotFoundException e) {return def;}
+}
+
+public byte[] getByteArray(String name, byte[] def) {
+	try {return ((HBTByteArray) getTag(name)).getData();}
+	catch (ClassCastException e) {Log.warn("tag:"+name,e); return def;}
+	catch (HBTCompound.TagNotFoundException e) {return def;}
+}
+
+public HBTFlag getFlag(String name, String def) {
+	try {return (HBTFlag) getTag(name);}
+	catch (ClassCastException e) {Log.warn("tag:"+name,e); return new HBTFlag(name, def);}
+	catch (HBTCompound.TagNotFoundException e) {return new HBTFlag(name, def);}
+}
+
+public void putTag(String name, HBTTag tag) throws HBTCompound.TagNotFoundException {
+	hbtData.setTag(name, tag);
+}
+
+public void putByte(String name, byte data) {
+	putTag(name, new HBTByte(name.substring(name.lastIndexOf('.')+1), data));
+}
+
+public void putShort(String name, short data) {
+	putTag(name,new HBTShort(name.substring(name.lastIndexOf('.')+1),data));
+}
+
+public void putInt(String name, int data) {
+	putTag(name,new HBTInt(name.substring(name.lastIndexOf('.')+1),data));
+}
+
+public void putLong(String name, long data) {
+	putTag(name,new HBTLong(name.substring(name.lastIndexOf('.')+1),data));
+}
+
+public void putFloat(String name, float data) {
+	putTag(name,new HBTFloat(name.substring(name.lastIndexOf('.')+1),data));
+}
+
+public void putDouble(String name, double data) {
+	putTag(name,new HBTDouble(name.substring(name.lastIndexOf('.')+1),data));
+}
+
+public void putByteArray(String name, byte[] data) {
+	putTag(name,new HBTByteArray(name.substring(name.lastIndexOf('.')+1),data));
+}
+
+public void putString(String name, String data) {
+	putTag(name,new HBTString(name.substring(name.lastIndexOf('.')+1),data));
+}
+
+
+public void putCompound(String name, HBTCompound data) {
+	putTag(name,data);
 }
 
 public void write() {

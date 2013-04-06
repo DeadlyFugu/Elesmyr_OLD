@@ -31,10 +31,36 @@ public void addTag(HBTTag tag) {
 		}
 	} catch (TagNotFoundException e) {
 		e.printStackTrace();
-	}
-	else {
+	} else {
 		data.add(tag);
 	}
+}
+
+public void setTag(HBTTag tag) {
+	int hasAlready = -1;
+	for (HBTTag tag1 : data) {
+		if (tag1.getName().equals(tag.getName())) hasAlready=data.indexOf(tag1);
+	}
+	if (hasAlready!=-1) {
+		data.set(hasAlready,tag);
+	} else {
+		data.add(tag);
+	}
+}
+
+public void setTag(String fullname, HBTTag tag) {
+	if (fullname.contains(".")) {
+		String[] parts = fullname.split("\\.",2);
+		getCompoundTouch(parts[0]).setTag(parts[1],tag);
+	} else {
+		setTag(tag);
+	}
+}
+
+private HBTCompound getCompoundTouch(String name) {
+	try {return (HBTCompound) getTag(name);}
+	catch (ClassCastException e) {Log.warn("tag:"+name,e); return (HBTCompound) addTagPass(new HBTCompound(name));}
+	catch (HBTCompound.TagNotFoundException e) {return (HBTCompound) addTagPass(new HBTCompound(name));}
 }
 
 public HBTTag getTag(String name) {

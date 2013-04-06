@@ -48,7 +48,7 @@ public static String parse(String name, ResourceType type) {
  * @param extension The acceptable extensions
  * @return The file's path
  */
-private static List<String> parseFileName(String name, String[] extension, boolean dataFile) {
+public static List<String> parseFileName(String name, String[] extension, boolean dataFile) {
 	List<String> found = new ArrayList<String>();
 	File f;
 	if (dataFile) {
@@ -116,13 +116,17 @@ private static List<File> getAllFiles(File parent) {
 /**
  * Reads a HBT matching name
  * @param name
- * @return array of HBTCompounds, Usually one per file matched.
+ * @return array of HBTCompounds.
  */
-private static List<HBTTag> readHBT(String name, boolean dataFile) throws IOException {
+public static List<HBTTag> readHBT(String name, boolean dataFile) throws IOException {
 	List<String> paths = parseFileName(name,ResourceType.HBT.getExtensions(),dataFile);
 	List<HBTTag> out = new ArrayList<HBTTag>();
+	if (!dataFile) {
 	for (String path : paths) {
 		out.addAll(readHBTFile(path));
+	}
+	} else {
+		out.addAll(readHBTFile(paths.get(0)));
 	}
 	return out;
 }
@@ -200,7 +204,7 @@ public static HBTFlag getFlag(String name, String def) {
  * @return ArrayList of root-level HBTTags found in the file.
  * @throws IOException
  */
-private static List<HBTTag> readHBTFile(String path) throws IOException {
+public static List<HBTTag> readHBTFile(String path) throws IOException {
 	List<HBTTag> ret = new ArrayList<HBTTag>();
 	String extension = path.substring(path.lastIndexOf('.')+1);
 	if (extension.equals("hbt") || extension.equals("hbtc")) {
