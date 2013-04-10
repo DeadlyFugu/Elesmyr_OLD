@@ -1,6 +1,7 @@
 package net.halite.lote.system;
 
 import com.esotericsoftware.minlog.Log;
+import net.halite.hbt.HBTTag;
 import net.halite.lote.Save;
 import net.halite.lote.msgsys.Connection;
 import net.halite.lote.msgsys.Message;
@@ -64,24 +65,32 @@ public GameServer(Save save, String hostUName) {
 public void load() {
 	world=new World();
 	world.load(save);
-	igStartTime=Integer.valueOf(save.get("gen.time"));
-	date=Integer.valueOf(save.get("gen.date"));
-	for (Entry<String, String> e : save.getEntries())
+	igStartTime=save.getInt("gen.time",0);
+	date=save.getInt("gen.date",1234);
+	/*for (Entry<String, String> e : save.getEntries())
 		if (e.getKey().startsWith("pdat.")) {
 			PlayerData pdat=new PlayerData(e.getKey().substring(5), null);
 			pdat.fromString(e.getValue());
 			playerDat.put(e.getKey().substring(5), pdat);
+		}*/
+	System.out.println(save.getCompound("pdat"));
+	for (HBTTag tag : save.getCompound("pdat")) {
+		PlayerData pdat=new PlayerData(tag.getName(), null);
+		pdat.fromHBT(tag);
+		playerDat.put(tag.getName(), pdat);
+	}
 
-		}
 }
 
 public void save() {
 	HashmapLoader.writeHashmap("pass", pass);
 	world.save(save);
-	save.put("gen.time", String.valueOf((int) time));
-	save.put("gen.date", String.valueOf((int) date));
-	for (Entry<String, PlayerData> e : playerDat.entrySet())
-		save.put("pdat."+e.getKey(), e.getValue().toString());
+	save.putInt("gen.time", (int) time);
+	save.putInt("gen.date", date);
+	for (Entry<String, PlayerData> e : playerDat.entrySet()) {
+		//save.put("pdat."+e.getKey(), e.getValue().toString()); //rewrite to use HBT
+		save.putTag("pdat."+e.getKey(), e.getValue().toHBT());
+	}
 	save.write(); //Write to disk
 }
 

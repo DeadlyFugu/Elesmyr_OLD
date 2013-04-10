@@ -83,7 +83,8 @@ public void load(Save save) {
 
 @Override
 public void save(Save save) {
-	//save.getCompound("world").setTag(toHBTSave());
+	save.clearTag("world."+name);
+	save.putTag("world."+name,this.toHBTSave());
 	String ret="";
 	int id=0;
 	for (Entity e : entities.values()) {
@@ -97,10 +98,11 @@ public void save(Save save) {
 			id++;
 		}
 	}
-	if (!ret.equals(""))
+	/*if (!ret.equals(""))
 		save.put("region."+name, ret.substring(1));
 	else
-		save.put("region."+name, ret);
+		save.put("region."+name, ret);*/
+	Log.error("This shouldn't get called maybe?");
 }
 
 @Override public void fromHBT(HBTCompound tag) {

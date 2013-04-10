@@ -1,5 +1,8 @@
 package net.halite.lote.player;
 
+import net.halite.hbt.HBTCompound;
+import net.halite.hbt.HBTString;
+import net.halite.hbt.HBTTag;
 import net.halite.lote.Element;
 import net.halite.lote.msgsys.Connection;
 import net.halite.lote.msgsys.Message;
@@ -11,7 +14,6 @@ import net.halite.lote.world.item.ItemFactory;
 import java.util.ArrayList;
 
 public class PlayerData {
-
 public class InventoryEntry {
 	Item item;
 	String extd;
@@ -148,6 +150,16 @@ public String invToString() {
 		ret=ret.concat(ie.toString()+"\n");
 	}
 	return ret;
+}
+
+public HBTTag toHBT() {
+	HBTCompound ret = new HBTCompound(name);
+	ret.addTag(new HBTString("str",this.toString())); //TODO: Dodgy implementation
+	return ret;
+}
+
+public void fromHBT(HBTTag tag) {
+	fromString(((HBTCompound) tag).getString("str",""));
 }
 
 public String getName() {

@@ -149,8 +149,6 @@ public void loadRegion(String name) {
 public void save(Save save) {
 	for (Region r : regions.values()) {
 		r.save(save);
-		save.clearTag("world."+r.name);
-		save.putTag("world",this.toHBT());
 	}
 }
 

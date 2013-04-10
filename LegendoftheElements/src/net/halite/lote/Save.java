@@ -21,8 +21,8 @@ import java.util.Set;
 public class Save {
 
 String name;
-HashMap<String, String> data;
-HBTCompound hbtData;
+@Deprecated HashMap<String, String> hmData;
+HBTCompound data;
 
 public Save(String name) {
 	this.name=name;
@@ -37,16 +37,16 @@ public Save(String name) {
 		}
 	}
 
-	data=new HashMap<String, String>();
+	hmData=new HashMap<String, String>();
 
 	for (File f : temp) {
-		data.putAll(HashmapLoader.readHashmapWHeader(f.getName()+".", f.getPath()));
+		hmData.putAll(HashmapLoader.readHashmapWHeader(f.getName()+".", f.getPath()));
 	}
 
-	hbtData = new HBTCompound("saveroot");
+	data= new HBTCompound("saveroot");
 	try {
-		for (HBTTag tag : FileHandler.readHBT("save/"+name+"/dataunc",false)) { //TODO: dataunc = outputted data; make dataunc work.
-			hbtData.addTag(tag);
+		for (HBTTag tag : FileHandler.readHBT("save/"+name+"/dataunc",false)) {
+			data.addTag(tag);
 		}
 	} catch (IOException e) {
 		e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
@@ -54,15 +54,15 @@ public Save(String name) {
 }
 
 @Deprecated public String get(String key) {
-	return data.get(key);
+	return hmData.get(key);
 }
 
 @Deprecated public void put(String key, String value) {
-	data.put(key, value);
+	hmData.put(key, value);
 }
 
 public HBTTag getTag(String name) throws HBTCompound.TagNotFoundException {
-	return hbtData.getTag(name);
+	return data.getTag(name);
 }
 
 public HBTCompound getCompound(String name) {
@@ -126,7 +126,7 @@ public HBTFlag getFlag(String name, String def) {
 }
 
 public void putTag(String name, HBTTag tag) throws HBTCompound.TagNotFoundException {
-	hbtData.setTag(name, tag);
+	data.setTag(name, tag);
 }
 
 public void putByte(String name, byte data) {
@@ -167,8 +167,8 @@ public void putCompound(String name, HBTCompound data) {
 }
 
 public void write() {
-	HashMap<String, HashMap<String, String>> dataHSep=new HashMap<String, HashMap<String, String>>(); //data with the headers separated.
-	for (Entry<String, String> e : data.entrySet()) {
+	HashMap<String, HashMap<String, String>> dataHSep=new HashMap<String, HashMap<String, String>>(); //hmData with the headers separated.
+	for (Entry<String, String> e : hmData.entrySet()) {
 		String head=e.getKey().split("\\.", 2)[0];
 		String key=e.getKey().split("\\.", 2)[1];
 		if (!dataHSep.containsKey(head))
@@ -179,10 +179,10 @@ public void write() {
 		HashmapLoader.writeHashmap("save/"+name+"/"+e.getKey(), e.getValue());
 	}
 	putLong("meta.savedate", new Date().getTime());
-	//System.out.println(hbtData);
+	//System.out.println(data);
 	try {
 		HBTOutputStream os = new HBTOutputStream(new FileOutputStream("save/"+name+"/dataunc.hbt"),false);
-		for (HBTTag tag : hbtData)
+		for (HBTTag tag : data)
 			os.write(tag);
 		os.close();
 	} catch (FileNotFoundException e) {
@@ -204,12 +204,12 @@ public void putPlayer(String name, String data, Region region) {
 	put("players."+name, data.split("\\.")[0]+","+player.x+","+player.y);
 }
 
-public Set<Entry<String, String>> getEntries() {
-	return data.entrySet();
+@Deprecated public Set<Entry<String, String>> getEntries() {
+	return hmData.entrySet();
 }
 
 public void clearTag(String world) {
-	HBTCompound tag = hbtData;
+	HBTCompound tag =data;
 	while (world.contains(".")) {
 		tag=tag.getCompound(world.split("\\.",2)[0]);
 		world = world.split("\\.",2)[1];
