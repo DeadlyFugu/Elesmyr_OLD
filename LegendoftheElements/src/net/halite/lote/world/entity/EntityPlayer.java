@@ -8,6 +8,7 @@ import net.halite.lote.msgsys.Message;
 import net.halite.lote.msgsys.MessageReceiver;
 import net.halite.lote.msgsys.MessageSystem;
 import net.halite.lote.player.Camera;
+import net.halite.lote.player.PlayerClient;
 import net.halite.lote.player.PlayerData;
 import net.halite.lote.system.FontRenderer;
 import net.halite.lote.system.GameClient;
@@ -18,7 +19,10 @@ import net.halite.lote.util.FileHandler;
 import net.halite.lote.world.Region;
 import net.halite.lote.world.item.Item;
 import net.halite.lote.world.item.ItemFactory;
-import org.newdawn.slick.*;
+import org.newdawn.slick.GameContainer;
+import org.newdawn.slick.Graphics;
+import org.newdawn.slick.SlickException;
+import org.newdawn.slick.SpriteSheet;
 import org.newdawn.slick.state.StateBasedGame;
 
 public class EntityPlayer extends Entity {
@@ -126,7 +130,11 @@ private void draw(float xd, float yd, int x, int y, int px, int py, float spx, f
 			tx=(int) (3+animFrame);
 		}
 	}
-	spr.getSprite(tx, ty).draw(((int) xd+cam.getXOff())+(flip?16:-16), ((int) yd+cam.getYOff())-39, (flip?-32:32), 48);
+	if (PlayerClient.BIGSIZE) {
+		spr.getSprite(tx, ty).draw(((int) xd+cam.getXOff())+(flip?32:-32), ((int) yd+cam.getYOff())-78, (flip?-64:64), 96);
+	} else {
+		spr.getSprite(tx, ty).draw(((int) xd+cam.getXOff())+(flip?16:-16), ((int) yd+cam.getYOff())-39, (flip?-32:32), 48);
+	}
 	if (animState!=0) //if not still
 		animFrame+=0.2f; //update animFrame
 	if (animFrame>=6&&animState==1)

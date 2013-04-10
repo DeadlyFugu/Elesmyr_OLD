@@ -83,7 +83,7 @@ public void load(Save save) {
 
 @Override
 public void save(Save save) {
-	save.getCompound("world").setTag(toHBTSave());
+	//save.getCompound("world").setTag(toHBTSave());
 	String ret="";
 	int id=0;
 	for (Entity e : entities.values()) {

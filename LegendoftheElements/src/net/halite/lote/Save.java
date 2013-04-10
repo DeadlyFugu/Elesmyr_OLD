@@ -13,6 +13,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -44,7 +45,7 @@ public Save(String name) {
 
 	hbtData = new HBTCompound("saveroot");
 	try {
-		for (HBTTag tag : FileHandler.readHBT("save/"+name+"/data",false)) { //TODO: dataunc = outputted data; make dataunc work.
+		for (HBTTag tag : FileHandler.readHBT("save/"+name+"/dataunc",false)) { //TODO: dataunc = outputted data; make dataunc work.
 			hbtData.addTag(tag);
 		}
 	} catch (IOException e) {
@@ -177,7 +178,8 @@ public void write() {
 	for (Entry<String, HashMap<String, String>> e : dataHSep.entrySet()) {
 		HashmapLoader.writeHashmap("save/"+name+"/"+e.getKey(), e.getValue());
 	}
-	System.out.println(hbtData);
+	putLong("meta.savedate", new Date().getTime());
+	//System.out.println(hbtData);
 	try {
 		HBTOutputStream os = new HBTOutputStream(new FileOutputStream("save/"+name+"/dataunc.hbt"),false);
 		for (HBTTag tag : hbtData)
@@ -204,5 +206,20 @@ public void putPlayer(String name, String data, Region region) {
 
 public Set<Entry<String, String>> getEntries() {
 	return data.entrySet();
+}
+
+public void clearTag(String world) {
+	HBTCompound tag = hbtData;
+	while (world.contains(".")) {
+		tag=tag.getCompound(world.split("\\.",2)[0]);
+		world = world.split("\\.",2)[1];
+	}
+	HBTTag toDel=null;
+	for (HBTTag tag1 : tag) {
+		if (tag1.getName().equals(world)) toDel=tag;
+	}
+	tag.getData().remove(toDel);
+	if (toDel==null)
+		Log.warn("Finding tag "+world+" failed.");
 }
 }

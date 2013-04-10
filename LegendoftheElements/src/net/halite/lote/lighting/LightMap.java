@@ -153,10 +153,11 @@ public void update(Region r, Camera cam, float time) {
 }
 
 private void calcAmbLight(float timeh, Region region) {
+	final float nightAlpha = 1f; //0.995f for barely visible night
 	if (timeh<5) { //Night
-		setAmbCol(0.02f, 0.02f, 0.05f, 0.995f); //(0.14f,0.14f,0.22f,0.995f)-Nighttime fog?
+		setAmbCol(0.02f, 0.02f, 0.05f, nightAlpha); //(0.14f,0.14f,0.22f,0.995f)-Nighttime fog?
 	} else if (timeh<5.5f) { //Night to Sunrise
-		setAmbColInterp(0.02f, 0.02f, 0.05f, 0.995f, 0.4f, 0.2f, 0.1f, 0.5f, (timeh%0.5f)*2);
+		setAmbColInterp(0.02f, 0.02f, 0.05f, nightAlpha, 0.4f, 0.2f, 0.1f, 0.5f, (timeh%0.5f)*2);
 	} else if (timeh<6) { //Sunrise to day
 		setAmbColInterp(0.4f, 0.2f, 0.1f, 0.5f, 0, 0, 0, 0, (timeh%0.5f)*2);
 	} else if (timeh<18) { //Day
@@ -166,7 +167,7 @@ private void calcAmbLight(float timeh, Region region) {
 	} else if (timeh<19.5) { //Sunset to Night
 		setAmbColInterp(0.4f, 0.2f, 0.1f, 0.5f, 0.02f, 0.02f, 0.05f, 0.995f, (timeh-0.5f)%1);
 	} else if (timeh<24) { //Night
-		setAmbCol(0.02f, 0.02f, 0.05f, 0.995f);
+		setAmbCol(0.02f, 0.02f, 0.05f, nightAlpha);
 	}
 	if (region!=null)
 		setAmbCol(region.weather.getAmbCol(new float[]{ambLightT.r, ambLightT.g, ambLightT.b, ambLightT.a}));

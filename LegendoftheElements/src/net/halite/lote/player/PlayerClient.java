@@ -9,6 +9,7 @@ import net.halite.lote.msgsys.MessageReceiver;
 import net.halite.lote.msgsys.MessageSystem;
 import net.halite.lote.system.GameClient;
 import net.halite.lote.system.GameServer;
+import net.halite.lote.system.Globals;
 import net.halite.lote.system.Input;
 import net.halite.lote.world.Region;
 import net.halite.lote.world.World;
@@ -19,6 +20,7 @@ import org.newdawn.slick.SlickException;
 import org.newdawn.slick.state.StateBasedGame;
 
 public class PlayerClient implements GameElement {
+public static boolean BIGSIZE=true;
 private World world;
 private GameClient gs;
 public int x, y;
@@ -38,6 +40,7 @@ private boolean pastHalf=false;
 public PlayerClient(GameClient gs, World world) {
 	this.gs=gs;
 	this.world=world;
+	PlayerClient.BIGSIZE = Boolean.parseBoolean(Globals.get("big","false"));
 	//this.region = "start";
 }
 
@@ -74,7 +77,7 @@ public void clientUpdate(GameContainer gc, StateBasedGame sbg, GameClient receiv
 	if (region==null||!region.name.equals(regionName)) {
 		region=this.getRegion();
 	} else if (warpWalkControl) {
-		int mvspd=2;
+		int mvspd=BIGSIZE?4:2;
 		if (!pastHalf) {
 			if (da=='U')
 				y-=mvspd;

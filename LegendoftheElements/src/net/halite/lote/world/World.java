@@ -149,6 +149,7 @@ public void loadRegion(String name) {
 public void save(Save save) {
 	for (Region r : regions.values()) {
 		r.save(save);
+		save.clearTag("world."+r.name);
 		save.putTag("world",this.toHBT());
 	}
 }
@@ -160,7 +161,7 @@ public void save(Save save) {
 @Override public HBTCompound toHBT() {
 	HBTCompound ret = new HBTCompound("world");
 	for (Region r : regions.values()) {
-		ret.addTag(r.toHBT());
+		ret.addTag(r.toHBTSave());
 	}
 	return ret;
 }

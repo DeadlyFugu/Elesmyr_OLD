@@ -21,9 +21,21 @@ public void set(WeatherType type, float strength, float dist) {
 
 public float[] getAmbCol(float[] timeBasedAmb) {
 	switch (type) {
-		case FOG: return new float[]{0.37f, 0.38f, 0.4f, 0.9f};
+		case FOG: return mult4f(timeBasedAmb, new float[]{0.37f, 0.38f, 0.4f, 0.9f});
 		default: return timeBasedAmb;
 	}
+}
+
+private float[] mult4f(float[] a, float[] b) {
+	float[] c = new float[4];
+	for (int i=0;i<3;i++) {
+		c[i]=b[i]+(a[i]-b[i])*(a[3]/1.25f);
+	}
+	c[3]=Math.max(a[3],b[3]);
+	System.out.print("[");
+	for (float f : c) System.out.print(f+",");
+	System.out.println("]");
+	return c;
 }
 
 public String toString() {
