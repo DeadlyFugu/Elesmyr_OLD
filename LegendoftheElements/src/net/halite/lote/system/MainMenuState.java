@@ -3,12 +3,18 @@ package net.halite.lote.system;
 import com.esotericsoftware.kryonet.FrameworkMessage;
 import com.esotericsoftware.kryonet.KryoSerialization;
 import com.esotericsoftware.minlog.Log;
+import com.jhlabs.image.AbstractBufferedImageOp;
+import com.jhlabs.image.GaussianFilter;
 import net.halite.lote.util.FileHandler;
 import org.newdawn.slick.*;
 import org.newdawn.slick.gui.TextField;
+import org.newdawn.slick.opengl.Texture;
 import org.newdawn.slick.state.BasicGameState;
 import org.newdawn.slick.state.StateBasedGame;
+import org.newdawn.slick.util.BufferedImageUtil;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.*;
 import java.nio.ByteBuffer;
@@ -23,6 +29,7 @@ int stateID=-1;
 Image background=null;
 Image bg2=null;
 Image bg3=null;
+Image alphabg=null;
 
 private String[] levels=null;
 private String[] showList;
@@ -98,9 +105,11 @@ private ArrayList<File> getSubs(File cur) {
 }
 
 public void init(GameContainer gc, StateBasedGame sbg) throws SlickException {
-	background=FileHandler.getImage("menu.bg");
+	//background=FileHandler.getImage("menu.bg");
+	resetBGImage();
 	bg2=FileHandler.getImage("menu.bg2");
 	bg3=FileHandler.getImage("menu.bg3");
+	alphabg=FileHandler.getImage("ui.alphabg");
 
 	ArrayList<File> files=getSubs(new File("save"));
 	levels=new String[files.size()+2];
@@ -148,6 +157,28 @@ public void init(GameContainer gc, StateBasedGame sbg) throws SlickException {
 	textField.setMaxLength(15);
 }
 
+@Override public void enter(GameContainer gc, StateBasedGame sbg) throws SlickException {
+	resetBGImage();
+}
+
+public void resetBGImage() throws SlickException {
+	File file = new File("save/thumb/"+Globals.get("lastSave","")+".png");
+	if (file.exists()) {
+		try {
+			BufferedImage src = ImageIO.read(file);
+			AbstractBufferedImageOp filter = new GaussianFilter(10);
+			BufferedImage filtered = filter.filter(src,null);
+			Texture texture = BufferedImageUtil.getTexture("", filtered);
+			background = new Image(texture.getImageWidth(), texture.getImageHeight());
+			background.setTexture(texture);
+		} catch (IOException e) {
+			e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+		}
+	} else {
+		background = FileHandler.getImage("menu.bg");
+	}
+}
+
 public void render(GameContainer gc, StateBasedGame sbg, Graphics g) throws SlickException {
 	g.setColor(Color.black);
 	float vw=gc.getWidth();
@@ -170,7 +201,11 @@ public void render(GameContainer gc, StateBasedGame sbg, Graphics g) throws Slic
 	//}*/
 
 	g.setColor(Color.white);
-	background.draw(ox, oy, w, h);
+	//background.draw(ox, oy, w, h);
+	background.draw();
+	alphabg.draw(0,0,Main.INTERNAL_RESX,Main.INTERNAL_RESY);
+	alphabg.draw(0,0,Main.INTERNAL_RESX,Main.INTERNAL_RESY);
+	alphabg.draw(0,0,Main.INTERNAL_RESX,Main.INTERNAL_RESY);
 	bg2.draw(0, 0, vh*(4/3f), h);
 	bg3.draw(vw-vh*(4/3f), 0, vh*(4/3f), h);
 	//g.translate(ox, oy);
@@ -416,7 +451,7 @@ public void update(GameContainer gc, StateBasedGame sbg, int delta) throws Slick
 				levels[1]="#menu.newgame";
 				int i=2;
 				for (File f : files) {
-					levels[i]=f.getName().substring(0,f.getName().lastIndexOf('.'));
+					levels[i]=f.getName().substring(0, f.getName().lastIndexOf('.'));
 					i++;
 				}
 			} break;
@@ -495,7 +530,7 @@ public void update(GameContainer gc, StateBasedGame sbg, int delta) throws Slick
 							levels[1]="#menu.newgame";
 							int i=2;
 							for (File f : files) {
-								levels[i]=f.getName().substring(0,f.getName().lastIndexOf('.'));
+								levels[i]=f.getName().substring(0, f.getName().lastIndexOf('.'));
 								i++;
 							}
 						} catch (IOException e) {

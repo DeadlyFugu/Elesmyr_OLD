@@ -34,7 +34,7 @@ public static float INTERNAL_ASPECT=(4/3f);
 public static int INTERNAL_RESY=480; //Internal resolution y
 public static int INTERNAL_RESX=(int) (INTERNAL_RESY*INTERNAL_ASPECT); //Internal resolution x
 
-public static final String verNum="0.2.3";
+public static final String verNum="0.2.4";
 public static final String verRelease="PRE-ALPHA";
 public static final String version="$version.prealpha| "+verNum; //0.0.1 = DEC 16
 

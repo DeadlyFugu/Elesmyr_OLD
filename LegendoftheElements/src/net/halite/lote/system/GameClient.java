@@ -238,7 +238,6 @@ public void update(GameContainer gc, StateBasedGame sbg, int delta) throws Slick
 			ui.removeFirst();
 		} else {
 			MessageSystem.close();
-			//gc.exit();
 			gc.getInput().clearKeyPressedRecord();
 			sbg.enterState(Main.MENUSTATE);
 			return;
