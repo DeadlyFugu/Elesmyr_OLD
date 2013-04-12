@@ -121,8 +121,11 @@ public static void handleCrash(Throwable e) {
 		String out = parts[0];
 		boolean ellipsisYet=false;
 		boolean ignoreRest=false;
+		boolean server=false;
 		for (int i=1; i<parts.length; i++) {
 			String s=parts[i];
+			if (s.trim().startsWith("at net.halite.lote.system.GameServer."))
+				server=true;
 			if (s.trim().startsWith("at ")&&!(ignoreRest|s.trim().startsWith("at java.")||s.trim().startsWith("at sun."))) {
 				out=out+"\n    "+s.trim();
 				ellipsisYet=false;
@@ -133,7 +136,7 @@ public static void handleCrash(Throwable e) {
 				ellipsisYet=true;
 			}
 		}
-		JOptionPane.showMessageDialog(null, "Info for geeks:\n"+out+"\nA full log can be found at ./LOTE_CRASH_LOG", "LotE just kinda stopped working. :(", JOptionPane.ERROR_MESSAGE);
+		JOptionPane.showMessageDialog(null, "The LotE "+(server?"server":"client")+" has crashed. Info for geeks:\n"+out+"\nA full log can be found at ./LOTE_CRASH_LOG", "LotE "+(server?"server":"client")+" just kinda stopped working. :(", JOptionPane.ERROR_MESSAGE);
 	} catch (Exception e2) {
 		e2.printStackTrace();
 	}

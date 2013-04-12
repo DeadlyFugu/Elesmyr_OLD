@@ -65,6 +65,7 @@ public void update(Region region, GameServer receiver) {
 	for (Region r : regions.values()) {
 		r.update(null, receiver);
 		if (r.connections.size()==0) {
+			r.save(save);
 			regions.remove(r.name);
 		}
 	}

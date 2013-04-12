@@ -92,7 +92,7 @@ public void save(Save save) {
 			EntityPlayer p=(EntityPlayer) e;
 			save.putPlayer(p.getName(), name+"."+p.name, this);
 		} else {
-			e.save(save);
+			e.save(save); //TODO: remove
 			String[] parts=e.toString().split(",", 3);
 			ret=ret+"\\"+parts[0]+","+parts[2];
 			id++;
@@ -102,7 +102,6 @@ public void save(Save save) {
 		save.put("region."+name, ret.substring(1));
 	else
 		save.put("region."+name, ret);*/
-	Log.error("This shouldn't get called maybe?");
 }
 
 @Override public void fromHBT(HBTCompound tag) {

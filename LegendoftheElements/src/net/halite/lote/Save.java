@@ -2,63 +2,32 @@ package net.halite.lote;
 
 import net.halite.hbt.*;
 import net.halite.lote.util.FileHandler;
-import net.halite.lote.util.HashmapLoader;
 import net.halite.lote.world.Region;
 import net.halite.lote.world.World;
 import net.halite.lote.world.entity.Entity;
 import org.newdawn.slick.util.Log;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map.Entry;
-import java.util.Set;
 
 public class Save {
 
 String name;
-@Deprecated HashMap<String, String> hmData;
 HBTCompound data;
 
 public Save(String name) {
 	this.name=name;
 
-	ArrayList<File> temp=new ArrayList<File>();
-	File[] fileList=new File("save/"+name).listFiles();
-
-	for (int i=0; i<fileList.length; i++) {
-		File choose=fileList[i];
-		if (choose.isFile()&&!temp.contains(choose)&&!choose.getName().matches("(data\\.hbt(|x|c)|)")) {
-			temp.add(choose);
-		}
-	}
-
-	hmData=new HashMap<String, String>();
-
-	for (File f : temp) {
-		hmData.putAll(HashmapLoader.readHashmapWHeader(f.getName()+".", f.getPath()));
-	}
-
 	data= new HBTCompound("saveroot");
 	try {
-		for (HBTTag tag : FileHandler.readHBT("save/"+name+"/dataunc",false)) {
+		for (HBTTag tag : FileHandler.readHBT("save/"+name,false)) {
 			data.addTag(tag);
 		}
 	} catch (IOException e) {
 		e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
 	}
-}
-
-@Deprecated public String get(String key) {
-	return hmData.get(key);
-}
-
-@Deprecated public void put(String key, String value) {
-	hmData.put(key, value);
 }
 
 public HBTTag getTag(String name) throws HBTCompound.TagNotFoundException {
@@ -167,21 +136,10 @@ public void putCompound(String name, HBTCompound data) {
 }
 
 public void write() {
-	HashMap<String, HashMap<String, String>> dataHSep=new HashMap<String, HashMap<String, String>>(); //hmData with the headers separated.
-	for (Entry<String, String> e : hmData.entrySet()) {
-		String head=e.getKey().split("\\.", 2)[0];
-		String key=e.getKey().split("\\.", 2)[1];
-		if (!dataHSep.containsKey(head))
-			dataHSep.put(head, new HashMap<String, String>());
-		dataHSep.get(head).put(key, e.getValue());
-	}
-	for (Entry<String, HashMap<String, String>> e : dataHSep.entrySet()) {
-		HashmapLoader.writeHashmap("save/"+name+"/"+e.getKey(), e.getValue());
-	}
 	putLong("meta.savedate", new Date().getTime());
-	//System.out.println(data);
+	System.out.println(data);
 	try {
-		HBTOutputStream os = new HBTOutputStream(new FileOutputStream("save/"+name+"/dataunc.hbt"),false);
+		HBTOutputStream os = new HBTOutputStream(new FileOutputStream("save/"+name+".hbt"),false);
 		for (HBTTag tag : data)
 			os.write(tag);
 		os.close();
@@ -196,16 +154,18 @@ public void putPlayer(String name, String data, World world) {
 	if (data==null)
 		return;
 	Entity player=world.getRegion(data.split("\\.")[0]).entities.get(Integer.parseInt(data.split("\\.", 2)[1])); //Can sometimes cause null pointer.
-	put("players."+name, data.split("\\.")[0]+","+player.x+","+player.y);
+	//put("players."+name, data.split("\\.")[0]+","+player.x+","+player.y);
+	HBTCompound pTag = new HBTCompound(name);
+	pTag.addTag(new HBTString("str",data.split("\\.")[0]+","+player.x+","+player.y)); //TODO: Proper player to hbt
+	putTag("players."+name,pTag);
 }
 
 public void putPlayer(String name, String data, Region region) {
 	Entity player=region.entities.get(Integer.parseInt(data.split("\\.", 2)[1]));
-	put("players."+name, data.split("\\.")[0]+","+player.x+","+player.y);
-}
-
-@Deprecated public Set<Entry<String, String>> getEntries() {
-	return hmData.entrySet();
+	//put("players."+name, data.split("\\.")[0]+","+player.x+","+player.y);
+	HBTCompound pTag = new HBTCompound(name);
+	pTag.addTag(new HBTString("str",data.split("\\.")[0]+","+player.x+","+player.y)); //TODO: Proper player to hbt
+	putTag("players."+name,pTag);
 }
 
 public void clearTag(String world) {

@@ -1,6 +1,7 @@
 package net.halite.lote.system;
 
 import com.esotericsoftware.minlog.Log;
+import net.halite.hbt.HBTString;
 import net.halite.hbt.HBTTag;
 import net.halite.lote.Save;
 import net.halite.lote.msgsys.Connection;
@@ -173,11 +174,11 @@ public boolean receiveMessage(Message msg) {
 				sendChat("SERVER: "+uname+" joined the game.");
 				Log.info("server",connection.toString()+" logged in as "+uname);
 				players.put(connection, uname);
-				String pInfo=save.get("players."+uname);
+				String pInfo=((HBTString) save.getTag("players."+uname+".str")).getData(); //TODO: Use proper HBTCompound stuffs
 				if (pInfo!=null) {
 					MessageSystem.sendClient(null, connection, new Message("PLAYER.playerInfo", pInfo), false);
 				} else {
-					MessageSystem.sendClient(null, connection, new Message("PLAYER.playerInfo", save.get("players.new")), false);
+					MessageSystem.sendClient(null, connection, new Message("PLAYER.playerInfo", ((HBTString) save.getTag("players.new.str")).getData()), false);
 				}
 			}
 		} else if (name.equals("getRegion")) {

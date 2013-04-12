@@ -90,7 +90,7 @@ private ArrayList<File> getSubs(File cur) {
 
 		//If the file is a Directory(folder) add it to return, if not done so already
 		File choose=fileList[i];
-		if (choose.isDirectory()&&!temp.contains(choose)&&(!choose.getName().equals("new")||debug)) {
+		if (choose.isFile()&&!temp.contains(choose)&&(!choose.getName().equals("new")||debug)&&choose.getName().endsWith(".hbt")) {
 			temp.add(choose);
 		}
 	}
@@ -109,7 +109,7 @@ public void init(GameContainer gc, StateBasedGame sbg) throws SlickException {
 	levels[1]="#menu.newgame";
 	int i=2;
 	for (File f : files) {
-		levels[i]=f.getName();
+		levels[i]=f.getName().substring(0,f.getName().lastIndexOf('.'));
 		i++;
 	}
 
@@ -416,7 +416,7 @@ public void update(GameContainer gc, StateBasedGame sbg, int delta) throws Slick
 				levels[1]="#menu.newgame";
 				int i=2;
 				for (File f : files) {
-					levels[i]=f.getName();
+					levels[i]=f.getName().substring(0,f.getName().lastIndexOf('.'));
 					i++;
 				}
 			} break;
@@ -495,7 +495,7 @@ public void update(GameContainer gc, StateBasedGame sbg, int delta) throws Slick
 							levels[1]="#menu.newgame";
 							int i=2;
 							for (File f : files) {
-								levels[i]=f.getName();
+								levels[i]=f.getName().substring(0,f.getName().lastIndexOf('.'));
 								i++;
 							}
 						} catch (IOException e) {
