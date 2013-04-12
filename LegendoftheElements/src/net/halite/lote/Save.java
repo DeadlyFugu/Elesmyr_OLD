@@ -2,6 +2,7 @@ package net.halite.lote;
 
 import net.halite.hbt.*;
 import net.halite.lote.system.Globals;
+import net.halite.lote.system.Main;
 import net.halite.lote.util.FileHandler;
 import net.halite.lote.world.Region;
 import net.halite.lote.world.World;
@@ -200,15 +201,16 @@ public void saveScreen() {
 	int bpp = 4; // Assuming a 32-bit display with a byte each for red, green, blue, and alpha.
 	ByteBuffer buffer = BufferUtils.createByteBuffer(width*height*bpp);
 	GL11.glReadPixels(0, 0, width, height, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, buffer );
-	BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
-		for(int x = 0; x < width; x++)
-			for(int y = 0; y < height; y++)
+	final int scale = height/Main.INTERNAL_RESY;
+	BufferedImage image = new BufferedImage(width/scale, height/scale, BufferedImage.TYPE_INT_RGB);
+		for(int x = 0; x < width/scale; x++)
+			for(int y = 0; y < height/scale; y++)
 			{
-				int i = (x + (width * y)) * bpp;
+				int i = ((x*scale) + (width * (y*scale))) * bpp;
 				int r = buffer.get(i) & 0xFF;
 				int g = buffer.get(i + 1) & 0xFF;
 				int b = buffer.get(i + 2) & 0xFF;
-				image.setRGB(x, height - (y + 1), (0xFF << 24) | (r << 16) | (g << 8) | b);
+				image.setRGB(x, (height/scale) - (y + 1), (0xFF << 24) | (r << 16) | (g << 8) | b);
 			}
 	try {
 		File file = new File("save/thumb/"+name+".png");

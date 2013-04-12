@@ -61,7 +61,7 @@ private ArrayList<InetAddress> lanServers;
 private boolean serverOnly=false;
 
 private int dx=-256;
-private int tdx=64;
+private int tdx=Main.INTERNAL_RESX/2;
 
 private boolean waitingForKeyPress;
 private String inKey=null;
@@ -166,7 +166,7 @@ public void resetBGImage() throws SlickException {
 	if (file.exists()) {
 		try {
 			BufferedImage src = ImageIO.read(file);
-			AbstractBufferedImageOp filter = new GaussianFilter(10);
+			AbstractBufferedImageOp filter = new GaussianFilter(8);
 			BufferedImage filtered = filter.filter(src,null);
 			Texture texture = BufferedImageUtil.getTexture("", filtered);
 			background = new Image(texture.getImageWidth(), texture.getImageHeight());
@@ -202,10 +202,10 @@ public void render(GameContainer gc, StateBasedGame sbg, Graphics g) throws Slic
 
 	g.setColor(Color.white);
 	//background.draw(ox, oy, w, h);
-	background.draw();
-	alphabg.draw(0,0,Main.INTERNAL_RESX,Main.INTERNAL_RESY);
-	alphabg.draw(0,0,Main.INTERNAL_RESX,Main.INTERNAL_RESY);
-	alphabg.draw(0,0,Main.INTERNAL_RESX,Main.INTERNAL_RESY);
+	background.draw(0,0,vw,vh);
+	alphabg.draw(0,0,vw,vh);
+	alphabg.draw(0,0,vw,vh);
+	alphabg.draw(0,0,vw,vh);
 	bg2.draw(0, 0, vh*(4/3f), h);
 	bg3.draw(vw-vh*(4/3f), 0, vh*(4/3f), h);
 	//g.translate(ox, oy);
