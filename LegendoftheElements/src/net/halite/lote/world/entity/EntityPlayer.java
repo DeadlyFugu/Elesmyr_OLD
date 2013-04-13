@@ -146,20 +146,20 @@ private void draw(float xd, float yd, int x, int y, int px, int py, float spx, f
 @Override
 public void receiveMessageExt(Message msg, MessageReceiver server) {
 	if (msg.getName().equals("moveClient")) {
-		this.cx=Integer.parseInt(msg.getData().split(",")[0]);
-		this.cy=Integer.parseInt(msg.getData().split(",")[1]);
+		this.cx=Integer.parseInt(msg.getDataStr().split(",")[0]);
+		this.cy=Integer.parseInt(msg.getDataStr().split(",")[1]);
 		this.isUser=true;
 	} else if (msg.getName().equals("putItem")) {
-		pdat.put(ItemFactory.getItem(msg.getData().split(",", 2)[0]), msg.getData().split(",", 2)[1], region, receiverName);
+		pdat.put(ItemFactory.getItem(msg.getDataStr().split(",", 2)[0]), msg.getDataStr().split(",", 2)[1], region, receiverName);
 	} else if (msg.getName().equals("equip")) {
-		pdat.setEquipped(pdat.inventory.get(Integer.parseInt(msg.getData())), region, receiverName);
+		pdat.setEquipped(pdat.inventory.get(Integer.parseInt(msg.getDataStr())), region, receiverName);
 	} else if (msg.getName().equals("use")) {
-		PlayerData.InventoryEntry ie=pdat.inventory.get(Integer.parseInt(msg.getData()));
+		PlayerData.InventoryEntry ie=pdat.inventory.get(Integer.parseInt(msg.getDataStr()));
 		if (ie!=null)
 			if (ie.getItem().onUse((GameServer) server, this, ie))
-				pdat.removeItem(Integer.parseInt(msg.getData()), region, receiverName);
+				pdat.removeItem(Integer.parseInt(msg.getDataStr()), region, receiverName);
 	} else if (msg.getName().equals("drop")) {
-		PlayerData.InventoryEntry ie=pdat.inventory.get(Integer.parseInt(msg.getData()));
+		PlayerData.InventoryEntry ie=pdat.inventory.get(Integer.parseInt(msg.getDataStr()));
 		if (ie!=null) {
 			int dx=x-16;
 			int dy=y-16;
@@ -182,19 +182,19 @@ public void receiveMessageExt(Message msg, MessageReceiver server) {
 			}
 			System.out.println(dx+","+dy);
 			region.addEntityServer("Entity"+(ie.getItem().stickyDrops()?"Placed":"")+"Item,"+dx+","+dy+","+ie.getItem().name+","+ie.getExtd());
-			pdat.removeItem(Integer.parseInt(msg.getData()), region, receiverName);
+			pdat.removeItem(Integer.parseInt(msg.getDataStr()), region, receiverName);
 		}
 	} else if (msg.getName().equals("craftItem")) {
-		CraftUI.getRecipe(Integer.parseInt(msg.getData())).addToPDAT(pdat, region, receiverName);
+		CraftUI.getRecipe(Integer.parseInt(msg.getDataStr())).addToPDAT(pdat, region, receiverName);
 	} else if (msg.getName().equals("setPDAT")) {
 		if (pdat==null)
 			pdat=new PlayerData(extd, msg.getConnection());
-		pdat.fromString(msg.getData());
+		pdat.fromString(msg.getDataStr());
 	} else if (msg.getName().equals("setHealth")) {
-		pdat.health=Integer.parseInt(msg.getData());
+		pdat.health=Integer.parseInt(msg.getDataStr());
 		pdat.updated(region, receiverName);
 	} else if (msg.getName().equals("setAffinity")) {
-		pdat.affinity=Element.valueOf(msg.getData());
+		pdat.affinity=Element.valueOf(msg.getDataStr());
 		pdat.updated(region, receiverName);
 	} else {
 		Log.info("ENTITYPLAYER: Ignored message "+msg.toString());

@@ -101,7 +101,7 @@ public void update(GameContainer gc, StateBasedGame sbg, int delta)
 			tfUser.setFocus(false);
 			tfPass.setAcceptingInput(false);
 			tfPass.setFocus(false);
-			((GameClient) sbg.getState(Main.GAMEPLAYSTATE)).login(tfUser.getText(), Integer.toHexString(tfPass.getText().hashCode()));
+			((GameClient) sbg.getState(Main.GAMEPLAYSTATE)).login(tfUser.getText(), tfPass.getText().hashCode());
 			gc.getInput().clearKeyPressedRecord();
 			sbg.enterState(Main.GAMEPLAYSTATE);
 		} else {

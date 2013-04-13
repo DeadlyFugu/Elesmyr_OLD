@@ -76,7 +76,7 @@ public void clientUpdate(GameContainer gc, StateBasedGame sbg, GameClient receiv
 @Override
 public void receiveMessage(Message msg, MessageReceiver receiver) {
 	String name=msg.getName();
-	String data=msg.getData();
+	String data=msg.getDataStr();
 	if (name.equals("move")) {
 		this.x=Integer.parseInt(data.split(",")[0]);
 		this.y=Integer.parseInt(data.split(",")[1]);

@@ -270,17 +270,16 @@ private boolean isSolid(int id) {
 public void receiveMessage(Message msg, MessageReceiver receiver) {
 	String name=msg.getName();
 	if (name.equals("playerInfo")) {
-		String[] parts=msg.getData().split(",");
-		regionName=parts[0];
-		gs.cam.x=x=Integer.parseInt(parts[1]);
-		gs.cam.y=y=Integer.parseInt(parts[2]);
-		msg.reply("SERVER.getRegion", parts[0]+","+parts[1]+","+parts[2], this);
+		regionName=msg.getData().getString("region","error");
+		gs.cam.x=x=msg.getData().getInt("x",0);
+		gs.cam.y=y=msg.getData().getInt("y",0);
+		msg.reply("SERVER.getRegion", regionName+","+x+","+y, this);
 	} else if (name.equals("setID")) {
-		this.entid=Integer.parseInt(msg.getData());
+		this.entid=Integer.parseInt(msg.getDataStr());
 	} else if (name.equals("setPDAT")) {
 		if (entid!=-1&&region!=null&&region.entities.get(entid)!=null&&(region.entities.get(entid) instanceof EntityPlayer))
-			((EntityPlayer) region.entities.get(entid)).setPDat(msg.getData());
-		pdat=msg.getData();
+			((EntityPlayer) region.entities.get(entid)).setPDat(msg.getDataStr());
+		pdat=msg.getDataStr();
 	} else {
 		Log.warn("PlayerClient Ignored message - unrecognised name: "+msg.toString());
 	}

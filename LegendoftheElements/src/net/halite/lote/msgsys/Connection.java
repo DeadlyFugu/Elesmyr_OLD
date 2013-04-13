@@ -44,7 +44,9 @@ void sendTCP(Message msg) throws IOException {
 	HBTCompound msgc = new HBTCompound("");
 	msgc.addTag(new HBTString("t",msg.getTarget()));
 	msgc.addTag(new HBTString("n",msg.getName()));
-	msgc.addTag(new HBTString("d",msg.getData()));
+	HBTCompound payload = new HBTCompound("d");
+	payload.getData().addAll(msg.getData().getData());
+	msgc.addTag(payload);
 	out.write(msgc);
 }
 
@@ -56,7 +58,7 @@ Message readMsg() throws IOException, HBTCompound.TagNotFoundException {
 	HBTCompound msgc = (HBTCompound) in.read();
 	return new Message(((HBTString) msgc.getTag("t")).getData()+"."+
 			                   ((HBTString) msgc.getTag("n")).getData(),
-			                  ((HBTString) msgc.getTag("d")).getData());
+			                   (HBTCompound) msgc.getTag("d"));
 }
 
 void setFastlinked() {

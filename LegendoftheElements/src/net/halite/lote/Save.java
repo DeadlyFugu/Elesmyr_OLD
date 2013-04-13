@@ -156,6 +156,7 @@ public void write() {
 	} catch (IOException e) {
 		e.printStackTrace();
 	}
+	System.out.println(data);
 	saveScreen();
 	Globals.set("lastSave",name);
 	Globals.save();
@@ -167,7 +168,9 @@ public void putPlayer(String name, String data, World world) {
 	Entity player=world.getRegion(data.split("\\.")[0]).entities.get(Integer.parseInt(data.split("\\.", 2)[1])); //Can sometimes cause null pointer.
 	//put("players."+name, data.split("\\.")[0]+","+player.x+","+player.y);
 	HBTCompound pTag = new HBTCompound(name);
-	pTag.addTag(new HBTString("str",data.split("\\.")[0]+","+player.x+","+player.y)); //TODO: Proper player to hbt
+	pTag.addTag(new HBTString("region",data.split("\\.")[0])); //TODO: Proper player to hbt
+	pTag.addTag(new HBTInt("x",player.x));
+	pTag.addTag(new HBTInt("y",player.y));
 	putTag("players."+name,pTag);
 }
 
@@ -175,7 +178,9 @@ public void putPlayer(String name, String data, Region region) {
 	Entity player=region.entities.get(Integer.parseInt(data.split("\\.", 2)[1]));
 	//put("players."+name, data.split("\\.")[0]+","+player.x+","+player.y);
 	HBTCompound pTag = new HBTCompound(name);
-	pTag.addTag(new HBTString("str",data.split("\\.")[0]+","+player.x+","+player.y)); //TODO: Proper player to hbt
+	pTag.addTag(new HBTString("region",data.split("\\.")[0])); //TODO: Proper player to hbt
+	pTag.addTag(new HBTInt("x",player.x));
+	pTag.addTag(new HBTInt("y",player.y));
 	putTag("players."+name,pTag);
 }
 

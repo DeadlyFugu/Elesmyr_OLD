@@ -1,7 +1,7 @@
 package net.halite.lote.system;
 
 import com.esotericsoftware.minlog.Log;
-import net.halite.hbt.HBTString;
+import net.halite.hbt.HBTCompound;
 import net.halite.hbt.HBTTag;
 import net.halite.lote.Save;
 import net.halite.lote.msgsys.Connection;
@@ -9,6 +9,7 @@ import net.halite.lote.msgsys.Message;
 import net.halite.lote.msgsys.MessageReceiver;
 import net.halite.lote.msgsys.MessageSystem;
 import net.halite.lote.player.PlayerData;
+import net.halite.lote.util.FileHandler;
 import net.halite.lote.util.HashmapLoader;
 import net.halite.lote.world.Region;
 import net.halite.lote.world.World;
@@ -149,10 +150,11 @@ public boolean receiveMessage(Message msg) {
 	Connection connection=msg.getConnection();
 	if (msg.getTarget().equals("SERVER")) {
 		String name=msg.getName();
-		String data=msg.getData();
+		String dataStr=msg.getDataStr();
+		HBTCompound data = msg.getData();
 		if (name.equals("wantPlayer")) {
-			String uname=data.split(",", 2)[0];
-			String upass=data.split(",", 2)[1];
+			String uname = data.getString("name","Player");
+			String upass= Integer.toHexString(data.getInt("pass","".hashCode()));
 			if (pass.containsKey(uname)) {
 				if (!pass.get(uname).equals(upass)&&!uname.equals(hostUName)) {
 					MessageSystem.sendClient(null, connection, new Message("CLIENT.error", "Password incorrect!"), false);
@@ -163,7 +165,7 @@ public boolean receiveMessage(Message msg) {
 					}
 					return false;
 				}
-			} else if (hostUName=="") {
+			} else if (hostUName.equals("")) {
 				//Register user
 				pass.put(uname, upass);
 			}
@@ -174,23 +176,23 @@ public boolean receiveMessage(Message msg) {
 				sendChat("SERVER: "+uname+" joined the game.");
 				Log.info("server",connection.toString()+" logged in as "+uname);
 				players.put(connection, uname);
-				String pInfo=((HBTString) save.getTag("players."+uname+".str")).getData(); //TODO: Use proper HBTCompound stuffs
+				HBTCompound pInfo=save.getCompound("players."+uname);
 				if (pInfo!=null) {
 					MessageSystem.sendClient(null, connection, new Message("PLAYER.playerInfo", pInfo), false);
 				} else {
-					MessageSystem.sendClient(null, connection, new Message("PLAYER.playerInfo", ((HBTString) save.getTag("players.new.str")).getData()), false);
+					MessageSystem.sendClient(null, connection, new Message("PLAYER.playerInfo",FileHandler.getCompound("new.player")), false);
 				}
 			}
 		} else if (name.equals("getRegion")) {
-			int x=Integer.parseInt(data.split(",")[1]);
-			int y=Integer.parseInt(data.split(",")[2]);
-			data=data.split(",")[0];
-			changePlayerRegion(data, x, y, connection, false);
+			int x=Integer.parseInt(dataStr.split(",")[1]);
+			int y=Integer.parseInt(dataStr.split(",")[2]);
+			dataStr=dataStr.split(",")[0];
+			changePlayerRegion(dataStr, x, y, connection, false);
 		} else if (name.equals("changeRegion")) {
-			int x=Integer.parseInt(data.split(",")[1]);
-			int y=Integer.parseInt(data.split(",")[2]);
-			data=data.split(",")[0];
-			changePlayerRegion(data, x, y, connection, true);
+			int x=Integer.parseInt(dataStr.split(",")[1]);
+			int y=Integer.parseInt(dataStr.split(",")[2]);
+			dataStr=dataStr.split(",")[0];
+			changePlayerRegion(dataStr, x, y, connection, true);
 		} else if (name.equals("close")) {
 			sendChat("SERVER: "+players.get(connection)+" left the game.");
 			if (players.get(connection)==null||playerEnt.get(players.get(connection))==null) {
@@ -206,10 +208,10 @@ public boolean receiveMessage(Message msg) {
 			playerEnt.remove(players.get(connection));
 			players.remove(connection);
 		} else if (name.equals("chat")) {
-			sendChat(players.get(connection)+": "+msg.getData());
+			sendChat(players.get(connection)+": "+msg.getDataStr());
 		} else if (name.equals("setTime")) {
 			rlStartTime=System.currentTimeMillis();
-			igStartTime=Integer.valueOf(msg.getData());
+			igStartTime=Integer.valueOf(msg.getDataStr());
 		} else {
 			Log.warn("SERVER: Ignored message - unrecognised name: "+msg.toString());
 		}

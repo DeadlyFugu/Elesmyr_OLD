@@ -133,7 +133,7 @@ public void hurt(Region region, Entity entity, MessageReceiver receiver) {
 @Override
 public void receiveMessageExt(Message msg, MessageReceiver receiver) {
 	if (msg.getName().equals("setHealth")) {
-		this.health=Integer.parseInt(msg.getData());
+		this.health=Integer.parseInt(msg.getDataStr());
 	} else {
 		Log.warn("ENTITY: Ignored message "+msg.toString());
 	}

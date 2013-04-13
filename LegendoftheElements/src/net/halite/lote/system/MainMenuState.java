@@ -61,7 +61,7 @@ private ArrayList<InetAddress> lanServers;
 private boolean serverOnly=false;
 
 private int dx=-256;
-private int tdx=Main.INTERNAL_RESX/2;
+private int tdx=64;
 
 private boolean waitingForKeyPress;
 private String inKey=null;

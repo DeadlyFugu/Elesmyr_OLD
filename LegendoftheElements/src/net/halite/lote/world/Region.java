@@ -156,21 +156,21 @@ public void clientUpdate(GameContainer gc, StateBasedGame sbg, GameClient receiv
 public void receiveMessage(Message msg, MessageReceiver receiver) {
 	if (msg.getTarget().equals(name)) {
 		if (msg.getName().equals("addEnt")) {
-			addEntity(msg.getData(), true);
+			addEntity(msg.getDataStr(), true);
 		} else if (msg.getName().equals("addEntSERV")) {
-			if (addEntityServer(msg.getData())==-1) {
+			if (addEntityServer(msg.getDataStr())==-1) {
 				msg.reply("CLIENT.chat", "ERROR: addEntityServer failed for input string:", this);
-				msg.reply("CLIENT.chat", "       "+msg.getData(), this);
+				msg.reply("CLIENT.chat", "       "+msg.getDataStr(), this);
 			}
 		} else if (msg.getName().equals("killSERV")) {
-			entities.remove(Integer.parseInt(msg.getData()));
-			MessageSystem.sendClient(this, connections, new Message(name+".kill", msg.getData()), false);
+			entities.remove(Integer.parseInt(msg.getDataStr()));
+			MessageSystem.sendClient(this, connections, new Message(name+".kill", msg.getDataStr()), false);
 		} else if (msg.getName().equals("kill")) {
 			try {
-				entities.get(Integer.parseInt(msg.getData())).kill((GameClient) receiver);
-				entities.remove(Integer.parseInt(msg.getData()));
+				entities.get(Integer.parseInt(msg.getDataStr())).kill((GameClient) receiver);
+				entities.remove(Integer.parseInt(msg.getDataStr()));
 			} catch (Exception e) {
-				Log.info("Client could not kill "+msg.getData());
+				Log.info("Client could not kill "+msg.getDataStr());
 			}
 		} else if (msg.getName().equals("hitAt")) {
 			EntityPlayer ep=((GameServer) receiver).getPlayerEnt(msg.getConnection());
@@ -178,16 +178,16 @@ public void receiveMessage(Message msg, MessageReceiver receiver) {
 			if (ie!=null)
 				if (ie.getItem().onUse((GameServer) receiver, ep, ie))
 					ep.pdat.removeItem(ep.pdat.inventory.indexOf(ie), ep.region, ep.getReceiverName());
-			for (Entity e : getEntitiesAt(Integer.parseInt(msg.getData().split(",", 2)[0]), Integer.parseInt(msg.getData().split(",", 2)[1]))) {
+			for (Entity e : getEntitiesAt(Integer.parseInt(msg.getDataStr().split(",", 2)[0]), Integer.parseInt(msg.getDataStr().split(",", 2)[1]))) {
 				if (e!=ep||(Globals.get("debug", false)&&Globals.get("selfHit", true)))
 					e.hurt(this, ep, receiver);
 			}
 		} else if (msg.getName().equals("intAt")) {
-			for (Entity e : getEntitiesAt(Integer.parseInt(msg.getData().split(",", 2)[0]), Integer.parseInt(msg.getData().split(",", 2)[1]))) {
+			for (Entity e : getEntitiesAt(Integer.parseInt(msg.getDataStr().split(",", 2)[0]), Integer.parseInt(msg.getDataStr().split(",", 2)[1]))) {
 				e.interact(this, ((GameServer) receiver).getPlayerEnt(msg.getConnection()), receiver, msg);
 			}
 		} else if (msg.getName().equals("pickupAt")) {
-			for (Entity e : getEntitiesAt(Integer.parseInt(msg.getData().split(",", 2)[0]), Integer.parseInt(msg.getData().split(",", 2)[1]))) {
+			for (Entity e : getEntitiesAt(Integer.parseInt(msg.getDataStr().split(",", 2)[0]), Integer.parseInt(msg.getDataStr().split(",", 2)[1]))) {
 				if (e instanceof EntityItem)
 					e.interact(this, ((GameServer) receiver).getPlayerEnt(msg.getConnection()), receiver, msg);
 			}

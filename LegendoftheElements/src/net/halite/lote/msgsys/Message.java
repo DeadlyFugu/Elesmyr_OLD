@@ -1,18 +1,37 @@
 package net.halite.lote.msgsys;
 
+import net.halite.hbt.HBTCompound;
+import net.halite.hbt.HBTString;
 import net.halite.lote.GameElement;
 
 public class Message {
-private String target, name, data;
+private String target, name;
+private HBTCompound data;
 private Object connection;
 private String sender;
 private boolean serverBound=true;
 
-public Message(String name, String data) {
+@Deprecated public Message(String name, String data) {
 	int splitIndex=name.lastIndexOf(".");
 	if (splitIndex==-1) {
 		new Exception("Wrongly formatted Message name. It needs atleast one period.").printStackTrace();
-		target=name=data="none";
+		target=name="none";
+		data=data;
+	} else {
+		this.target=name.substring(0, splitIndex);
+		this.name=name.substring(splitIndex+1);
+		HBTCompound p = new HBTCompound("p");
+		p.addTag(new HBTString("s",data));
+		this.data=p;
+	}
+}
+
+public Message(String name, HBTCompound data) {
+	int splitIndex=name.lastIndexOf(".");
+	if (splitIndex==-1) {
+		new Exception("Wrongly formatted Message name. It needs atleast one period.").printStackTrace();
+		target=name="none";
+		data=data;
 	} else {
 		this.target=name.substring(0, splitIndex);
 		this.name=name.substring(splitIndex+1);
@@ -31,7 +50,11 @@ public String getName() {
 	return name;
 }
 
-public String getData() {
+public String getDataStr() {
+	return data.getString("s","ERROR");
+}
+
+public HBTCompound getData() {
 	return data;
 }
 

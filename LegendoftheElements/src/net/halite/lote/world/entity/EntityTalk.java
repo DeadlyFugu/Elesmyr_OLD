@@ -46,7 +46,7 @@ public void interact(Region region, EntityPlayer entityPlayer, MessageReceiver r
 @Override
 public void receiveMessageExt(Message msg, MessageReceiver receiver) {
 	if (msg.getName().equals("tresponse")) {
-		dh.response(this, msg.getData().split("\\|", 2)[0], msg.getData().split("\\|", 2)[1], msg.getConnection());
+		dh.response(this, msg.getDataStr().split("\\|", 2)[0], msg.getDataStr().split("\\|", 2)[1], msg.getConnection());
 	} else {
 		Log.warn("EntityPlayer ingored message "+msg);
 	}

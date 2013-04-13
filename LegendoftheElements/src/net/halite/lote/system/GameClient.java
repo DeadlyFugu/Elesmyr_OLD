@@ -1,6 +1,9 @@
 package net.halite.lote.system;
 
 import com.esotericsoftware.minlog.Log;
+import net.halite.hbt.HBTCompound;
+import net.halite.hbt.HBTInt;
+import net.halite.hbt.HBTString;
 import net.halite.lote.Save;
 import net.halite.lote.ScriptObject;
 import net.halite.lote.lighting.LightMap;
@@ -322,51 +325,51 @@ public boolean receiveMessage(Message msg) {
 		String name=msg.getName();
 		if (name.equals("setRegion")) {
 			lm.clearLight();
-			String rname=msg.getData().split(":", 2)[0];
+			String rname=msg.getDataStr().split(":", 2)[0];
 			world.touchRegionClient(rname);
-			world.getRegion(rname).parseEntityString(msg.getData().split(":", 2)[1], true);
+			world.getRegion(rname).parseEntityString(msg.getDataStr().split(":", 2)[1], true);
 			lm.addLight(world.getRegion(rname).getLights());
 			player.setRegion(rname);
 			regionLoaded=true;
 		} else if (name.equals("chat")) {
-			chat.addFirst(new ChatMessage(msg.getData()));
+			chat.addFirst(new ChatMessage(msg.getDataStr()));
 			//if (chat.size()>5) {
 			//	chat.removeLast();
 			//}
 		} else if (name.equals("talk")) {
 			if (ui.peekFirst() instanceof ChatUI) {
-				((ChatUI) ui.peekFirst()).setMsg(msg.getData().split(":", 2)[0], msg.getData().split(":", 2)[1], msg);
+				((ChatUI) ui.peekFirst()).setMsg(msg.getDataStr().split(":", 2)[0], msg.getDataStr().split(":", 2)[1], msg);
 			} else {
 				ChatUI nui=new ChatUI();
-				nui.setMsg(msg.getData().split(":", 2)[0], msg.getData().split(":", 2)[1], msg);
+				nui.setMsg(msg.getDataStr().split(":", 2)[0], msg.getDataStr().split(":", 2)[1], msg);
 				ui.addFirst(nui);
 			}
 		} else if (name.equals("echointwl")) {
 			msg.reply(msg.getSender()+".tresponse", FontRenderer.getLang()+"|int", null);
 		} else if (name.equals("error")) {
-			error=msg.getData();
+			error=msg.getDataStr();
 		} else if (name.equals("time")) {
 			float oltime=servtime;
-			servtime=Float.parseFloat(msg.getData().split(":",2)[0]);
-			date=Integer.parseInt(msg.getData().split(":",2)[1]);
+			servtime=Float.parseFloat(msg.getDataStr().split(":",2)[0]);
+			date=Integer.parseInt(msg.getDataStr().split(":",2)[1]);
 			if (servtime>oltime+10||servtime<oltime-10) {
 				Log.info("Time skip");
 				lm.skipFade(servtime/60f, player.region);
 				time=servtime;
 			}
 		} else if (name.equals("openUI")) {
-			UserInterface nui=UIFactory.getUI(msg.getData());
+			UserInterface nui=UIFactory.getUI(msg.getDataStr());
 			if (nui!=null)
 				ui.addFirst(nui);
 			else
-				Log.warn("CLIENT: Could not open UI "+msg.getData());
+				Log.warn("CLIENT: Could not open UI "+msg.getDataStr());
 		} else if (name.equals("book")) {
 			if (ui.peekFirst() instanceof BookUI) {
-				((BookUI) ui.peekFirst()).addPage(msg.getData());
+				((BookUI) ui.peekFirst()).addPage(msg.getDataStr());
 			} else {
 				BookUI nui=new BookUI();
 				nui.ctor(null);
-				nui.addPage(msg.getData());
+				nui.addPage(msg.getDataStr());
 				ui.addFirst(nui);
 			}
 		} else {
@@ -394,7 +397,10 @@ public void loadSave(GameContainer gc, String saveName, boolean serverOnly, Stat
 	if (MessageSystem.SERVER)
 		server.load();
 	if (MessageSystem.CLIENT) {
-		MessageSystem.sendServer(null, new Message("SERVER.wantPlayer", Globals.get("name", "Player")+","+Integer.toHexString("".hashCode())), false);
+		HBTCompound tag = new HBTCompound("p");
+		tag.addTag(new HBTString("name",Globals.get("name", "Player")));
+		tag.addTag(new HBTInt("pass","".hashCode()));
+		MessageSystem.sendServer(null, new Message("SERVER.wantPlayer", tag), false);
 	}
 }
 
@@ -408,12 +414,15 @@ public void join(InetAddress hostaddr) throws Exception {
 	MessageSystem.initialise(this, false, hostaddr, null);
 }
 
-public void sendMessage(String name, String data) {
+@Deprecated public void sendMessage(String name, String data) {
 	MessageSystem.sendServer(null, new Message(name, data), false);
 }
 
-public void login(String name, String pass) {
-	MessageSystem.sendServer(null, new Message("SERVER.wantPlayer", name+","+pass), false);
+public void login(String name, int pass) {
+	HBTCompound tag = new HBTCompound("p");
+	tag.addTag(new HBTString("name",Globals.get("name", "Player")));
+	tag.addTag(new HBTInt("pass",pass));
+	MessageSystem.sendServer(null, new Message("SERVER.wantPlayer", tag), false);
 }
 
 public GameServer getServer() {
