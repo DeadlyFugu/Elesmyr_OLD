@@ -1,5 +1,6 @@
 package net.sekien.lote.world.entity;
 
+import net.sekien.hbt.HBTTools;
 import net.sekien.lote.lighting.Light;
 import net.sekien.lote.msgsys.Message;
 import net.sekien.lote.msgsys.MessageReceiver;
@@ -20,17 +21,17 @@ import org.newdawn.slick.state.StateBasedGame;
 public class EntityItem extends Entity {
 Image spr;
 Item item;
-int destTimer=-1;
+int destTimer = -1;
 private EntityPlayer targetEP;
-private Light light=null;
+private Light light = null;
 
 @Override
 public void init(GameContainer gc, StateBasedGame sbg, MessageReceiver receiver)
 		throws SlickException {
-	this.item=ItemFactory.getItem(extd.split(",", 2)[0]);
-	spr=item.spr;
+	this.item = ItemFactory.getItem(extd.split(",", 2)[0]);
+	spr = item.spr;
 	if (item instanceof ItemTorch) {
-		light=new Light(600, 550, 256, 0.8f, 0.5f, 0.2f, 0.4f); //TORCH LIGHT
+		light = new Light(600, 550, 256, 0.8f, 0.5f, 0.2f, 0.4f); //TORCH LIGHT
 		((GameClient) sbg.getState(Main.GAMEPLAYSTATE)).lm.addLight(light);
 	}
 }
@@ -43,7 +44,7 @@ public void kill(GameClient gs) {
 
 @Override
 public void initSERV() {
-	this.item=ItemFactory.getItem(extd.split(",", 2)[0]);
+	this.item = ItemFactory.getItem(extd.split(",", 2)[0]);
 }
 
 @Override
@@ -58,21 +59,21 @@ public void render(GameContainer gc, StateBasedGame sbg, Graphics g,
 
 @Override
 public void update(Region region, GameServer receiver) {
-	if (destTimer>0) {
+	if (destTimer > 0) {
 		destTimer--;
-		this.x=targetEP.x-16;
-		this.y=targetEP.y-16;
+		this.x = targetEP.x-16;
+		this.y = targetEP.y-16;
 	} else if (destTimer==0)
-		region.receiveMessage(new Message(region.name+".killSERV", this.name), receiver);
+		region.receiveMessage(new Message(region.name+".killSERV", HBTTools.msgString("ent", this.name)), receiver);
 }
 
 @Override
 public void interact(Region region, EntityPlayer entityPlayer, MessageReceiver receiver, Message msg) {
 	if (destTimer==-1)
 		if (entityPlayer.putItem(item, extd.split(",", 2)[1])) {
-			destTimer=40;
-			this.targetEP=entityPlayer;
-			constantUpdate=true;
+			destTimer = 40;
+			this.targetEP = entityPlayer;
+			constantUpdate = true;
 		}
 }
 }

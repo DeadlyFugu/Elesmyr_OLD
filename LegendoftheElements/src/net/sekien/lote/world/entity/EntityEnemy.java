@@ -1,6 +1,7 @@
 package net.sekien.lote.world.entity;
 
 import com.esotericsoftware.minlog.Log;
+import net.sekien.hbt.HBTTools;
 import net.sekien.lote.msgsys.Message;
 import net.sekien.lote.msgsys.MessageReceiver;
 import net.sekien.lote.msgsys.MessageSystem;
@@ -20,27 +21,27 @@ public class EntityEnemy extends Entity {
 
 Image spr;
 protected int xmove, ymove;
-protected boolean moveFree=true;
+protected boolean moveFree = true;
 protected int xtarget, ytarget;
 protected int mdist, cmdist; //mdist = distance to move in tiles, cmdist = distance moved so far in pixels
-protected int health=0;
-protected int maxHealth=0;
-protected Random airand=new Random();
-private int nextHit=10;
+protected int health = 0;
+protected int maxHealth = 0;
+protected Random airand = new Random();
+private int nextHit = 10;
 
 public EntityEnemy() {
-	constantUpdate=true;
+	constantUpdate = true;
 }
 
 @Override
 public void initSERV() {
-	health=Integer.parseInt(extd.split(",", 2)[0]);
+	health = Integer.parseInt(extd.split(",", 2)[0]);
 }
 
 @Override
 public void init(GameContainer gc, StateBasedGame sbg, MessageReceiver receiver)
 		throws SlickException {
-	spr=FileHandler.getImage("ent.enemy");
+	spr = FileHandler.getImage("ent.enemy");
 }
 
 @Override
@@ -66,35 +67,35 @@ protected void drawHealthBar(float x, float y, Graphics g) {
 @Override
 public void update(Region region, GameServer receiver) {
 	if (region.aiPlaceFreeRect(x+xmove-10, y-4, x+xmove+10, y+4))
-		x+=xmove;
+		x += xmove;
 	else
-		cmdist=mdist*32;
+		cmdist = mdist*32;
 	if (region.aiPlaceFreeRect(x-10, y+ymove-4, x+10, y+ymove+4))
-		y+=ymove;
+		y += ymove;
 	else
-		cmdist=mdist*32;
+		cmdist = mdist*32;
 
 	if (moveFree) {
 		cmdist++;
-		if (cmdist>mdist*32) {
+		if (cmdist > mdist*32) {
 			//use airand to change direction and mdist
-			int dir=airand.nextInt(4);
-			xmove=ymove=0;
+			int dir = airand.nextInt(4);
+			xmove = ymove = 0;
 			if (dir==0)
-				xmove=1;
+				xmove = 1;
 			else if (dir==1)
-				xmove=-1;
+				xmove = -1;
 			else if (dir==2)
-				ymove=1;
+				ymove = 1;
 			else if (dir==3)
-				ymove=-1;
-			mdist=airand.nextInt(3)+3;
-			cmdist=0;
+				ymove = -1;
+			mdist = airand.nextInt(3)+3;
+			cmdist = 0;
 		}
 	}
 	if (nextHit==0) {
 		attack(region, receiver);
-		nextHit=airand.nextInt(6)+6;
+		nextHit = airand.nextInt(6)+6;
 	} else {
 		nextHit--;
 	}
@@ -110,30 +111,30 @@ private void attack(Region region, GameServer receiver) {
 
 @Override
 public void hurt(Region region, Entity entity, MessageReceiver receiver) {
-	float dmg=1;
+	float dmg = 1;
 	if (entity.getEquipped()!=null) {
-		Item i=entity.getEquipped().getItem();
+		Item i = entity.getEquipped().getItem();
 		if (i instanceof ItemWeapon)
-			dmg=((ItemWeapon) i).getMult(entity.getEquipped().getExtd());
-		dmg*=i.getElement().multAgainst(this.getElement())*entity.getElement().multAgainst(this.getElement());
+			dmg = ((ItemWeapon) i).getMult(entity.getEquipped().getExtd());
+		dmg *= i.getElement().multAgainst(this.getElement())*entity.getElement().multAgainst(this.getElement());
 	}
-	health-=dmg;
-	if (health<=0) {
+	health -= dmg;
+	if (health <= 0) {
 		this.drop(region);
-		region.receiveMessage(new Message(region.name+".killSERV", this.name), receiver);
+		region.receiveMessage(new Message(region.name+".killSERV", HBTTools.msgString("ent", this.name)), receiver); //TODO: Merge all killSEV:<this> into one method in Entity
 	} else {
-		MessageSystem.sendClient(this, region.connections, new Message(this.getReceiverName()+".setHealth", ""+health), false);
+		MessageSystem.sendClient(this, region.connections, new Message(this.getReceiverName()+".setHealth", HBTTools.msgInt("health", health)), false);
 	}
 	if (extd.contains(","))
-		extd=health+","+extd.split(",", 2)[1];
+		extd = health+","+extd.split(",", 2)[1];
 	else
-		extd=""+health;
+		extd = ""+health;
 }
 
 @Override
 public void receiveMessageExt(Message msg, MessageReceiver receiver) {
 	if (msg.getName().equals("setHealth")) {
-		this.health=Integer.parseInt(msg.getDataStr());
+		this.health = msg.getData().getInt("health", 0);
 	} else {
 		Log.warn("ENTITY: Ignored message "+msg.toString());
 	}

@@ -1,6 +1,7 @@
 package net.sekien.lote.msgsys;
 
 import com.esotericsoftware.minlog.Log;
+import net.sekien.hbt.HBTCompound;
 import net.sekien.lote.system.Main;
 
 import java.io.IOException;
@@ -14,7 +15,7 @@ import java.net.SocketException;
  */
 public class Client {
 private Connection connection;
-private boolean running=true;
+private boolean running = true;
 
 public void sendUDP(Message msg) {
 	try {
@@ -38,28 +39,28 @@ public void received(Message msg) {
 }
 
 public void start() {
-	running=true;
+	running = true;
 }
 
 public void connect(int i, InetAddress address, int port, int port2) throws IOException {
-	Socket socket=new Socket(address, port);
+	Socket socket = new Socket(address, port);
 	Log.info("msgsys", "Client connected to "+socket.toString());
-	connection=new Connection(-1, socket);
+	connection = new Connection(-1, socket);
 	new Thread() {
 		public void run() {
 			this.setName("[client] listener");
 			while (running) {
 				try {
 					received(connection.readMsg());
-				} catch (net.sekien.hbt.HBTCompound.TagNotFoundException e) {
+				} catch (HBTCompound.TagNotFoundException e) {
 					Log.error("msgsys", "Badly formed message received.");
 					e.printStackTrace();
 				} catch (NullPointerException npe) {
 					//Gets thrown when client is stopped
-					running=false;
+					running = false;
 				} catch (SocketException e) {
 					//Gets thrown when client is stopped
-					running=false;
+					running = false;
 				} catch (Exception e) {
 					if (running) {
 						Main.handleCrash(e);
@@ -73,7 +74,7 @@ public void connect(int i, InetAddress address, int port, int port2) throws IOEx
 
 public void stop() {
 	Log.info("client", "Client stopped");
-	running=false;
+	running = false;
 }
 
 public void close() throws IOException {
@@ -81,6 +82,6 @@ public void close() throws IOException {
 }
 
 public boolean isConnected() {
-	return running&&connection.isConnected();
+	return running && connection.isConnected();
 }
 }

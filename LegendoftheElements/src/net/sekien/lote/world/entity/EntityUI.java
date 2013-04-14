@@ -1,5 +1,6 @@
 package net.sekien.lote.world.entity;
 
+import net.sekien.hbt.HBTTools;
 import net.sekien.lote.msgsys.Message;
 import net.sekien.lote.msgsys.MessageReceiver;
 import net.sekien.lote.msgsys.MessageSystem;
@@ -19,7 +20,7 @@ Image spr;
 @Override
 public void init(GameContainer gc, StateBasedGame sbg, MessageReceiver receiver)
 		throws SlickException {
-	spr=FileHandler.getImage("ent."+extd.split(",", 2)[0]);
+	spr = FileHandler.getImage("ent."+extd.split(",", 2)[0]);
 }
 
 @Override
@@ -32,6 +33,6 @@ public void render(GameContainer gc, StateBasedGame sbg, Graphics g,
 
 @Override
 public void interact(Region region, EntityPlayer entityPlayer, MessageReceiver receiver, Message msg) {
-	MessageSystem.sendClient(this, msg.getConnection(), new Message("CLIENT.openUI", extd.split(",", 2)[1]), false);
+	MessageSystem.sendClient(this, msg.getConnection(), new Message("CLIENT.openUI", HBTTools.msgString("ui", extd.split(",", 2)[1])), false);
 }
 }

@@ -1,6 +1,7 @@
 package net.sekien.lote.system;
 
 import com.esotericsoftware.minlog.Log;
+import net.sekien.hbt.HBTCompound;
 import net.sekien.lote.ScriptRunner;
 import net.sekien.lote.util.FileHandler;
 import net.sekien.lote.util.HashmapLoader;
@@ -23,19 +24,19 @@ import java.util.HashMap;
  */
 public class Main extends StateBasedGame {
 
-public static final int INTROSTATE=0;
-public static final int MENUSTATE=1;
-public static final int GAMEPLAYSTATE=2;
-public static final int ERRORSTATE=3;
-public static final int LOGINSTATE=4;
+public static final int INTROSTATE = 0;
+public static final int MENUSTATE = 1;
+public static final int GAMEPLAYSTATE = 2;
+public static final int ERRORSTATE = 3;
+public static final int LOGINSTATE = 4;
 
-public static float INTERNAL_ASPECT=(4/3f);
-public static int INTERNAL_RESY=480; //Internal resolution y
-public static int INTERNAL_RESX=(int) (INTERNAL_RESY*INTERNAL_ASPECT); //Internal resolution x
+public static float INTERNAL_ASPECT = (4/3f);
+public static int INTERNAL_RESY = 480; //Internal resolution y
+public static int INTERNAL_RESX = (int) (INTERNAL_RESY*INTERNAL_ASPECT); //Internal resolution x
 
-public static final String verNum="0.2.4";
-public static final String verRelease="PRE-ALPHA";
-public static final String version="$version.prealpha| "+verNum; //0.0.1 = DEC 16
+public static final String verNum = "0.2.4";
+public static final String verRelease = "PRE-ALPHA";
+public static final String version = "$version.prealpha| "+verNum; //0.0.1 = DEC 16
 
 private static GameContainer gc;
 private static StateBasedGame sbg;
@@ -82,7 +83,7 @@ public static void main(String[] args) throws SlickException {
 	try {
 		//HBTOutputStream os = new HBTOutputStream(new FileOutputStream("save/TestOut2.hbtc"),true);
 		FileHandler.readData();
-	} catch (net.sekien.hbt.HBTCompound.TagNotFoundException e) {
+	} catch (HBTCompound.TagNotFoundException e) {
 		e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
 	} catch (IOException e) {
 		e.printStackTrace();
@@ -90,10 +91,10 @@ public static void main(String[] args) throws SlickException {
 
 	ScriptRunner.init();
 
-	AppGameContainer app=new CustomAppGameContainer(new Main());
+	AppGameContainer app = new CustomAppGameContainer(new Main());
 
-	MainMenuState.disx[3]=app.getScreenWidth();
-	MainMenuState.disy[3]=app.getScreenHeight();
+	MainMenuState.disx[3] = app.getScreenWidth();
+	MainMenuState.disy[3] = app.getScreenHeight();
 
 	app.setDisplayMode(MainMenuState.disx[0], MainMenuState.disy[0], false);
 	//app.setIcons(new String[]{"data/icon32.tga", "data/icon16.tga"}); //TODO: Make this work
@@ -103,10 +104,10 @@ public static void main(String[] args) throws SlickException {
 
 public static void handleCrash(Throwable e) {
 	Log.info("LotE crashed");
-	StringWriter writer=new StringWriter(256);
+	StringWriter writer = new StringWriter(256);
 	e.printStackTrace(new PrintWriter(writer));
 	try {
-		BufferedWriter bw=new BufferedWriter(new FileWriter("LOTE_CRASH_LOG"));
+		BufferedWriter bw = new BufferedWriter(new FileWriter("LOTE_CRASH_LOG"));
 		bw.write("LOTE CRASH LOG\n");
 		bw.write(writer.toString());
 		bw.write("at "+(new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(new Date())));
@@ -116,23 +117,23 @@ public static void handleCrash(Throwable e) {
 		e2.printStackTrace();
 	}
 	try {
-		String[] parts=writer.toString().trim().split("\n");
-		String out=parts[0];
-		boolean ellipsisYet=false;
-		boolean ignoreRest=false;
-		boolean server=false;
-		for (int i=1; i<parts.length; i++) {
-			String s=parts[i];
+		String[] parts = writer.toString().trim().split("\n");
+		String out = parts[0];
+		boolean ellipsisYet = false;
+		boolean ignoreRest = false;
+		boolean server = false;
+		for (int i = 1; i < parts.length; i++) {
+			String s = parts[i];
 			if (s.trim().startsWith("at GameServer."))
-				server=true;
-			if (s.trim().startsWith("at ")&&!(ignoreRest|s.trim().startsWith("at java.")||s.trim().startsWith("at sun."))) {
-				out=out+"\n    "+s.trim();
-				ellipsisYet=false;
+				server = true;
+			if (s.trim().startsWith("at ") && !(ignoreRest|s.trim().startsWith("at java.") || s.trim().startsWith("at sun."))) {
+				out = out+"\n    "+s.trim();
+				ellipsisYet = false;
 				if (s.trim().matches("at net\\.sekien\\.lote\\.system\\.(GameClient|GameServer|.*State).*"))
-					ignoreRest=true;
+					ignoreRest = true;
 			} else if (!ellipsisYet) {
-				out=out+"\n    ...";
-				ellipsisYet=true;
+				out = out+"\n    ...";
+				ellipsisYet = true;
 			}
 		}
 		JOptionPane.showMessageDialog(null, "The LotE "+(server?"server":"client")+" has crashed. Info for geeks:\n"+out+"\nA full log can be found at ./LOTE_CRASH_LOG", "LotE "+(server?"server":"client")+" just kinda stopped working. :(", JOptionPane.ERROR_MESSAGE);
@@ -146,8 +147,8 @@ public static void handleCrash(Throwable e) {
 public void initStatesList(GameContainer gameContainer) throws SlickException {
 	FontRenderer.setLang(FontRenderer.Language.valueOf(Globals.get("lang", "EN_US")));
 	FontRenderer.initialise(gameContainer);
-	Main.gc=gameContainer;
-	Main.sbg=this;
+	Main.gc = gameContainer;
+	Main.sbg = this;
 }
 
 public static void handleError(Exception e) {
@@ -157,7 +158,7 @@ public static void handleError(Exception e) {
 
 public static void handleError(String error) {
 	gc.getInput().clearKeyPressedRecord();
-	((ErrorState) sbg.getState(Main.ERRORSTATE)).errorText=error;
+	((ErrorState) sbg.getState(Main.ERRORSTATE)).errorText = error;
 	sbg.enterState(Main.ERRORSTATE);
 }
 
@@ -206,7 +207,7 @@ private static class CustomAppGameContainer extends AppGameContainer {
 	protected void updateAndRender(int delta) throws SlickException {
 		if (smoothDeltas) {
 			if (getFPS()!=0) {
-				delta=1000/getFPS();
+				delta = 1000/getFPS();
 			}
 		}
 
@@ -214,30 +215,30 @@ private static class CustomAppGameContainer extends AppGameContainer {
 
 		Music.poll(delta);
 		if (!paused) {
-			storedDelta+=delta;
+			storedDelta += delta;
 
-			if (storedDelta>=minimumLogicInterval) {
+			if (storedDelta >= minimumLogicInterval) {
 				try {
 					if (maximumLogicInterval!=0) {
-						long cycles=storedDelta/maximumLogicInterval;
-						for (int i=0; i<cycles; i++) {
+						long cycles = storedDelta/maximumLogicInterval;
+						for (int i = 0; i < cycles; i++) {
 							game.update(this, (int) maximumLogicInterval);
 						}
 
-						int remainder=(int) (storedDelta%maximumLogicInterval);
-						if (remainder>minimumLogicInterval) {
+						int remainder = (int) (storedDelta%maximumLogicInterval);
+						if (remainder > minimumLogicInterval) {
 							game.update(this, (int) (remainder%maximumLogicInterval));
-							storedDelta=0;
+							storedDelta = 0;
 						} else {
-							storedDelta=remainder;
+							storedDelta = remainder;
 						}
 					} else {
 						game.update(this, (int) storedDelta);
-						storedDelta=0;
+						storedDelta = 0;
 					}
 
 				} catch (Throwable e) {
-					running=false;
+					running = false;
 					Main.handleCrash(e);
 				}
 			}
@@ -245,13 +246,13 @@ private static class CustomAppGameContainer extends AppGameContainer {
 			game.update(this, 0);
 		}
 
-		if (hasFocus()||getAlwaysRender()) {
+		if (hasFocus() || getAlwaysRender()) {
 			if (clearEachFrame) {
 				GL.glClear(SGL.GL_COLOR_BUFFER_BIT|SGL.GL_DEPTH_BUFFER_BIT);
 			}
 
 			GL.glLoadIdentity();
-			Graphics graphics=getGraphics();
+			Graphics graphics = getGraphics();
 			graphics.resetTransform();
 			graphics.resetFont();
 			graphics.resetLineWidth();
@@ -259,7 +260,7 @@ private static class CustomAppGameContainer extends AppGameContainer {
 			try {
 				game.render(this, graphics);
 			} catch (Throwable e) {
-				running=false;
+				running = false;
 				Main.handleCrash(e);
 			}
 			graphics.resetTransform();

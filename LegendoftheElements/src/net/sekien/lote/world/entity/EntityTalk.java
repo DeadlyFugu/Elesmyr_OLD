@@ -1,6 +1,7 @@
 package net.sekien.lote.world.entity;
 
 import com.esotericsoftware.minlog.Log;
+import net.sekien.hbt.HBTCompound;
 import net.sekien.lote.msgsys.Connection;
 import net.sekien.lote.msgsys.Message;
 import net.sekien.lote.msgsys.MessageReceiver;
@@ -22,12 +23,12 @@ private DialogueHandler dh;
 @Override
 public void init(GameContainer gc, StateBasedGame sbg, MessageReceiver receiver)
 		throws SlickException {
-	spr=FileHandler.getImage("ent."+extd.split(",", 2)[0]);
+	spr = FileHandler.getImage("ent."+extd.split(",", 2)[0]);
 }
 
 @Override
 public void initSERV() {
-	dh=new DialogueHandler("test");
+	dh = new DialogueHandler("test");
 }
 
 @Override
@@ -40,7 +41,7 @@ public void render(GameContainer gc, StateBasedGame sbg, Graphics g,
 
 @Override
 public void interact(Region region, EntityPlayer entityPlayer, MessageReceiver receiver, Message msg) {
-	MessageSystem.sendClient(this, msg.getConnection(), new Message("CLIENT.echointwl", ""), false);
+	MessageSystem.sendClient(this, msg.getConnection(), new Message("CLIENT.echointwl", new HBTCompound("p")), false);
 }
 
 @Override

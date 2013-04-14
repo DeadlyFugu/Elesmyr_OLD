@@ -1,6 +1,7 @@
 package net.sekien.lote.msgsys;
 
 import com.esotericsoftware.minlog.Log;
+import net.sekien.hbt.HBTCompound;
 import net.sekien.lote.system.Main;
 
 import java.io.IOException;
@@ -16,9 +17,9 @@ import java.util.List;
  * Templates.
  */
 public class Server {
-private final ArrayList<Connection> connections=new ArrayList<Connection>();
+private final ArrayList<Connection> connections = new ArrayList<Connection>();
 private ServerSocket serverSocket;
-private boolean running=true;
+private boolean running = true;
 
 public List<Connection> getConnections() {
 	return connections;
@@ -53,7 +54,7 @@ public void start() {
 
 public void bind(int port, int port2) throws BindException {
 	try {
-		serverSocket=new ServerSocket(port);
+		serverSocket = new ServerSocket(port);
 		Log.info("msgsys", "Server bound to port "+port);
 	} catch (IOException e) {
 		Log.error("msgsys", "Could not listen on port: "+port);
@@ -64,11 +65,11 @@ public void bind(int port, int port2) throws BindException {
 		public void run() {
 			this.setName("[server] Request listener");
 			while (running) {
-				Socket clientSocket=null;
+				Socket clientSocket = null;
 				try {
-					clientSocket=serverSocket.accept();
-					Connection connection=new Connection(connections.size(), clientSocket);
-					if (connections.size()==0&&MessageSystem.CLIENT) {
+					clientSocket = serverSocket.accept();
+					Connection connection = new Connection(connections.size(), clientSocket);
+					if (connections.size()==0 && MessageSystem.CLIENT) {
 						connection.setFastlinked();
 						MessageSystem.setFastlink(connection);
 					}
@@ -95,7 +96,7 @@ private void createListenerThread(final Connection connection) {
 			while (running) {
 				try {
 					received(connection, connection.readMsg());
-				} catch (net.sekien.hbt.HBTCompound.TagNotFoundException e) {
+				} catch (HBTCompound.TagNotFoundException e) {
 					Log.error("msgsys", "Badly formed message received.");
 					e.printStackTrace();
 				} catch (NullPointerException npe) {
@@ -130,7 +131,7 @@ public void received(Connection connection, Message msg) {
 }
 
 public void stop() {
-	running=false;
+	running = false;
 }
 
 public void close() throws IOException {

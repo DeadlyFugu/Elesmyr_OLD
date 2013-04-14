@@ -1,6 +1,10 @@
 package net.sekien.lote.player;
 
 import com.esotericsoftware.minlog.Log;
+import net.sekien.hbt.HBTCompound;
+import net.sekien.hbt.HBTInt;
+import net.sekien.hbt.HBTString;
+import net.sekien.hbt.HBTTools;
 import net.sekien.lote.GameElement;
 import net.sekien.lote.Save;
 import net.sekien.lote.msgsys.Message;
@@ -19,41 +23,41 @@ import org.newdawn.slick.SlickException;
 import org.newdawn.slick.state.StateBasedGame;
 
 public class PlayerClient implements GameElement {
-public static boolean BIGSIZE=true;
+public static boolean BIGSIZE = true;
 private World world;
 private GameClient gs;
 public int x, y;
 private String regionName;
 public Region region;
-public int entid=-1;
-private int caxis_x=0;
-private int caxis_y=1;
+public int entid = -1;
+private int caxis_x = 0;
+private int caxis_y = 1;
 private boolean controller;
-private String pdat=null;
-private boolean warpWalkControl=false;
+private HBTCompound pdat = null;
+private boolean warpWalkControl = false;
 private char da, db;
 private int twx, twy;
 private String twd;
-private boolean pastHalf=false;
+private boolean pastHalf = false;
 
 public PlayerClient(GameClient gs, World world) {
-	this.gs=gs;
-	this.world=world;
-	PlayerClient.BIGSIZE=Boolean.parseBoolean(Globals.get("big", "false"));
+	this.gs = gs;
+	this.world = world;
+	PlayerClient.BIGSIZE = Boolean.parseBoolean(Globals.get("big", "false"));
 	//this.region = "start";
 }
 
 @Override
 public void init(GameContainer gc, StateBasedGame sbg, MessageReceiver receiver)
 		throws SlickException {
-	controller=(gc.getInput().getControllerCount()>0);
+	controller = (gc.getInput().getControllerCount() > 0);
 	if (controller)
-		for (int i=0; i<gc.getInput().getAxisCount(0); i++) {
-			String aname=gc.getInput().getAxisName(0, i);
+		for (int i = 0; i < gc.getInput().getAxisCount(0); i++) {
+			String aname = gc.getInput().getAxisName(0, i);
 			if (aname.equals("x"))
-				caxis_x=i;
+				caxis_x = i;
 			if (aname.equals("y"))
-				caxis_y=i;
+				caxis_y = i;
 		}
 }
 
@@ -73,122 +77,126 @@ public void update(Region region, GameServer receiver) {
 @Override
 public void clientUpdate(GameContainer gc, StateBasedGame sbg, GameClient receiver) {
 	//Log.info((region==null)+" "+((region==null)?"":region.name)+" "+regionName);
-	if (region==null||!region.name.equals(regionName)) {
-		region=this.getRegion();
+	if (region==null || !region.name.equals(regionName)) {
+		region = this.getRegion();
 	} else if (warpWalkControl) {
-		int mvspd=BIGSIZE?4:2;
+		int mvspd = BIGSIZE?4:2;
 		if (!pastHalf) {
 			if (da=='U')
-				y-=mvspd;
+				y -= mvspd;
 			else if (da=='D')
-				y+=mvspd;
+				y += mvspd;
 			else if (da=='L')
-				x-=mvspd;
+				x -= mvspd;
 			else if (da=='R')
-				x+=mvspd;
-			if (x<0||y<0||x>region.map.getWidth()*32||y>region.map.getHeight()*32||da=='C') {
-				pastHalf=true;
-				int smx=twx, smy=twy;
+				x += mvspd;
+			if (x < 0 || y < 0 || x > region.map.getWidth()*32 || y > region.map.getHeight()*32 || da=='C') {
+				pastHalf = true;
+				int smx = twx, smy = twy;
 				if (db=='U')
-					while (smy<region.map.getHeight()*32)
-						smy+=mvspd;
+					while (smy < region.map.getHeight()*32)
+						smy += mvspd;
 				else if (db=='D')
-					while (smy>0)
-						smy-=mvspd;
+					while (smy > 0)
+						smy -= mvspd;
 				else if (db=='L')
-					while (smx<region.map.getWidth()*32)
-						smx+=mvspd;
+					while (smx < region.map.getWidth()*32)
+						smx += mvspd;
 				else if (db=='R')
-					while (smx>0)
-						smx-=mvspd;
-				gs.cam.setPosition(this.x=smx, this.y=smy, this);
-				gs.regionLoaded=false;
-				this.region=null;
-				this.entid=-1;
-				gs.sendMessage("SERVER.changeRegion", twd+","+x+","+y);
+					while (smx > 0)
+						smx -= mvspd;
+				gs.cam.setPosition(this.x = smx, this.y = smy, this);
+				gs.regionLoaded = false;
+				this.region = null;
+				this.entid = -1;
+				HBTCompound pTag = new HBTCompound("p");
+				pTag.addTag(new HBTString("region", twd)); //TODO: Proper player to hbt
+				pTag.addTag(new HBTInt("x", x));
+				pTag.addTag(new HBTInt("y", y));
+				MessageSystem.sendServer(null, new Message("SERVER.changeRegion", pTag), false);
 			}
 		} else {
 			if (db=='U')
-				y-=mvspd;
+				y -= mvspd;
 			else if (db=='D')
-				y+=mvspd;
+				y += mvspd;
 			else if (db=='L')
-				x-=mvspd;
+				x -= mvspd;
 			else if (db=='R')
-				x+=mvspd;
-			if (x<twx+10&&y<twy+10&&x>twx-10&&y>twy-10) {
-				pastHalf=false;
-				warpWalkControl=false;
+				x += mvspd;
+			if (x < twx+10 && y < twy+10 && x > twx-10 && y > twy-10) {
+				pastHalf = false;
+				warpWalkControl = false;
 			}
 		}
 		posUpdate();
 	} else {
-		org.newdawn.slick.Input in=gc.getInput();
-		int xp=x;
-		int yp=y;
-		int mvspd=2;
-		int snkspd=1;
-		int noMove=0;
-		int xm=0;
-		int ym=0;
+		org.newdawn.slick.Input in = gc.getInput();
+		int xp = x;
+		int yp = y;
+		int mvspd = 2;
+		int snkspd = 1;
+		int noMove = 0;
+		int xm = 0;
+		int ym = 0;
 		if (in.isKeyDown(org.newdawn.slick.Input.KEY_LEFT)) {
-			x-=mvspd;
-			xm=-1;
+			x -= mvspd;
+			xm = -1;
 		} else if (in.isKeyDown(org.newdawn.slick.Input.KEY_RIGHT)) {
-			x+=mvspd;
-			xm=1;
+			x += mvspd;
+			xm = 1;
 		} else {
 			noMove++;
-			xm=0;
+			xm = 0;
 		}
 		if (in.isKeyDown(org.newdawn.slick.Input.KEY_UP)) {
-			y-=mvspd;
-			ym=-1;
+			y -= mvspd;
+			ym = -1;
 		} else if (in.isKeyDown(org.newdawn.slick.Input.KEY_DOWN)) {
-			y+=mvspd;
-			ym=1;
+			y += mvspd;
+			ym = 1;
 		} else {
 			noMove++;
-			ym=0;
+			ym = 0;
 		}
-		if (noMove==2&&controller) {
-			if (in.getAxisValue(0, caxis_x)<-0.3f)
-				x-=mvspd;
-			else if (in.getAxisValue(0, caxis_x)<-0.2f)
-				x-=snkspd;
-			if (in.getAxisValue(0, caxis_x)>0.3f)
-				x+=mvspd;
-			else if (in.getAxisValue(0, caxis_x)>0.2f)
-				x+=snkspd;
+		if (noMove==2 && controller) {
+			if (in.getAxisValue(0, caxis_x) < -0.3f)
+				x -= mvspd;
+			else if (in.getAxisValue(0, caxis_x) < -0.2f)
+				x -= snkspd;
+			if (in.getAxisValue(0, caxis_x) > 0.3f)
+				x += mvspd;
+			else if (in.getAxisValue(0, caxis_x) > 0.2f)
+				x += snkspd;
 
-			if (in.getAxisValue(0, caxis_y)<-0.3f)
-				y-=mvspd;
-			else if (in.getAxisValue(0, caxis_y)<-0.2f)
-				y-=snkspd;
-			if (in.getAxisValue(0, caxis_y)>0.3f)
-				y+=mvspd;
-			else if (in.getAxisValue(0, caxis_y)>0.2f)
-				y+=snkspd;
+			if (in.getAxisValue(0, caxis_y) < -0.3f)
+				y -= mvspd;
+			else if (in.getAxisValue(0, caxis_y) < -0.2f)
+				y -= snkspd;
+			if (in.getAxisValue(0, caxis_y) > 0.3f)
+				y += mvspd;
+			else if (in.getAxisValue(0, caxis_y) > 0.2f)
+				y += snkspd;
 		}
 
 		if (Input.isKeyPressed(gc, "atk"))
-			MessageSystem.sendServer(this, new Message(regionName+".hitAt", (x+xm*16)+","+(y+ym*16)), true);
+			MessageSystem.sendServer(this, new Message(regionName+".hitAt", HBTTools.position(x+xm*16, y+ym*16)), true);
 
 		if (Input.isKeyPressed(gc, "int")) {
-			int colInfront=region.map.getTileId((int) (x+xm*16)/32, (int) (y+ym*16)/32, region.mapColLayer);
+			int colInfront = region.map.getTileId((int) (x+xm*16)/32, (int) (y+ym*16)/32, region.mapColLayer);
 			if (!intWith(colInfront))
-				MessageSystem.sendServer(this, new Message(regionName+".intAt", (x+xm*16)+","+(y+ym*16)), true);
+				MessageSystem.sendServer(this, new Message(regionName+".intAt", HBTTools.position(x+xm*16, y+ym*16)), true);
 		}
 
 		if (region!=null) {
 			if (!in.isKeyDown(org.newdawn.slick.Input.KEY_SPACE)) {
 				if (placeFree(x, yp))
-					x=xp;
+					x = xp;
 				if (placeFree(x, y))
-					y=yp;
+					y = yp;
 			}
 			try {
-				int colHere=region.map.getTileId((int) (x)/32, (int) (y)/32, region.mapColLayer);
+				int colHere = region.map.getTileId((int) (x)/32, (int) (y)/32, region.mapColLayer);
 				if (colHere==region.mapColTOff+12)
 					useWarp(region.map.getMapProperty("warp1", "error,12,12,C"));
 				else if (colHere==region.mapColTOff+13)
@@ -203,13 +211,13 @@ public void clientUpdate(GameContainer gc, StateBasedGame sbg, GameClient receiv
 private void posUpdate() {
 	//Send player position to server
 	if (entid!=-1) {
-		MessageSystem.sendServer(this, new Message(regionName+"."+entid+".move", x+","+y), true);
-		MessageSystem.sendServer(this, new Message(regionName+".pickupAt", x+","+y), true);
+		MessageSystem.sendServer(this, new Message(regionName+"."+entid+".move", HBTTools.position(x, y)), true);
+		MessageSystem.sendServer(this, new Message(regionName+".pickupAt", HBTTools.position(x, y)), true);
 	}
-	world.receiveMessage(new Message(regionName+"."+entid+".moveClient", x+","+y), gs);
-	if (pdat!=null&&((EntityPlayer) region.entities.get(entid))!=null) {
+	world.receiveMessage(new Message(regionName+"."+entid+".moveClient", HBTTools.position(x, y)), gs);
+	if (pdat!=null && ((EntityPlayer) region.entities.get(entid))!=null) {
 		((EntityPlayer) region.entities.get(entid)).setPDat(pdat);
-		pdat=null;
+		pdat = null;
 	}
 }
 
@@ -238,24 +246,24 @@ private void useWarp(String dest) {
 	//gs.sendMessage("SERVER.changeRegion",dest.split(",")[0]);
 	//gs.cam.x=this.x=(int) (Float.parseFloat(dest.split(",")[1])*32);
 	//gs.cam.y=this.y=(int) (Float.parseFloat(dest.split(",")[2])*32);
-	String dir=dest.split(",")[3];
-	da=dir.charAt(0);
-	db=da;
-	try {db=dir.charAt(1);} catch (Exception e) {}
+	String dir = dest.split(",")[3];
+	da = dir.charAt(0);
+	db = da;
+	try {db = dir.charAt(1);} catch (Exception e) {}
 	;
-	twx=(int) (Float.parseFloat(dest.split(",")[1])*32);
-	twy=(int) (Float.parseFloat(dest.split(",")[2])*32);
-	twd=dest.split(",")[0];
-	warpWalkControl=true;
+	twx = (int) (Float.parseFloat(dest.split(",")[1])*32);
+	twy = (int) (Float.parseFloat(dest.split(",")[2])*32);
+	twd = dest.split(",")[0];
+	warpWalkControl = true;
 
 	//gs.regionLoaded=false;
 }
 
 private boolean placeFree(float x, float y) {
 	try {
-		return (isSolid(region.map.getTileId((int) (x-8)/32, (int) (y+3)/32, region.mapColLayer)-region.mapColTOff)||
-				        isSolid(region.map.getTileId((int) (x+8)/32, (int) (y+3)/32, region.mapColLayer)-region.mapColTOff)||
-				        isSolid(region.map.getTileId((int) (x-8)/32, (int) (y-3)/32, region.mapColLayer)-region.mapColTOff)||
+		return (isSolid(region.map.getTileId((int) (x-8)/32, (int) (y+3)/32, region.mapColLayer)-region.mapColTOff) ||
+				        isSolid(region.map.getTileId((int) (x+8)/32, (int) (y+3)/32, region.mapColLayer)-region.mapColTOff) ||
+				        isSolid(region.map.getTileId((int) (x-8)/32, (int) (y-3)/32, region.mapColLayer)-region.mapColTOff) ||
 				        isSolid(region.map.getTileId((int) (x+8)/32, (int) (y-3)/32, region.mapColLayer)-region.mapColTOff));
 	} catch (ArrayIndexOutOfBoundsException e) {
 		return true;
@@ -263,23 +271,23 @@ private boolean placeFree(float x, float y) {
 }
 
 private boolean isSolid(int id) {
-	return (id==0||(id>=4&&id<12));
+	return (id==0 || (id >= 4 && id < 12));
 }
 
 @Override
 public void receiveMessage(Message msg, MessageReceiver receiver) {
-	String name=msg.getName();
+	String name = msg.getName();
 	if (name.equals("playerInfo")) {
-		regionName=msg.getData().getString("region", "error");
-		gs.cam.x=x=msg.getData().getInt("x", 0);
-		gs.cam.y=y=msg.getData().getInt("y", 0);
-		msg.reply("SERVER.getRegion", regionName+","+x+","+y, this);
+		regionName = msg.getData().getString("region", "error");
+		gs.cam.x = x = msg.getData().getInt("x", 0);
+		gs.cam.y = y = msg.getData().getInt("y", 0);
+		msg.reply("SERVER.getRegion", msg.getData(), this);
 	} else if (name.equals("setID")) {
-		this.entid=Integer.parseInt(msg.getDataStr());
+		this.entid = msg.getData().getInt("id", -1);
 	} else if (name.equals("setPDAT")) {
-		if (entid!=-1&&region!=null&&region.entities.get(entid)!=null&&(region.entities.get(entid) instanceof EntityPlayer))
-			((EntityPlayer) region.entities.get(entid)).setPDat(msg.getDataStr());
-		pdat=msg.getDataStr();
+		if (entid!=-1 && region!=null && region.entities.get(entid)!=null && (region.entities.get(entid) instanceof EntityPlayer))
+			((EntityPlayer) region.entities.get(entid)).setPDat(msg.getData());
+		pdat = msg.getData();
 	} else {
 		Log.warn("PlayerClient Ignored message - unrecognised name: "+msg.toString());
 	}
@@ -290,11 +298,11 @@ public void save(Save save) {
 }
 
 @Override
-public void fromHBT(net.sekien.hbt.HBTCompound tag) {
+public void fromHBT(HBTCompound tag) {
 }
 
 @Override
-public net.sekien.hbt.HBTCompound toHBT() {
+public HBTCompound toHBT(boolean msg) {
 	return null;
 }
 
@@ -303,7 +311,7 @@ public String getRegionName() {
 }
 
 public void setRegion(String rname) {
-	this.regionName=rname;
+	this.regionName = rname;
 }
 
 public Region getRegion() {

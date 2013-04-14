@@ -1,5 +1,6 @@
 package net.sekien.lote.world.item;
 
+import net.sekien.hbt.HBTCompound;
 import net.sekien.lote.Element;
 import net.sekien.lote.player.PlayerData;
 import net.sekien.lote.system.GameServer;
@@ -11,13 +12,13 @@ import org.newdawn.slick.SlickException;
 public class Item {
 public Image spr;
 public String name;
-protected net.sekien.hbt.HBTCompound extd;
+protected HBTCompound extd;
 
-public Item ctor(String name, String img, net.sekien.hbt.HBTCompound extd) {
-	this.name=name;
-	this.extd=extd;
+public Item ctor(String name, String img, HBTCompound extd) {
+	this.name = name;
+	this.extd = extd;
 	try {
-		spr=FileHandler.getImage("item."+img);
+		spr = FileHandler.getImage("item."+img);
 	} catch (SlickException e) {}
 	return this;
 }

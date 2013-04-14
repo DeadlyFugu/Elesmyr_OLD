@@ -1,5 +1,6 @@
 package net.sekien.lote.world.item;
 
+import net.sekien.hbt.HBTTools;
 import net.sekien.lote.msgsys.Message;
 import net.sekien.lote.msgsys.MessageSystem;
 import net.sekien.lote.player.PlayerData;
@@ -20,9 +21,9 @@ public String getType() { return "Books"; }
 
 @Override
 public boolean onUse(GameServer receiver, EntityPlayer player, PlayerData.InventoryEntry entry) {
-	ArrayList<String> pages=BookParser.parseBook(extd.getString("extd", "testing"));
+	ArrayList<String> pages = BookParser.parseBook(extd.getString("extd", "testing"));
 	for (String s : pages)
-		MessageSystem.sendClient(null, receiver.getPlayerConnection(player), new Message("CLIENT.book", s), false);
+		MessageSystem.sendClient(null, receiver.getPlayerConnection(player), new Message("CLIENT.book", HBTTools.msgString("page", s)), false);
 	return false;
 }
 

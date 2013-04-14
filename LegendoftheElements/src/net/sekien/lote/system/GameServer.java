@@ -1,6 +1,7 @@
 package net.sekien.lote.system;
 
 import com.esotericsoftware.minlog.Log;
+import net.sekien.hbt.*;
 import net.sekien.lote.Save;
 import net.sekien.lote.msgsys.Connection;
 import net.sekien.lote.msgsys.Message;
@@ -32,17 +33,17 @@ private World world;
 private ConcurrentHashMap<Connection, String> players;
 private HashMap<String, String> pass;
 
-private int timeCheck=20;
+private int timeCheck = 20;
 
 private int date;
 private float time; //In-game minutes
 private long rlStartTime;
 private int igStartTime;
-private static final int timescale=50; //Default = 50
+private static final int timescale = 50; //Default = 50
 
-private String hostUName="";
+private String hostUName = "";
 
-public static boolean running=true;
+public static boolean running = true;
 
 /** Ent is stored as "REGION.ENTID" */
 private ConcurrentHashMap<String, String> playerEnt;
@@ -50,23 +51,23 @@ private ConcurrentHashMap<String, String> playerEnt;
 private ConcurrentHashMap<String, PlayerData> playerDat;
 
 public GameServer(Save save, String hostUName) {
-	this.save=save;
-	players=new ConcurrentHashMap<Connection, String>();
-	playerEnt=new ConcurrentHashMap<String, String>();
-	playerDat=new ConcurrentHashMap<String, PlayerData>();
+	this.save = save;
+	players = new ConcurrentHashMap<Connection, String>();
+	playerEnt = new ConcurrentHashMap<String, String>();
+	playerDat = new ConcurrentHashMap<String, PlayerData>();
 	if (new File("pass").exists())
-		pass=HashmapLoader.readHashmap("pass");
+		pass = HashmapLoader.readHashmap("pass");
 	else
-		pass=new HashMap<String, String>();
-	this.hostUName=hostUName;
-	rlStartTime=System.currentTimeMillis();
+		pass = new HashMap<String, String>();
+	this.hostUName = hostUName;
+	rlStartTime = System.currentTimeMillis();
 }
 
 public void load() {
-	world=new World();
+	world = new World();
 	world.load(save);
-	igStartTime=save.getInt("gen.time", 0);
-	date=save.getInt("gen.date", 1234);
+	igStartTime = save.getInt("gen.time", 0);
+	date = save.getInt("gen.date", 1234);
 	/*for (Entry<String, String> e : save.getEntries())
 		if (e.getKey().startsWith("pdat.")) {
 			PlayerData pdat=new PlayerData(e.getKey().substring(5), null);
@@ -74,8 +75,8 @@ public void load() {
 			playerDat.put(e.getKey().substring(5), pdat);
 		}*/
 	System.out.println(save.getCompound("pdat"));
-	for (net.sekien.hbt.HBTTag tag : save.getCompound("pdat")) {
-		PlayerData pdat=new PlayerData(tag.getName(), null);
+	for (HBTTag tag : save.getCompound("pdat")) {
+		PlayerData pdat = new PlayerData(tag.getName(), null);
 		pdat.fromHBT(tag);
 		playerDat.put(tag.getName(), pdat);
 	}
@@ -96,12 +97,12 @@ public void save() {
 
 public void gameUpdate() {
 	//Time
-	float elapsedTime=(System.currentTimeMillis()-rlStartTime);
-	time=(((elapsedTime/1000)/60f)*timescale)+igStartTime;
-	if (time>1440) {
-		rlStartTime=System.currentTimeMillis();
-		time=time-1440;
-		igStartTime=0;
+	float elapsedTime = (System.currentTimeMillis()-rlStartTime);
+	time = (((elapsedTime/1000)/60f)*timescale)+igStartTime;
+	if (time > 1440) {
+		rlStartTime = System.currentTimeMillis();
+		time = time-1440;
+		igStartTime = 0;
 		date++;
 	}
 
@@ -112,14 +113,14 @@ public void gameUpdate() {
 
 	for (Entry<String, PlayerData> entry : playerDat.entrySet()) {
 		if (entry.getValue().reqUpdate()) {
-			String pEnt=playerEnt.get(entry.getKey());
+			String pEnt = playerEnt.get(entry.getKey());
 			entry.getValue().updated(world.getRegion(pEnt.split("\\.")[0]), pEnt);
 		}
 	}
 
 	//Check stuff
 	if (timeCheck==0) {
-		timeCheck=100;
+		timeCheck = 100;
 		if (Globals.get("autosave", true))
 			this.save();
 		for (Connection c : players.keySet()) {
@@ -127,7 +128,8 @@ public void gameUpdate() {
 			if (!c.isConnected()) {
 				if (players.containsKey(c)) {
 					sendChat("SERVER: "+players.get(c)+" timed out.");
-					world.receiveMessage(new Message(playerEnt.get(players.get(c)).split("\\.", 2)[0]+".killSERV", playerEnt.get(players.get(c)).split("\\.", 2)[1]), this);
+					world.receiveMessage(new Message(playerEnt.get(players.get(c)).split("\\.", 2)[0]+".killSERV",
+							                                HBTTools.msgString("ent", playerEnt.get(players.get(c)).split("\\.", 2)[1])), this);
 					for (Region r : world.regions.values()) {
 						r.connections.remove(c);
 					}
@@ -137,7 +139,7 @@ public void gameUpdate() {
 			}
 
 			//Send time packet
-			MessageSystem.sendClient(null, c, new Message("CLIENT.time", String.valueOf(time)+":"+String.valueOf(date)), true);
+			MessageSystem.sendClient(null, c, new Message("CLIENT.time", new HBTCompound("td", new HBTTag[]{new HBTFloat("time", time), new HBTInt("date", date)})), true);
 		}
 	} else {
 		timeCheck--;
@@ -145,17 +147,16 @@ public void gameUpdate() {
 }
 
 public boolean receiveMessage(Message msg) {
-	Connection connection=msg.getConnection();
+	Connection connection = msg.getConnection();
 	if (msg.getTarget().equals("SERVER")) {
-		String name=msg.getName();
-		String dataStr=msg.getDataStr();
-		net.sekien.hbt.HBTCompound data=msg.getData();
+		String name = msg.getName();
+		HBTCompound data = msg.getData();
 		if (name.equals("wantPlayer")) {
-			String uname=data.getString("name", "Player");
-			String upass=Integer.toHexString(data.getInt("pass", "".hashCode()));
+			String uname = data.getString("name", "Player");
+			String upass = Integer.toHexString(data.getInt("pass", "".hashCode()));
 			if (pass.containsKey(uname)) {
-				if (!pass.get(uname).equals(upass)&&!uname.equals(hostUName)) {
-					MessageSystem.sendClient(null, connection, new Message("CLIENT.error", "Password incorrect!"), false);
+				if (!pass.get(uname).equals(upass) && !uname.equals(hostUName)) {
+					MessageSystem.sendClient(null, connection, new Message("CLIENT.error", HBTTools.msgString("msg", "Password incorrect!")), false);
 					Log.info("server", connection.toString()+" failed password for "+uname);
 					try {
 						connection.close();
@@ -169,12 +170,12 @@ public boolean receiveMessage(Message msg) {
 			}
 			//String uname = data;
 			if (playerEnt.containsKey(uname)) {
-				MessageSystem.sendClient(null, connection, new Message("CLIENT.error", "There is already a player called "+uname+" on that server!"), false);
+				MessageSystem.sendClient(null, connection, new Message("CLIENT.error", HBTTools.msgString("msg", "There is already a player called "+uname+" on that server!")), false);
 			} else {
 				sendChat("SERVER: "+uname+" joined the game.");
 				Log.info("server", connection.toString()+" logged in as "+uname);
 				players.put(connection, uname);
-				net.sekien.hbt.HBTCompound pInfo=save.getCompound("players."+uname);
+				HBTCompound pInfo = save.getCompound("players."+uname);
 				if (pInfo!=null) {
 					MessageSystem.sendClient(null, connection, new Message("PLAYER.playerInfo", pInfo), false);
 				} else {
@@ -182,34 +183,34 @@ public boolean receiveMessage(Message msg) {
 				}
 			}
 		} else if (name.equals("getRegion")) {
-			int x=Integer.parseInt(dataStr.split(",")[1]);
-			int y=Integer.parseInt(dataStr.split(",")[2]);
-			dataStr=dataStr.split(",")[0];
-			changePlayerRegion(dataStr, x, y, connection, false);
+			int x = data.getInt("x", 0);
+			int y = data.getInt("y", 0);
+			String region = data.getString("region", "error");
+			changePlayerRegion(region, x, y, connection, false);
 		} else if (name.equals("changeRegion")) {
-			int x=Integer.parseInt(dataStr.split(",")[1]);
-			int y=Integer.parseInt(dataStr.split(",")[2]);
-			dataStr=dataStr.split(",")[0];
-			changePlayerRegion(dataStr, x, y, connection, true);
+			int x = data.getInt("x", 0);
+			int y = data.getInt("y", 0);
+			String region = data.getString("region", "error");
+			changePlayerRegion(region, x, y, connection, true);
 		} else if (name.equals("close")) {
 			sendChat("SERVER: "+players.get(connection)+" left the game.");
-			if (players.get(connection)==null||playerEnt.get(players.get(connection))==null) {
+			if (players.get(connection)==null || playerEnt.get(players.get(connection))==null) {
 				Log.info("Close message from non-player");
 				return false;
 			}
 			save.putPlayer(players.get(connection), playerEnt.get(players.get(connection)), world);
 			world.receiveMessage(new Message(playerEnt.get(players.get(connection)).split("\\.", 2)[0]+".killSERV",
-					                                playerEnt.get(players.get(connection)).split("\\.", 2)[1]), this);
+					                                HBTTools.msgString("ent", playerEnt.get(players.get(connection)).split("\\.", 2)[1])), this);
 			for (Region r : world.regions.values()) {
 				r.connections.remove(connection);
 			}
 			playerEnt.remove(players.get(connection));
 			players.remove(connection);
 		} else if (name.equals("chat")) {
-			sendChat(players.get(connection)+": "+msg.getDataStr());
+			sendChat(players.get(connection)+": "+msg.getData().getString("msg", "ERROR: Badly formatted chat message"));
 		} else if (name.equals("setTime")) {
-			rlStartTime=System.currentTimeMillis();
-			igStartTime=Integer.valueOf(msg.getDataStr());
+			rlStartTime = System.currentTimeMillis();
+			igStartTime = msg.getData().getInt("time", 0);
 		} else {
 			Log.warn("SERVER: Ignored message - unrecognised name: "+msg.toString());
 		}
@@ -222,37 +223,33 @@ public boolean receiveMessage(Message msg) {
 public void changePlayerRegion(String data, int x, int y, Connection connection, boolean killOld) {
 	if (killOld) {
 		world.receiveMessage(new Message(playerEnt.get(players.get(connection)).split("\\.", 2)[0]+".killSERV",
-				                                playerEnt.get(players.get(connection)).split("\\.", 2)[1]), this);
+				                                HBTTools.msgString("ent", playerEnt.get(players.get(connection)).split("\\.", 2)[1])), this);
 		for (Region r : world.regions.values()) {
 			r.connections.remove(connection);
 		}
 	}
 	world.touchRegion(data); //Load region if unloaded
 	world.getRegion(data).connections.add(connection); //Add the connection to the region
-	String rEntD=world.getRegion(data).getEntityString(); //Get the region's entity string
-	if (rEntD.length()<2800) //If the string is smaller than 2800 chars, send it
-		MessageSystem.sendClient(null, connection, new Message("CLIENT.setRegion", data+":"+rEntD), false);
-	else {
-		MessageSystem.sendClient(null, connection, new Message("CLIENT.setRegion", data+":"), false);
-		for (Entity e : world.getRegion(data).entities.values()) {
-			MessageSystem.sendClient(null, connection, new Message(data+".addEnt", e.toString()), false);
-		}
+	//String rEntD=world.getRegion(data).getEntityString(); //Get the region's entity string
+	MessageSystem.sendClient(null, connection, new Message("CLIENT.setRegion", new HBTCompound("p", new HBTTag[]{new HBTString("region", data)})), false);
+	for (Entity e : world.getRegion(data).entities.values()) {
+		MessageSystem.sendClient(null, connection, new Message(data+".addEnt", e), false);
 	}
-	int entid=world.getRegion(data).addEntityServer("EntityPlayer,"+x+","+y+","+players.get(connection)); //Add a player entity
+	int entid = world.getRegion(data).addEntityServer("EntityPlayer,"+x+","+y+","+players.get(connection)); //Add a player entity
 	if (entid==-1) { //Shouldn't happen
-		MessageSystem.sendClient(null, connection, new Message("CLIENT.error", "addEntityServer returned -1"), false);
+		MessageSystem.sendClient(null, connection, new Message("CLIENT.error", HBTTools.msgString("msg", "addEntityServer returned -1")), false);
 		return;
 	}
-	PlayerData pdat=playerDat.get(players.get(connection)); //Get the PlayerData object for this player
+	PlayerData pdat = playerDat.get(players.get(connection)); //Get the PlayerData object for this player
 	if (pdat==null) //If there is no PlayerData object for this player, make one.
-		playerDat.put(players.get(connection), pdat=new PlayerData(players.get(connection), connection));
+		playerDat.put(players.get(connection), pdat = new PlayerData(players.get(connection), connection));
 	else
 		pdat.addConnection(connection); //Set the connection
 	((EntityPlayer) world.getRegion(data).entities.get(entid)).setSERVDAT(connection, pdat); //Tell the player entity about the PlayerData object
 	playerEnt.put(players.get(connection), data+"."+entid); //Put the entities name into playerEnt
-	MessageSystem.sendClient(null, connection, new Message("PLAYER.setID", ""+entid), false); //Send a message to the client notifying it of its entity's ID.
-	MessageSystem.sendClient(null, connection, new Message("PLAYER.setPDAT", pdat.toString()), false); //Send client PDAT
-	MessageSystem.sendClient(null, connection, new Message("CLIENT.time", String.valueOf(time)+":"+String.valueOf(date)), false); //Send the client the time
+	MessageSystem.sendClient(null, connection, new Message("PLAYER.setID", HBTTools.msgInt("id", entid)), false); //Send a message to the client notifying it of its entity's ID. //TODO fix
+	MessageSystem.sendClient(null, connection, new Message("PLAYER.setPDAT", (HBTCompound) pdat.toHBT()), false); //Send client PDAT
+	MessageSystem.sendClient(null, connection, new Message("CLIENT.time", new HBTCompound("td", new HBTTag[]{new HBTFloat("time", time), new HBTInt("date", date)})), false); //Send the client the time
 	for (Entity e : world.getRegion(data).entities.values()) {
 		if (e instanceof EntityPlayer) {
 			((EntityPlayer) e).pdat.updated(world.getRegion(data), e.getReceiverName());
@@ -261,7 +258,7 @@ public void changePlayerRegion(String data, int x, int y, Connection connection,
 }
 
 public void sendChat(String msg) {
-	MessageSystem.sendClient(null, getConnections(), new Message("CLIENT.chat", msg), false);
+	MessageSystem.sendClient(null, getConnections(), new Message("CLIENT.chat", HBTTools.msgString("msg", msg)), false);
 }
 
 private List<Connection> getConnections() {
@@ -271,7 +268,7 @@ private List<Connection> getConnections() {
 public void render(GameContainer gc, StateBasedGame sbg, Graphics g, boolean overlay) {
 	if (overlay) {
 		FontRenderer.drawString(10, 18, "Connections:", g);
-		int i=0;
+		int i = 0;
 		for (Entry<String, String> e : playerEnt.entrySet()) {
 			FontRenderer.drawString(10, 32+i*10, e.getKey()+":"+e.getValue(), g);
 			i++;
@@ -279,12 +276,12 @@ public void render(GameContainer gc, StateBasedGame sbg, Graphics g, boolean ove
 	} else {
 		FontRenderer.drawString(10, 18, "Connections:", g);
 		FontRenderer.drawString(128, 18, "Regions:", g);
-		int i=0;
+		int i = 0;
 		for (Entry<String, String> e : playerEnt.entrySet()) {
 			FontRenderer.drawString(10, 32+i*10, e.getKey()+":"+e.getValue(), g);
 			i++;
 		}
-		i=0;
+		i = 0;
 		for (Region r : this.world.regions.values()) {
 			FontRenderer.drawString(128, 32+i*10, r.name, g);
 			i++;
@@ -301,7 +298,7 @@ public EntityPlayer getPlayerEnt(Connection connection) {
 }
 
 public Connection getPlayerConnection(EntityPlayer player) {
-	String name=player.getName();
+	String name = player.getName();
 	for (Entry<Connection, String> e : players.entrySet()) {
 		if (e.getValue().equals(name)) {
 			return e.getKey();
@@ -312,7 +309,7 @@ public Connection getPlayerConnection(EntityPlayer player) {
 }
 
 public Entity getEntity(String string) {
-	String[] args=string.split("\\.", 2);
+	String[] args = string.split("\\.", 2);
 	return world.getRegion(args[0]).entities.get(Integer.parseInt(args[1]));
 }
 
@@ -322,6 +319,6 @@ public boolean isServer() {
 }
 
 public void broadcastKill() {
-	MessageSystem.sendClient(null, getConnections(), new Message("CLIENT.error", "Server has been closed."), false);
+	MessageSystem.sendClient(null, getConnections(), new Message("CLIENT.error", HBTTools.msgString("msg", "Server has been closed.")), false);
 }
 }

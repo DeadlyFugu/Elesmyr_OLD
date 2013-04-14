@@ -1,7 +1,6 @@
 package net.sekien.lote.util;
 
-import net.sekien.hbt.HBTComment;
-import net.sekien.hbt.HBTFlag;
+import net.sekien.hbt.*;
 import net.sekien.lote.system.Main;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.SlickException;
@@ -13,7 +12,7 @@ import java.util.*;
 /** Class to handle all file IO. Also handles mods */
 public class FileHandler {
 
-private static net.sekien.hbt.HBTCompound data;
+private static HBTCompound data;
 
 private static List<String> packs;
 
@@ -48,22 +47,22 @@ public static String parse(String name, ResourceType type) {
  * @return The file's path
  */
 public static List<String> parseFileName(String name, String[] extension, boolean dataFile) {
-	List<String> found=new ArrayList<String>();
+	List<String> found = new ArrayList<String>();
 	File f;
 	if (dataFile) {
 		for (String pack : packs) {
 			for (String s : extension) {
 				if (!s.equals("")) {
-					s="."+s; //TODO: Remove this and files without extensions (To .hm for hashmap files maybe?)
+					s = "."+s; //TODO: Remove this and files without extensions (To .hm for hashmap files maybe?)
 				}
-				f=new File(pack+"/"+name.replaceAll("\\.", "/")+s);
+				f = new File(pack+"/"+name.replaceAll("\\.", "/")+s);
 				if (f.exists())
 					found.add(f.getPath());
 			}
 		}
 	} else {
 		for (String s : extension) {
-			f=new File(name.replaceAll("\\.", "/")+"."+s);
+			f = new File(name.replaceAll("\\.", "/")+"."+s);
 			if (f.exists())
 				found.add(f.getPath());
 		}
@@ -72,10 +71,10 @@ public static List<String> parseFileName(String name, String[] extension, boolea
 }
 
 public static void readData() throws IOException {
-	packs=new ArrayList<String>();
-	for (net.sekien.hbt.HBTTag tag : readHBTFile("pack/packs.hbtx")) {
+	packs = new ArrayList<String>();
+	for (HBTTag tag : readHBTFile("pack/packs.hbtx")) {
 		if (tag.getName().equals("packs")) {
-			for (net.sekien.hbt.HBTTag packentry : ((net.sekien.hbt.HBTCompound) tag)) {
+			for (HBTTag packentry : ((HBTCompound) tag)) {
 				if (packentry instanceof HBTFlag) {
 					if (((HBTFlag) packentry).isTrue()) {
 						packs.add("pack/"+packentry.getName());
@@ -85,12 +84,12 @@ public static void readData() throws IOException {
 		}
 	}
 
-	data=new net.sekien.hbt.HBTCompound("data");
+	data = new HBTCompound("data");
 	for (String pack : packs) {
 		for (File f : getAllFiles(new File(pack+"/"))) {
 			if (f.getName().matches(".*\\.hbt(|x|c)"))
 				try {
-					for (net.sekien.hbt.HBTTag tag : readHBTFile(f.getPath())) {
+					for (HBTTag tag : readHBTFile(f.getPath())) {
 						data.addTag(tag);
 					}
 				} catch (IOException e) {
@@ -101,7 +100,7 @@ public static void readData() throws IOException {
 }
 
 private static List<File> getAllFiles(File parent) {
-	ArrayList<File> ret=new ArrayList<File>();
+	ArrayList<File> ret = new ArrayList<File>();
 	for (File f : parent.listFiles()) {
 		if (f.isFile()) {
 			ret.add(f);
@@ -117,9 +116,9 @@ private static List<File> getAllFiles(File parent) {
  *
  * @return array of HBTCompounds.
  */
-public static List<net.sekien.hbt.HBTTag> readHBT(String name, boolean dataFile) throws IOException {
-	List<String> paths=parseFileName(name, ResourceType.HBT.getExtensions(), dataFile);
-	List<net.sekien.hbt.HBTTag> out=new ArrayList<net.sekien.hbt.HBTTag>();
+public static List<HBTTag> readHBT(String name, boolean dataFile) throws IOException {
+	List<String> paths = parseFileName(name, ResourceType.HBT.getExtensions(), dataFile);
+	List<HBTTag> out = new ArrayList<HBTTag>();
 	if (!dataFile) {
 		for (String path : paths) {
 			out.addAll(readHBTFile(path));
@@ -131,78 +130,78 @@ public static List<net.sekien.hbt.HBTTag> readHBT(String name, boolean dataFile)
 }
 
 /** Returns the HBTTag at name */
-public static net.sekien.hbt.HBTTag getTag(String name) throws net.sekien.hbt.HBTCompound.TagNotFoundException {
+public static HBTTag getTag(String name) throws HBTCompound.TagNotFoundException {
 	return data.getTag(name);
 }
 
-public static net.sekien.hbt.HBTCompound getCompound(String name) {
-	try {return (net.sekien.hbt.HBTCompound) getTag(name);} catch (ClassCastException e) {
+public static HBTCompound getCompound(String name) {
+	try {return (HBTCompound) getTag(name);} catch (ClassCastException e) {
 		Log.warn("tag:"+name, e);
-		return new net.sekien.hbt.HBTCompound(name);
-	} catch (net.sekien.hbt.HBTCompound.TagNotFoundException e) {return new net.sekien.hbt.HBTCompound(name);}
+		return new HBTCompound(name);
+	} catch (HBTCompound.TagNotFoundException e) {return new HBTCompound(name);}
 }
 
 public static byte getByte(String name, byte def) {
-	try {return ((net.sekien.hbt.HBTByte) getTag(name)).getData();} catch (ClassCastException e) {
+	try {return ((HBTByte) getTag(name)).getData();} catch (ClassCastException e) {
 		Log.warn("tag:"+name, e);
 		return def;
-	} catch (net.sekien.hbt.HBTCompound.TagNotFoundException e) {return def;}
+	} catch (HBTCompound.TagNotFoundException e) {return def;}
 }
 
 public static short getShort(String name, short def) {
-	try {return ((net.sekien.hbt.HBTShort) getTag(name)).getData();} catch (ClassCastException e) {
+	try {return ((HBTShort) getTag(name)).getData();} catch (ClassCastException e) {
 		Log.warn("tag:"+name, e);
 		return def;
-	} catch (net.sekien.hbt.HBTCompound.TagNotFoundException e) {return def;}
+	} catch (HBTCompound.TagNotFoundException e) {return def;}
 }
 
 public static int getInt(String name, int def) {
-	try {return ((net.sekien.hbt.HBTInt) getTag(name)).getData();} catch (ClassCastException e) {
+	try {return ((HBTInt) getTag(name)).getData();} catch (ClassCastException e) {
 		Log.warn("tag:"+name, e);
 		return def;
-	} catch (net.sekien.hbt.HBTCompound.TagNotFoundException e) {return def;}
+	} catch (HBTCompound.TagNotFoundException e) {return def;}
 }
 
 public static long getLong(String name, long def) {
-	try {return ((net.sekien.hbt.HBTLong) getTag(name)).getData();} catch (ClassCastException e) {
+	try {return ((HBTLong) getTag(name)).getData();} catch (ClassCastException e) {
 		Log.warn("tag:"+name, e);
 		return def;
-	} catch (net.sekien.hbt.HBTCompound.TagNotFoundException e) {return def;}
+	} catch (HBTCompound.TagNotFoundException e) {return def;}
 }
 
 public static float getFloat(String name, float def) {
-	try {return ((net.sekien.hbt.HBTFloat) getTag(name)).getData();} catch (ClassCastException e) {
+	try {return ((HBTFloat) getTag(name)).getData();} catch (ClassCastException e) {
 		Log.warn("tag:"+name, e);
 		return def;
-	} catch (net.sekien.hbt.HBTCompound.TagNotFoundException e) {return def;}
+	} catch (HBTCompound.TagNotFoundException e) {return def;}
 }
 
 public static double getDouble(String name, double def) {
-	try {return ((net.sekien.hbt.HBTDouble) getTag(name)).getData();} catch (ClassCastException e) {
+	try {return ((HBTDouble) getTag(name)).getData();} catch (ClassCastException e) {
 		Log.warn("tag:"+name, e);
 		return def;
-	} catch (net.sekien.hbt.HBTCompound.TagNotFoundException e) {return def;}
+	} catch (HBTCompound.TagNotFoundException e) {return def;}
 }
 
 public static String getString(String name, String def) {
-	try {return ((net.sekien.hbt.HBTString) getTag(name)).getData();} catch (ClassCastException e) {
+	try {return ((HBTString) getTag(name)).getData();} catch (ClassCastException e) {
 		Log.warn("tag:"+name, e);
 		return def;
-	} catch (net.sekien.hbt.HBTCompound.TagNotFoundException e) {return def;}
+	} catch (HBTCompound.TagNotFoundException e) {return def;}
 }
 
 public static byte[] getByteArray(String name, byte[] def) {
-	try {return ((net.sekien.hbt.HBTByteArray) getTag(name)).getData();} catch (ClassCastException e) {
+	try {return ((HBTByteArray) getTag(name)).getData();} catch (ClassCastException e) {
 		Log.warn("tag:"+name, e);
 		return def;
-	} catch (net.sekien.hbt.HBTCompound.TagNotFoundException e) {return def;}
+	} catch (HBTCompound.TagNotFoundException e) {return def;}
 }
 
 public static HBTFlag getFlag(String name, String def) {
 	try {return (HBTFlag) getTag(name);} catch (ClassCastException e) {
 		Log.warn("tag:"+name, e);
 		return new HBTFlag(name, def);
-	} catch (net.sekien.hbt.HBTCompound.TagNotFoundException e) {return new HBTFlag(name, def);}
+	} catch (HBTCompound.TagNotFoundException e) {return new HBTFlag(name, def);}
 }
 
 /**
@@ -213,13 +212,13 @@ public static HBTFlag getFlag(String name, String def) {
  * @return ArrayList of root-level HBTTags found in the file.
  * @throws IOException
  */
-public static List<net.sekien.hbt.HBTTag> readHBTFile(String path) throws IOException {
-	List<net.sekien.hbt.HBTTag> ret=new ArrayList<net.sekien.hbt.HBTTag>();
-	String extension=path.substring(path.lastIndexOf('.')+1);
-	if (extension.equals("hbt")||extension.equals("hbtc")) {
-		net.sekien.hbt.HBTInputStream inputStream=new net.sekien.hbt.HBTInputStream(new FileInputStream(path), extension.equals("hbtc"));
+public static List<HBTTag> readHBTFile(String path) throws IOException {
+	List<HBTTag> ret = new ArrayList<HBTTag>();
+	String extension = path.substring(path.lastIndexOf('.')+1);
+	if (extension.equals("hbt") || extension.equals("hbtc")) {
+		HBTInputStream inputStream = new HBTInputStream(new FileInputStream(path), extension.equals("hbtc"));
 		while (true) {
-			net.sekien.hbt.HBTTag tag=inputStream.read();
+			HBTTag tag = inputStream.read();
 			if (tag!=null)
 				ret.add(tag);
 			else
@@ -227,10 +226,10 @@ public static List<net.sekien.hbt.HBTTag> readHBTFile(String path) throws IOExce
 		}
 		inputStream.close();
 	} else if (extension.equals("hbtx")) {
-		StringBuilder out=new StringBuilder();
-		BufferedReader br=new BufferedReader(new InputStreamReader(new FileInputStream(path)));
+		StringBuilder out = new StringBuilder();
+		BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(path)));
 		String l;
-		while ((l=br.readLine())!=null) {
+		while ((l = br.readLine())!=null) {
 			out.append(l+"\n");
 		}
 		br.close();
@@ -241,45 +240,45 @@ public static List<net.sekien.hbt.HBTTag> readHBTFile(String path) throws IOExce
 	return ret;
 }
 
-public static List<net.sekien.hbt.HBTTag> parseTextHBT(String out) throws IOException {
-	Stack<net.sekien.hbt.HBTCompound> compoundStack=new Stack<net.sekien.hbt.HBTCompound>();
-	compoundStack.push(new net.sekien.hbt.HBTCompound("master"));
+public static List<HBTTag> parseTextHBT(String out) throws IOException {
+	Stack<HBTCompound> compoundStack = new Stack<HBTCompound>();
+	compoundStack.push(new HBTCompound("master"));
 	for (String s : out.split("\n")) {
-		s=s.trim();
-		String name=null;
+		s = s.trim();
+		String name = null;
 		try {
-			name=s.split("=", 2)[0].split("\\s+", 3)[1];
+			name = s.split("=", 2)[0].split("\\s+", 3)[1];
 		} catch (Exception e) {
 		}
 		if (s.matches("[a-zA-Z0-9_]+ ?\\{")) {
-			net.sekien.hbt.HBTCompound compound=new net.sekien.hbt.HBTCompound(s.split("\\{", 2)[0].trim());
+			HBTCompound compound = new HBTCompound(s.split("\\{", 2)[0].trim());
 			compoundStack.push(compound);
 		} else if (s.matches("byte [a-zA-Z0-9_]+\\s*=\\s*-?[0-9]+")) { //byte name = 64
-			compoundStack.peek().addTag(new net.sekien.hbt.HBTByte(name, (byte) Short.parseShort(s.split("=", 2)[1].trim())));
+			compoundStack.peek().addTag(new HBTByte(name, (byte) Short.parseShort(s.split("=", 2)[1].trim())));
 		} else if (s.matches("byte [a-zA-Z0-9_]+\\s*=\\s*0x[0-9A-Fa-f][0-9A-Fa-f]")) {
-			compoundStack.peek().addTag(new net.sekien.hbt.HBTByte(name, (byte) Short.parseShort(s.split("=", 2)[1].trim().substring(2), 16)));
+			compoundStack.peek().addTag(new HBTByte(name, (byte) Short.parseShort(s.split("=", 2)[1].trim().substring(2), 16)));
 		} else if (s.matches("flag [a-zA-Z0-9_]+\\s*=\\s*(TRUE|FALSE|NEUTRAL|EARTH|WATER|FIRE|AIR|VOID)")) { //byte name = 64
 			compoundStack.peek().addTag(new HBTFlag(name, s.split("=", 2)[1].trim()));
 		} else if (s.matches("short [a-zA-Z0-9_]+\\s*=\\s*-?[0-9]+")) {
-			compoundStack.peek().addTag(new net.sekien.hbt.HBTShort(name, Short.parseShort(s.split("=", 2)[1].trim())));
+			compoundStack.peek().addTag(new HBTShort(name, Short.parseShort(s.split("=", 2)[1].trim())));
 		} else if (s.matches("int [a-zA-Z0-9_]+\\s*=\\s*-?[0-9]+")) {
-			compoundStack.peek().addTag(new net.sekien.hbt.HBTInt(name, Integer.parseInt(s.split("=", 2)[1].trim())));
+			compoundStack.peek().addTag(new HBTInt(name, Integer.parseInt(s.split("=", 2)[1].trim())));
 		} else if (s.matches("long [a-zA-Z0-9_]+\\s*=\\s*-?[0-9]+")) {
-			compoundStack.peek().addTag(new net.sekien.hbt.HBTLong(name, Long.parseLong(s.split("=", 2)[1].trim())));
+			compoundStack.peek().addTag(new HBTLong(name, Long.parseLong(s.split("=", 2)[1].trim())));
 		} else if (s.matches("float [a-zA-Z0-9_]+\\s*=\\s*-?[0-9]+(.[0-9]+)?([Ee]?-?[0-9]+)?")) {
-			compoundStack.peek().addTag(new net.sekien.hbt.HBTFloat(name, Float.parseFloat(s.split("=", 2)[1].trim())));
+			compoundStack.peek().addTag(new HBTFloat(name, Float.parseFloat(s.split("=", 2)[1].trim())));
 		} else if (s.matches("double [a-zA-Z0-9_]+\\s*=\\s*-?[0-9]+(.[0-9]+)?([Ee]?-?[0-9]+)?")) {
-			compoundStack.peek().addTag(new net.sekien.hbt.HBTDouble(name, Double.parseDouble(s.split("=", 2)[1].trim())));
+			compoundStack.peek().addTag(new HBTDouble(name, Double.parseDouble(s.split("=", 2)[1].trim())));
 		} else if (s.matches("data [a-zA-Z0-9_]+\\s*=\\s*([0-9A-Fa-f][0-9A-Fa-f])+")) {
-			compoundStack.peek().addTag(new net.sekien.hbt.HBTByteArray(name, parseByteArray(s.split("=", 2)[1].trim())));
+			compoundStack.peek().addTag(new HBTByteArray(name, parseByteArray(s.split("=", 2)[1].trim())));
 		} else if (s.matches("string [a-zA-Z0-9_]+\\s*=\\s*\"[^\"]*\"")) {
-			String str=s.split("=", 2)[1].trim();
-			compoundStack.peek().addTag(new net.sekien.hbt.HBTString(name, str.substring(1, str.length()-1)));
+			String str = s.split("=", 2)[1].trim();
+			compoundStack.peek().addTag(new HBTString(name, str.substring(1, str.length()-1)));
 		} else if (s.matches("//.*")) {
 			compoundStack.peek().addTag(new HBTComment(s.substring(2)));
 		} else if (s.equals("}")) {
-			if (compoundStack.size()>1) {
-				net.sekien.hbt.HBTCompound compound=compoundStack.pop();
+			if (compoundStack.size() > 1) {
+				HBTCompound compound = compoundStack.pop();
 				compoundStack.peek().addTag(compound);
 			} else {
 				throw new IOException("Unmatched '}'");
@@ -295,19 +294,19 @@ public static List<net.sekien.hbt.HBTTag> parseTextHBT(String out) throws IOExce
 }
 
 private static byte[] parseByteArray(String str) {
-	ArrayList<String> parts=new ArrayList<String>();
-	Character p=null;
+	ArrayList<String> parts = new ArrayList<String>();
+	Character p = null;
 	for (char c : str.toCharArray()) {
 		if (p!=null) {
 			parts.add(""+p+""+c);
-			p=null;
+			p = null;
 		} else {
-			p=c;
+			p = c;
 		}
 	}
-	byte[] ret=new byte[parts.size()];
-	for (int i=0; i<parts.size(); i++) {
-		ret[i]=(byte) Short.parseShort(parts.get(i), 16);
+	byte[] ret = new byte[parts.size()];
+	for (int i = 0; i < parts.size(); i++) {
+		ret[i] = (byte) Short.parseShort(parts.get(i), 16);
 	}
 	return ret;
 }
@@ -320,17 +319,17 @@ private static byte[] parseByteArray(String str) {
  * @return A map
  */
 public static Map<String, String> readMap(String name, boolean dataFile) throws IOException {
-	List<String> paths=parseFileName(name, new String[]{}, dataFile);
-	Map<String, String> map=new HashMap<String, String>();
+	List<String> paths = parseFileName(name, new String[]{}, dataFile);
+	Map<String, String> map = new HashMap<String, String>();
 	for (String path : paths) {
-		File file=new File(path);
-		BufferedReader br=new BufferedReader(new InputStreamReader(new FileInputStream(file)));
+		File file = new File(path);
+		BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
 		String l;
-		while ((l=br.readLine())!=null) {
-			String[] args=l.split("[,]", 2);
+		while ((l = br.readLine())!=null) {
+			String[] args = l.split("[,]", 2);
 			if (args.length!=2) continue;
-			String p=args[0];
-			String b=args[1];
+			String p = args[0];
+			String b = args[1];
 			map.put(p, b);
 		}
 		br.close();
@@ -351,7 +350,7 @@ public static Map<String, String> readMap(String name, boolean dataFile) throws 
  */
 public static void writeMap(File file, Map<String, String> map) throws IOException {
 	try {
-		BufferedWriter bw=new BufferedWriter(new FileWriter(file));
+		BufferedWriter bw = new BufferedWriter(new FileWriter(file));
 		for (String k : map.keySet()) {
 			bw.write(k+","+map.get(k));
 			bw.newLine();
@@ -373,7 +372,7 @@ public static Image getImageBlurry(String s) throws SlickException {
 }
 
 public static List<File> getDataFolderContents(String name) {
-	ArrayList<File> ret=new ArrayList<File>();
+	ArrayList<File> ret = new ArrayList<File>();
 	for (String folder : parseFileName(name, new String[]{""}, true)) {
 		ret.addAll(getAllFiles(new File(folder)));
 	}

@@ -1,5 +1,6 @@
 package net.sekien.lote.ui;
 
+import net.sekien.hbt.HBTTools;
 import net.sekien.lote.msgsys.Message;
 import net.sekien.lote.msgsys.MessageReceiver;
 import net.sekien.lote.msgsys.MessageSystem;
@@ -27,17 +28,17 @@ public static class Craftable {
 	private String[] ingredients;
 
 	public Craftable(String result, String recipe) {
-		this.result=result;
-		this.ingredients=recipe.split("\\|");
+		this.result = result;
+		this.ingredients = recipe.split("\\|");
 	}
 
 	public boolean isCraftable(ArrayList<PlayerData.InventoryEntry> inv) {
 		for (String s : ingredients) {
-			boolean matched=false;
-			String[] parts=parseIng(s);
+			boolean matched = false;
+			String[] parts = parseIng(s);
 			for (PlayerData.InventoryEntry ie : inv) {
-				if (ie.getItem().name.equals(parts[1])&&ie.getExtd().equals(parts[2])&&ie.getCount()>=Integer.parseInt(parts[0])) {
-					matched=true;
+				if (ie.getItem().name.equals(parts[1]) && ie.getExtd().equals(parts[2]) && ie.getCount() >= Integer.parseInt(parts[0])) {
+					matched = true;
 					break;
 				}
 			}
@@ -48,41 +49,41 @@ public static class Craftable {
 	}
 
 	private String[] parseIng(String s) {
-		String[] ret=new String[]{"1", "", ""};
+		String[] ret = new String[]{"1", "", ""};
 		if (s.contains("*")) {
-			ret[0]=s.split("\\*")[0];
-			s=s.split("\\*")[1];
+			ret[0] = s.split("\\*")[0];
+			s = s.split("\\*")[1];
 		}
 		if (s.contains(":")) {
-			ret[1]=s.split(":")[0];
-			ret[2]=s.split(":")[1];
+			ret[1] = s.split(":")[0];
+			ret[2] = s.split(":")[1];
 		} else {
-			ret[1]=s;
+			ret[1] = s;
 		}
 		return ret;
 	}
 
 	public String toString() {
-		String out=result;
-		boolean metBefore=false;
+		String out = result;
+		boolean metBefore = false;
 		for (String s : ingredients) {
-			String[] parts=parseIng(s);
+			String[] parts = parseIng(s);
 			if (metBefore)
-				out=out+",";
-			out=out+"| "+parts[0]+"x|$item."+parts[1]+(parts[2].equals("")?"|":"|: "+parts[2]);
-			metBefore=true;
+				out = out+",";
+			out = out+"| "+parts[0]+"x|$item."+parts[1]+(parts[2].equals("")?"|":"|: "+parts[2]);
+			metBefore = true;
 		}
 		return out;
 	}
 
 	public void addToPDAT(PlayerData pdat, Region r, String ent) {
 		for (String s : ingredients) {
-			boolean matched=false;
-			String[] parts=parseIng(s);
+			boolean matched = false;
+			String[] parts = parseIng(s);
 			for (PlayerData.InventoryEntry ie : pdat.inventory) {
-				if (ie.getItem().name.equals(parts[1])&&ie.getExtd().equals(parts[2])&&ie.getCount()>=Integer.parseInt(parts[0])) {
-					matched=true;
-					for (int i=0; i<Integer.parseInt(parts[0]); i++)
+				if (ie.getItem().name.equals(parts[1]) && ie.getExtd().equals(parts[2]) && ie.getCount() >= Integer.parseInt(parts[0])) {
+					matched = true;
+					for (int i = 0; i < Integer.parseInt(parts[0]); i++)
 						pdat.removeItem(pdat.inventory.indexOf(ie), r, ent);
 					break;
 				}
@@ -97,15 +98,15 @@ public static class Craftable {
 private static ArrayList<Craftable> recipes;
 
 static {
-	recipes=new ArrayList<Craftable>();
+	recipes = new ArrayList<Craftable>();
 	for (Entry<String, String> e : HashmapLoader.readHashmap(FileHandler.parse("craft_def", ResourceType.PLAIN)).entrySet()) //TODO: use HBT here
 		recipes.add(new Craftable(e.getKey(), e.getValue()));
 }
 
-private int isel=0;
-private int smax=1;
+private int isel = 0;
+private int smax = 1;
 
-private boolean inited=false;
+private boolean inited = false;
 
 @Override
 public boolean inited() {
@@ -120,18 +121,18 @@ public void ctor(String extd) {
 @Override
 public void init(GameContainer gc, StateBasedGame sbg,
                  MessageReceiver receiver) throws SlickException {
-	inited=true;
+	inited = true;
 }
 
 @Override
 public void render(GameContainer gc, StateBasedGame sbg, Graphics g,
                    Camera cam, GameClient receiver) throws SlickException {
-	int xoff=(Main.INTERNAL_RESX/2)-320;
+	int xoff = (Main.INTERNAL_RESX/2)-320;
 
 	FontRenderer.drawString(xoff+77, 17, "Crafting", g);
 
-	int i=0;
-	ArrayList<PlayerData.InventoryEntry> inv=((EntityPlayer) receiver.player.region.entities.get(receiver.player.entid)).pdat.inventory;
+	int i = 0;
+	ArrayList<PlayerData.InventoryEntry> inv = ((EntityPlayer) receiver.player.region.entities.get(receiver.player.entid)).pdat.inventory;
 	for (Craftable c : recipes) {
 		if (c.isCraftable(inv)) {
 			g.setColor(Color.lightGray);
@@ -147,33 +148,33 @@ public void render(GameContainer gc, StateBasedGame sbg, Graphics g,
 			i++;
 		}
 	}
-	smax=i;
+	smax = i;
 }
 
 @Override
 public void update(GameContainer gc, StateBasedGame sbg, GameClient receiver) {
-	Input in=gc.getInput();
+	Input in = gc.getInput();
 	if (in.isKeyPressed(Input.KEY_UP))
-		if (isel>0)
+		if (isel > 0)
 			isel--;
 	if (in.isKeyPressed(Input.KEY_DOWN))
-		if (isel<smax-1)
+		if (isel < smax-1)
 			isel++;
 	if (in.isKeyPressed(Input.KEY_X)) {
-		ArrayList<PlayerData.InventoryEntry> inv=((EntityPlayer) receiver.player.region.entities.get(receiver.player.entid)).pdat.inventory;
-		int i=0;
-		int iv=-1;
+		ArrayList<PlayerData.InventoryEntry> inv = ((EntityPlayer) receiver.player.region.entities.get(receiver.player.entid)).pdat.inventory;
+		int i = 0;
+		int iv = -1;
 		for (Craftable c : recipes) {
 			if (c.isCraftable(inv))
 				iv++;
 			if (iv==isel) {
-				MessageSystem.sendServer(null, new Message(receiver.player.region.name+"."+receiver.player.entid+".craftItem", ""+i), false);
+				MessageSystem.sendServer(null, new Message(receiver.player.region.name+"."+receiver.player.entid+".craftItem", HBTTools.msgInt("i", i)), false);
 			}
 			i++;
 		}
 	}
-	if (isel>smax-1)
-		isel=smax-1;
+	if (isel > smax-1)
+		isel = smax-1;
 }
 
 @Override

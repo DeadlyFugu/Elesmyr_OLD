@@ -1,6 +1,7 @@
 package net.sekien.lote.world;
 
 import com.esotericsoftware.minlog.Log;
+import net.sekien.hbt.HBTCompound;
 import net.sekien.lote.GameElement;
 import net.sekien.lote.Save;
 import net.sekien.lote.msgsys.Message;
@@ -23,17 +24,17 @@ public Save save;
 public ArrayList<Region> needsInit;
 
 public World() {
-	regions=new ConcurrentHashMap<String, Region>();
+	regions = new ConcurrentHashMap<String, Region>();
 	//removeRegions = new ArrayList<Region>();
-	needsInit=new ArrayList<Region>(); //Needed because
+	needsInit = new ArrayList<Region>(); //Needed because
 }
 
 @Override
 public void render(GameContainer gc, StateBasedGame sbg, Graphics g, Camera cam, GameClient receiver) throws SlickException {
-	Region r=null;
-	String name=((GameClient) sbg.getState(Main.GAMEPLAYSTATE)).getPlayer().getRegionName();
+	Region r = null;
+	String name = ((GameClient) sbg.getState(Main.GAMEPLAYSTATE)).getPlayer().getRegionName();
 	if (name!=null)
-		r=regions.get(name);
+		r = regions.get(name);
 	if (r!=null)
 		r.render(gc, sbg, g, cam, receiver);
 }
@@ -47,7 +48,7 @@ public void init(GameContainer gc, StateBasedGame sbg, MessageReceiver receiver)
 
 @Override
 public void load(Save save) {
-	this.save=save;
+	this.save = save;
 }
 
 @Override
@@ -112,7 +113,7 @@ public void touchRegion(String name) {
  */
 public void touchRegionClient(String name) {
 	if (getRegion(name)==null) {
-		Region r=new Region(name);
+		Region r = new Region(name);
 		needsInit.add(r);
 	}
 }
@@ -120,7 +121,7 @@ public void touchRegionClient(String name) {
 @Override
 public void receiveMessage(Message msg, MessageReceiver receiver) {
 	if (msg.getTarget().equals("WORLD")) {
-		String name=msg.getName();
+		String name = msg.getName();
 		if (name.equals("someName")) {
 			//TODO: put actual stuff here
 		} else {
@@ -140,7 +141,7 @@ public void receiveMessage(Message msg, MessageReceiver receiver) {
 }
 
 public void loadRegion(String name) {
-	Region r=new Region(name);
+	Region r = new Region(name);
 	r.load(save);
 	needsInit.add(r);
 }
@@ -153,13 +154,13 @@ public void save(Save save) {
 }
 
 @Override
-public void fromHBT(net.sekien.hbt.HBTCompound tag) {
+public void fromHBT(HBTCompound tag) {
 	//What I do here?
 }
 
 @Override
-public net.sekien.hbt.HBTCompound toHBT() {
-	net.sekien.hbt.HBTCompound ret=new net.sekien.hbt.HBTCompound("world");
+public HBTCompound toHBT(boolean msg) {
+	HBTCompound ret = new HBTCompound("world");
 	for (Region r : regions.values()) {
 		ret.addTag(r.toHBTSave());
 	}
@@ -167,7 +168,7 @@ public net.sekien.hbt.HBTCompound toHBT() {
 }
 
 public Region getRegion(String name) {
-	Region ret=regions.get(name);
+	Region ret = regions.get(name);
 	if (ret!=null)
 		return ret;
 	for (Region r : needsInit) {

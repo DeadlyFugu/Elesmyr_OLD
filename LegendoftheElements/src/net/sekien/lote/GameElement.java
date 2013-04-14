@@ -1,5 +1,6 @@
 package net.sekien.lote;
 
+import net.sekien.hbt.HBTCompound;
 import net.sekien.lote.msgsys.Message;
 import net.sekien.lote.msgsys.MessageReceiver;
 import net.sekien.lote.player.Camera;
@@ -52,9 +53,9 @@ public void receiveMessage(Message msg, MessageReceiver receiver);
 /** Save data Server-side */
 public void save(Save save);
 
-public void fromHBT(net.sekien.hbt.HBTCompound tag);
+public void fromHBT(HBTCompound tag);
 
-public net.sekien.hbt.HBTCompound toHBT();
+public HBTCompound toHBT(boolean msg);
 
 public String getReceiverName();
 }
