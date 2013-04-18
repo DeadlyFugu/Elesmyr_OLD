@@ -1,6 +1,6 @@
 package net.sekien.hbt;
 
-import net.sekien.lote.Element;
+import net.sekien.elesmyr.Element;
 import org.newdawn.slick.util.Log;
 
 /**
@@ -8,30 +8,30 @@ import org.newdawn.slick.util.Log;
  * File Templates.
  */
 public class HBTFlag extends HBTTag {
-private static final String[] VALUES={
-		                                     "TRUE",
-		                                     "FALSE",
-		                                     "NEUTRAL",
-		                                     "EARTH",
-		                                     "WATER",
-		                                     "FIRE",
-		                                     "AIR",
-		                                     "VOID"
+private static final String[] VALUES = {
+		                                       "TRUE",
+		                                       "FALSE",
+		                                       "NEUTRAL",
+		                                       "EARTH",
+		                                       "WATER",
+		                                       "FIRE",
+		                                       "AIR",
+		                                       "VOID"
 };
 private byte data;
 
 public HBTFlag(String name, byte data) {
 	super(name);
-	this.data=data;
+	this.data = data;
 }
 
 public HBTFlag(String name, String data) {
 	super(name);
-	this.data=stringToByte(data);
+	this.data = stringToByte(data);
 }
 
 private byte stringToByte(String data) {
-	for (byte i=0; i<VALUES.length; i++) {
+	for (byte i = 0; i < VALUES.length; i++) {
 		if (VALUES[i].equals(data)) {
 			return i;
 		}
