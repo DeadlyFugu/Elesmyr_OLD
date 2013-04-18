@@ -103,6 +103,9 @@ public void init(GameContainer gc, StateBasedGame sbg) throws SlickException {
 	//msgList = new ConcurrentLinkedQueue<Message>();
 	chat = new LinkedList<ChatMessage>();
 	ui = new LinkedList<UserInterface>();
+	DevMode dm = new DevMode();
+	dm.init(gc, sbg, this);
+	ui.addFirst(dm);
 	HUDUI hud = new HUDUI();
 	hud.init(gc, sbg, this);
 	ui.addFirst(hud);
@@ -255,7 +258,7 @@ public void update(GameContainer gc, StateBasedGame sbg, int delta) throws Slick
 				textField.setAcceptingInput(true);
 				textField.setFocus(true);
 			} else {
-				if (textField.getText().startsWith("<")
+				if (textField.getText().startsWith("<") //TODO: Remove - Deprecated by DevMode and useless due to msgsys using HBT.
 						    && textField.getText().contains(":")
 						    && textField.getText().split(":", 2)[0].contains(".")) {
 					MessageSystem.sendServer(null, new Message(textField.getText().split(":", 2)[0].substring(1), textField.getText().split(":", 2)[1]), false);

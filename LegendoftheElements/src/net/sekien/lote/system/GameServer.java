@@ -55,8 +55,8 @@ public GameServer(Save save, String hostUName) {
 	players = new ConcurrentHashMap<Connection, String>();
 	playerEnt = new ConcurrentHashMap<String, String>();
 	playerDat = new ConcurrentHashMap<String, PlayerData>();
-	if (new File("pass").exists())
-		pass = HashmapLoader.readHashmap("pass");
+	if (new File("pass.csv").exists())
+		pass = HashmapLoader.readHashmap("pass.csv");
 	else
 		pass = new HashMap<String, String>();
 	this.hostUName = hostUName;
@@ -84,7 +84,7 @@ public void load() {
 }
 
 public void save() {
-	HashmapLoader.writeHashmap("pass", pass);
+	HashmapLoader.writeHashmap("pass.csv", pass);
 	world.save(save);
 	save.putInt("gen.time", (int) time);
 	save.putInt("gen.date", date);

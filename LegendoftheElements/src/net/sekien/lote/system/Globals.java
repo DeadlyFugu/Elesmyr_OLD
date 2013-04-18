@@ -9,7 +9,7 @@ public class Globals {
 private static HashMap<String, String> globals;
 
 public static String get(String key, String def) {
-	String ret=globals.get(key);
+	String ret = globals.get(key);
 	if (ret==null) {
 		globals.put(key, def);
 		return def;
@@ -18,12 +18,12 @@ public static String get(String key, String def) {
 }
 
 public static boolean get(String key, boolean def) {
-	Boolean ret=null;
+	Boolean ret = null;
 	try {
-		ret=Boolean.parseBoolean(globals.get(key));
+		ret = Boolean.parseBoolean(globals.get(key));
 	} catch (Exception e) {}
 
-	if (!globals.containsKey(key)||ret==null) {
+	if (!globals.containsKey(key) || ret==null) {
 		globals.put(key, ""+def);
 		return def;
 	}
@@ -36,7 +36,7 @@ public static void set(String key, String value) {
 }
 
 public static void setMap(HashMap<String, String> hashMap) {
-	globals=hashMap;
+	globals = hashMap;
 }
 
 public static boolean containsKey(String string) {
@@ -44,13 +44,13 @@ public static boolean containsKey(String string) {
 }
 
 public static void save() {
-	HashmapLoader.writeHashmap("conf", globals);
+	HashmapLoader.writeHashmap("conf.csv", globals);
 }
 
 public static String getString() {
-	String ret="";
+	String ret = "";
 	for (Entry<String, String> e : globals.entrySet())
-		ret=ret+"\n"+e.getKey()+" = "+e.getValue();
+		ret = ret+"\n"+e.getKey()+" = "+e.getValue();
 	return ret.substring(1);
 }
 

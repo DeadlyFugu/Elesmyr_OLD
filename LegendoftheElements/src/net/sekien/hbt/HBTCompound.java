@@ -75,7 +75,9 @@ private HBTCompound getCompoundTouch(String name) {
 public HBTTag getTag(String name) {
 	if (name.contains(".")) {
 		String[] parts = name.split("\\.", 2);
-		return getCompoundTouch(parts[0]).getTag(parts[1]);
+		if (hasTag(parts[0]))
+			return getCompoundTouch(parts[0]).getTag(parts[1]);
+		throw new TagNotFoundException(name);
 	} else {
 		for (HBTTag tag : this) {
 			if (tag.getName().equals(name)) {
@@ -192,6 +194,10 @@ public boolean hasTag(String name) {
 		if (tag.getName().equals(name)) return true;
 	}
 	return false;
+}
+
+public void deleteTag(String child) {
+	data.remove(getTag(child));
 }
 
 public class TagNotFoundException extends RuntimeException {

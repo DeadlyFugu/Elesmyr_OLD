@@ -75,8 +75,8 @@ public static void main(String[] args) throws SlickException {
 
 	org.newdawn.slick.util.Log.setLogSystem(new SlickToMinLogSystem());
 
-	if (new File("conf").exists())
-		Globals.setMap(HashmapLoader.readHashmap("conf"));
+	if (new File("conf.csv").exists())
+		Globals.setMap(HashmapLoader.readHashmap("conf.csv"));
 	else
 		Globals.setMap(new HashMap<String, String>());
 
