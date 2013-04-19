@@ -6,6 +6,7 @@ import net.sekien.elesmyr.player.Camera;
 import net.sekien.elesmyr.system.FontRenderer;
 import net.sekien.elesmyr.system.GameClient;
 import net.sekien.elesmyr.system.Main;
+import net.sekien.elesmyr.util.FileHandler;
 import net.sekien.elesmyr.world.entity.Entity;
 import net.sekien.hbt.HBTComment;
 import net.sekien.hbt.HBTCompound;
@@ -13,6 +14,8 @@ import net.sekien.hbt.HBTTag;
 import org.newdawn.slick.*;
 import org.newdawn.slick.gui.TextField;
 import org.newdawn.slick.state.StateBasedGame;
+
+import java.io.IOException;
 
 /**
  * Created with IntelliJ IDEA. User: matt Date: 17/04/13 Time: 4:51 PM To change this template use File | Settings |
@@ -52,6 +55,9 @@ public void init(GameContainer gc, StateBasedGame sbg, MessageReceiver receiver)
 	textField.setTextColor(Color.white);
 	textField.setAcceptingInput(false);
 	textField.setMaxLength(57);
+
+	listNew = new HBTCompound("NEW");
+	listDM = new HBTCompound("DEVMODE");
 }
 
 @Override
@@ -118,9 +124,9 @@ public void update(GameContainer gc, StateBasedGame sbg, GameClient receiver) {
 
 		if (input.isMousePressed(Input.MOUSE_LEFT_BUTTON)) {
 			System.out.print("ML PRESS");
+			if (activeElement!=null)
+				writeActiveElement(receiver);
 			if (mx > (Main.INTERNAL_RESX-panelWidth)+16 && my > 16 && my < Main.INTERNAL_RESY-64) {
-				if (activeElement!=null)
-					writeActiveElement(receiver);
 				my = my-16;
 				if (my < 16) { //In the 'target' area.
 					activeElement = targetAETag;
@@ -138,8 +144,6 @@ public void update(GameContainer gc, StateBasedGame sbg, GameClient receiver) {
 					}
 				}
 			} else {
-				if (activeElement!=null)
-					writeActiveElement(receiver);
 				activeElement = null;
 				setTextFieldActive(false);
 			}
@@ -182,8 +186,33 @@ private void writeActiveElement(GameClient client) {
 		if (test==null) {
 			Log.error("DevMode activeElement unrecognised: "+activeElement);
 		} else {
-			//Update the tag here
+			if (activeElement instanceof HBTComment) {
+				//TODO: Button handling code
+			} else {
+				int index = test.getData().indexOf(activeElement);
+				HBTTag old = activeElement;
+				test.getData().remove(activeElement);
+				try {
+					for (HBTTag tag : FileHandler.parseTextHBT(textField.getText()))
+						test.getData().add(index, tag);
+				} catch (IOException e) {
+					test.getData().add(index, old); //Reset incase adding new tag fails.
+					e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+				}
+				targetUpdate(client);
+			}
 		}
+	}
+}
+
+private void targetUpdate(GameClient client) {
+	if (target.equals("NULL")) {
+	} else if (target.equals("NEW")) {
+		listNew = list; //Unneeded?
+	} else if (target.startsWith("ENT")) {
+		String sub = target.split("\\.", 2)[1];
+		Entity ent = client.getPlayer().getRegion().entities.get(Integer.parseInt(sub));
+		ent.fromHBT(list);
 	}
 }
 
