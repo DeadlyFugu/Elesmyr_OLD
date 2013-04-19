@@ -74,7 +74,6 @@ public void load() {
 			pdat.fromString(e.getValue());
 			playerDat.put(e.getKey().substring(5), pdat);
 		}*/
-	System.out.println(save.getCompound("pdat"));
 	for (HBTTag tag : save.getCompound("pdat")) {
 		PlayerData pdat = new PlayerData(tag.getName(), null);
 		pdat.fromHBT(tag);

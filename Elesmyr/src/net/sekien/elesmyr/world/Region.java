@@ -196,10 +196,16 @@ public void receiveMessage(Message msg, MessageEndPoint receiver) {
 					e.interact(this, ((GameServer) receiver).getPlayerEnt(msg.getConnection()), receiver, msg);
 			}
 		}
-	} else if (entities.containsKey(Integer.valueOf(msg.getTarget().split("\\.", 2)[1]))) {
-		entities.get(Integer.valueOf(msg.getTarget().split("\\.", 2)[1])).receiveMessage(msg, receiver);
 	} else {
-		Log.warn("World."+name+": Ignored message - unrecognised target: "+msg.toString());
+		try {
+			if (entities.containsKey(Integer.valueOf(msg.getTarget().split("\\.", 2)[1]))) {
+				entities.get(Integer.valueOf(msg.getTarget().split("\\.", 2)[1])).receiveMessage(msg, receiver);
+			} else {
+				Log.warn("World."+name+": Ignored message - unrecognised target: "+msg.toString());
+			}
+		} catch (NumberFormatException nfe) {
+			Log.error("NumberFormatException in Region with "+msg);
+		}
 	}
 }
 

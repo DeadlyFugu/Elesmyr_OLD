@@ -1,6 +1,7 @@
 package net.sekien.elesmyr.system;
 
 import com.esotericsoftware.minlog.Log;
+import net.sekien.elesmyr.Profiler;
 import net.sekien.elesmyr.Save;
 import net.sekien.elesmyr.ScriptObject;
 import net.sekien.elesmyr.lighting.LightMap;
@@ -28,6 +29,8 @@ import org.newdawn.slick.state.StateBasedGame;
 import java.net.InetAddress;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 public class GameClient extends BasicGameState implements MessageEndPoint {
 
@@ -124,6 +127,7 @@ public void init(GameContainer gc, StateBasedGame sbg) throws SlickException {
 }
 
 public void render(GameContainer gc, StateBasedGame sbg, Graphics g) throws SlickException {
+	Profiler.startSection("Render");
 	//g.scale(gc.getWidth()/((float) (Main.INTERNAL_RESY)*((float) gc.getWidth()/(float) gc.getHeight())),gc.getHeight()/(float) (Main.INTERNAL_RESY));
 	g.scale(gc.getWidth()/(float) (Main.INTERNAL_RESX), gc.getHeight()/(float) (Main.INTERNAL_RESY));
 	if (!regionLoaded) {
@@ -194,7 +198,7 @@ public void render(GameContainer gc, StateBasedGame sbg, Graphics g) throws Slic
 		}
 		server.render(gc, sbg, g, MessageSystem.CLIENT);
 	}
-	if (MessageSystem.CLIENT && Globals.get("debug", false) && Globals.get("debugInfo", true)) {
+	if (MessageSystem.CLIENT && Globals.get("debugInfo", true)) {
 		//Client debug mode
 		String debugText = "ERROR.";
 		try {
@@ -204,6 +208,14 @@ public void render(GameContainer gc, StateBasedGame sbg, Graphics g) throws Slic
 							"Time norm: "+(int) ((time/60)%12)+":"+(int) (time%60)+"\n"+
 							"FPS: "+gc.getFPS()+"\n"+
 							"Ents: "+player.region.entities.size();
+			long total = 0;
+			for (Map.Entry entry : Profiler.getTimes().entrySet()) {
+				debugText += "\n"+entry.getKey()+": "+TimeUnit.MILLISECONDS.convert((Long) entry.getValue(), TimeUnit.NANOSECONDS)+"ms";
+				total += (Long) entry.getValue();
+			}
+			long ms = TimeUnit.MILLISECONDS.convert(total, TimeUnit.NANOSECONDS);
+			debugText += "\nTotal: "+ms+"ms";
+			debugText += "\nFPS: "+(1000/ms);
 		} catch (Exception e) {
 		}
 			/*try {
@@ -216,6 +228,7 @@ public void render(GameContainer gc, StateBasedGame sbg, Graphics g) throws Slic
 			i++;
 		}
 	}
+	Profiler.endSection();
 }
 
 private void renderMap(Region region, boolean fg) {
@@ -234,6 +247,7 @@ private void renderMap(Region region, boolean fg) {
 private boolean devModeInited = false;
 
 public void update(GameContainer gc, StateBasedGame sbg, int delta) throws SlickException {
+	Profiler.startSection("Client update");
 	if (gc.getInput().isKeyPressed(Input.KEY_ESCAPE)) {
 		if (showTextField) {
 			showTextField = false;
@@ -285,6 +299,9 @@ public void update(GameContainer gc, StateBasedGame sbg, int delta) throws Slick
 	if (gc.getInput().isKeyPressed(Input.KEY_F3)) {
 		Globals.set("debug", ""+!Globals.get("debug", false));
 	}
+	if (gc.getInput().isKeyPressed(Input.KEY_F4)) {
+		Globals.set("debugInfo", ""+!Globals.get("debugInfo", false));
+	}
 	if (net.sekien.elesmyr.system.Input.isKeyPressed(gc, "inv") && showTextField==false) {
 		if (ui.peekFirst() instanceof InventoryUI) {
 			ui.removeFirst();
@@ -293,9 +310,6 @@ public void update(GameContainer gc, StateBasedGame sbg, int delta) throws Slick
 			inv.init(gc, sbg, this);
 			ui.addFirst(inv);
 		}
-	}
-	if (MessageSystem.SERVER) {
-		server.gameUpdate();
 	}
 	if (MessageSystem.CLIENT) {
 		MessageSystem.receiveMessageClient();
@@ -328,6 +342,13 @@ public void update(GameContainer gc, StateBasedGame sbg, int delta) throws Slick
 		lm.update(player.region, cam, time);
 		time += (servtime-time)/120;
 	}
+	Profiler.endSection();
+	Profiler.startSection("Server update");
+	if (MessageSystem.SERVER) {
+		server.gameUpdate();
+	}
+	Profiler.endSection();
+	Profiler.flush();
 }
 
 public boolean receiveMessage(Message msg) {
