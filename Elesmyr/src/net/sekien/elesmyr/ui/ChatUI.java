@@ -1,7 +1,7 @@
 package net.sekien.elesmyr.ui;
 
 import net.sekien.elesmyr.msgsys.Message;
-import net.sekien.elesmyr.msgsys.MessageReceiver;
+import net.sekien.elesmyr.msgsys.MessageEndPoint;
 import net.sekien.elesmyr.player.Camera;
 import net.sekien.elesmyr.system.FontRenderer;
 import net.sekien.elesmyr.system.GameClient;
@@ -32,7 +32,7 @@ public boolean inited() {
 
 @Override
 public void init(GameContainer gc, StateBasedGame sbg,
-                 MessageReceiver receiver) throws SlickException {
+                 MessageEndPoint receiver) throws SlickException {
 	inited = true;
 }
 

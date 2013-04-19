@@ -1,7 +1,7 @@
 package net.sekien.elesmyr.world.entity;
 
 import net.sekien.elesmyr.msgsys.Message;
-import net.sekien.elesmyr.msgsys.MessageReceiver;
+import net.sekien.elesmyr.msgsys.MessageEndPoint;
 import net.sekien.elesmyr.msgsys.MessageSystem;
 import net.sekien.elesmyr.player.Camera;
 import net.sekien.elesmyr.system.GameClient;
@@ -18,7 +18,7 @@ public class EntityUI extends Entity {
 Image spr;
 
 @Override
-public void init(GameContainer gc, StateBasedGame sbg, MessageReceiver receiver)
+public void init(GameContainer gc, StateBasedGame sbg, MessageEndPoint receiver)
 		throws SlickException {
 	spr = FileHandler.getImage("ent."+extd.split(",", 2)[0]);
 }
@@ -32,7 +32,7 @@ public void render(GameContainer gc, StateBasedGame sbg, Graphics g,
 }
 
 @Override
-public void interact(Region region, EntityPlayer entityPlayer, MessageReceiver receiver, Message msg) {
+public void interact(Region region, EntityPlayer entityPlayer, MessageEndPoint receiver, Message msg) {
 	MessageSystem.sendClient(this, msg.getConnection(), new Message("CLIENT.openUI", HBTTools.msgString("ui", extd.split(",", 2)[1])), false);
 }
 }

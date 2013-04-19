@@ -1,6 +1,6 @@
 package net.sekien.elesmyr.ui;
 
-import net.sekien.elesmyr.msgsys.MessageReceiver;
+import net.sekien.elesmyr.msgsys.MessageEndPoint;
 import net.sekien.elesmyr.player.Camera;
 import net.sekien.elesmyr.system.GameClient;
 import org.newdawn.slick.GameContainer;
@@ -13,7 +13,7 @@ public void ctor(String extd);
 
 public boolean inited();
 
-public void init(GameContainer gc, StateBasedGame sbg, MessageReceiver receiver) throws SlickException;
+public void init(GameContainer gc, StateBasedGame sbg, MessageEndPoint receiver) throws SlickException;
 
 public void render(GameContainer gc, StateBasedGame sbg, Graphics g, Camera cam, GameClient receiver) throws SlickException;
 

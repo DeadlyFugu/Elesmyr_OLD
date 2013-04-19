@@ -4,7 +4,7 @@ import com.esotericsoftware.minlog.Log;
 import net.sekien.elesmyr.Save;
 import net.sekien.elesmyr.msgsys.Connection;
 import net.sekien.elesmyr.msgsys.Message;
-import net.sekien.elesmyr.msgsys.MessageReceiver;
+import net.sekien.elesmyr.msgsys.MessageEndPoint;
 import net.sekien.elesmyr.msgsys.MessageSystem;
 import net.sekien.elesmyr.player.PlayerData;
 import net.sekien.elesmyr.util.FileHandler;
@@ -25,7 +25,7 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class GameServer implements MessageReceiver {
+public class GameServer implements MessageEndPoint {
 private Save save;
 /** Server-side world; */
 private World world;

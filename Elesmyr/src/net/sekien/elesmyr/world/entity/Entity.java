@@ -5,7 +5,7 @@ import net.sekien.elesmyr.Element;
 import net.sekien.elesmyr.GameElement;
 import net.sekien.elesmyr.Save;
 import net.sekien.elesmyr.msgsys.Message;
-import net.sekien.elesmyr.msgsys.MessageReceiver;
+import net.sekien.elesmyr.msgsys.MessageEndPoint;
 import net.sekien.elesmyr.player.Camera;
 import net.sekien.elesmyr.player.PlayerData;
 import net.sekien.elesmyr.system.GameClient;
@@ -52,7 +52,7 @@ protected void initSERV() {
 }
 
 @Override
-public void init(GameContainer gc, StateBasedGame sbg, MessageReceiver receiver)
+public void init(GameContainer gc, StateBasedGame sbg, MessageEndPoint receiver)
 		throws SlickException {
 }
 
@@ -76,7 +76,7 @@ public void clientUpdate(GameContainer gc, StateBasedGame sbg, GameClient receiv
 }
 
 @Override
-public void receiveMessage(Message msg, MessageReceiver receiver) {
+public void receiveMessage(Message msg, MessageEndPoint receiver) {
 	String name = msg.getName();
 	HBTCompound data = msg.getData();
 	if (name.equals("move")) {
@@ -90,7 +90,7 @@ public void receiveMessage(Message msg, MessageReceiver receiver) {
 	}
 }
 
-void receiveMessageExt(Message msg, MessageReceiver receiver) {
+void receiveMessageExt(Message msg, MessageEndPoint receiver) {
 	Log.warn("ENTITY: Ignored message "+msg.toString());
 }
 
@@ -157,7 +157,7 @@ public boolean collidesWith(int x, int y) {
  * 		Entity that attacked
  * @return True if entity needs to be destroyed.
  */
-public void hurt(Region region, Entity entity, MessageReceiver receiver) {
+public void hurt(Region region, Entity entity, MessageEndPoint receiver) {
 }
 
 /**
@@ -166,7 +166,7 @@ public void hurt(Region region, Entity entity, MessageReceiver receiver) {
  * @param region
  * 		Region the entity is in
  */
-public void interact(Region region, EntityPlayer entityPlayer, MessageReceiver receiver, Message msg) {
+public void interact(Region region, EntityPlayer entityPlayer, MessageEndPoint receiver, Message msg) {
 }
 
 protected ArrayList<String> getDrops() {

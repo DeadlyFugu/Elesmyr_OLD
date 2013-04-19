@@ -1,21 +1,23 @@
 package net.sekien.elesmyr.ui;
 
 import com.esotericsoftware.minlog.Log;
-import net.sekien.elesmyr.msgsys.MessageReceiver;
+import net.sekien.elesmyr.msgsys.MessageEndPoint;
 import net.sekien.elesmyr.player.Camera;
 import net.sekien.elesmyr.system.FontRenderer;
 import net.sekien.elesmyr.system.GameClient;
 import net.sekien.elesmyr.system.Main;
+import net.sekien.elesmyr.ui.dm.DevModeTarget;
+import net.sekien.elesmyr.ui.dm.ReadOnlyTarget;
+import net.sekien.elesmyr.ui.dm.StoredListTarget;
 import net.sekien.elesmyr.util.FileHandler;
-import net.sekien.elesmyr.world.entity.Entity;
-import net.sekien.hbt.HBTComment;
-import net.sekien.hbt.HBTCompound;
-import net.sekien.hbt.HBTTag;
+import net.sekien.hbt.*;
 import org.newdawn.slick.*;
 import org.newdawn.slick.gui.TextField;
 import org.newdawn.slick.state.StateBasedGame;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * Created with IntelliJ IDEA. User: matt Date: 17/04/13 Time: 4:51 PM To change this template use File | Settings |
@@ -36,6 +38,9 @@ private HBTCompound listDM; //DevMode list
 
 private final HBTTag targetAETag = new HBTComment("_DTARGET");
 
+private HashMap<String, DevModeTarget> targets;
+private ArrayList<HBTCompound> openCompounds;
+
 private boolean inited = false;
 
 @Override
@@ -46,7 +51,7 @@ public void ctor(String extd) {
 }
 
 @Override
-public void init(GameContainer gc, StateBasedGame sbg, MessageReceiver receiver) throws SlickException {
+public void init(GameContainer gc, StateBasedGame sbg, MessageEndPoint receiver) throws SlickException {
 	inited = true;
 
 	textField = new TextField(gc, FontRenderer.getFont(), 0, 16, 530, 16);
@@ -56,8 +61,21 @@ public void init(GameContainer gc, StateBasedGame sbg, MessageReceiver receiver)
 	textField.setAcceptingInput(false);
 	textField.setMaxLength(57);
 
-	listNew = new HBTCompound("NEW");
-	listDM = new HBTCompound("DEVMODE");
+	//listNew = new HBTCompound("NEW");
+	//listDM = new HBTCompound("DEVMODE");
+
+	targets = new HashMap<String, DevModeTarget>();
+	targets.put("NEW", new StoredListTarget());
+	targets.get("NEW").getList(null).addTag(new HBTInt("aint", 123));
+	targets.get("NEW").getList(null).addTag(new HBTString("cheese", "MARY HAD A LITTLE EGG"));
+	targets.get("NEW").getList(null).addTag(HBTTools.location("here", 42, 9001));
+	targets.get("NEW").getList(null).addTag(new HBTCompound("baa", new HBTTag[]{new HBTInt("aint", 123), new HBTComment("ADD FIELD")}));
+	targets.get("NEW").getList(null).addTag(new HBTByteArray("r2", new byte[]{0, 54, 75, 44, 3, 45, 32, 6, 56, 54, 3, 64, 36, 46}));
+	targets.put("DEVMODE", new StoredListTarget());
+	targets.put("DATA", new ReadOnlyTarget(FileHandler.getData()));
+	//targets.put("ENT",new ServerEntTarget());
+
+	openCompounds = new ArrayList<HBTCompound>();
 }
 
 @Override
@@ -84,13 +102,18 @@ public void render(GameContainer gc, StateBasedGame sbg, Graphics g, Camera cam,
 	}
 }
 
-private void renderList(int x, int y, HBTCompound list, Graphics g) {
+private int renderList(int x, int y, HBTCompound list, Graphics g) {
 	int ry = y;
 	for (HBTTag tag : list) {
 		if (tag==activeElement) {
 			renderTextField(x, ry, g);
 		} else if (tag instanceof HBTCompound) {
-			FontRenderer.drawString(x, ry, tag.getName()+" [+]", g);
+			if (openCompounds.contains(tag)) {
+				FontRenderer.drawString(x, ry, tag.getName()+" [-]", g);
+				ry += renderList(x+18, ry+16, (HBTCompound) tag, g);
+			} else {
+				FontRenderer.drawString(x, ry, tag.getName()+" [+]", g);
+			}
 		} else if (tag instanceof HBTComment) {
 			FontRenderer.drawString(x, ry, "["+tag.getName()+"]", g);
 		} else {
@@ -98,6 +121,7 @@ private void renderList(int x, int y, HBTCompound list, Graphics g) {
 		}
 		ry += 16;
 	}
+	return (ry-y);
 }
 
 private boolean mouseDragging = false;
@@ -133,11 +157,19 @@ public void update(GameContainer gc, StateBasedGame sbg, GameClient receiver) {
 					setTextFieldActive(true);
 					setText(target);
 				} else {
-					HBTTag element = getElementAt((my-16)/16, list);
-					if (element==null) {
+					Object found = getElementAt((my-16)/16, list);
+					if (found instanceof Integer) {
 						activeElement = null;
 						setTextFieldActive(false);
+					} else if (found instanceof HBTCompound) {
+						HBTTag element = (HBTTag) found;
+						if (openCompounds.contains(element)) {
+							openCompounds.remove(element);
+						} else {
+							openCompounds.add((HBTCompound) element);
+						}
 					} else {
+						HBTTag element = (HBTTag) found;
 						activeElement = element;
 						setTextFieldActive(true);
 						setText(element.toString());
@@ -155,22 +187,29 @@ public void update(GameContainer gc, StateBasedGame sbg, GameClient receiver) {
 	}
 }
 
-private HBTTag getElementAt(int i, HBTCompound search) {
+private Object getElementAt(int i, HBTCompound search) {
 	if (search==null) //In case target=="NULL"
 		return null;
 	int si = 0;
 	for (HBTTag tag : search) {
+		System.out.println(tag.getName());
 		if (si==i) {
+			System.out.println("Found:"+tag);
 			return tag;
 		} else if (tag instanceof HBTCompound) {
-			HBTTag found = getElementAt(i-si, (HBTCompound) tag);
-			if (found!=null) {
-				return tag;
+			if (openCompounds.contains(tag)) {
+				Object found = getElementAt(i-si-1, (HBTCompound) tag);
+				if (found instanceof HBTTag) {
+					System.out.println("Found:"+found);
+					return found;
+				} else {
+					si += (Integer) found;
+				}
 			}
 		}
 		si++;
 	}
-	return null;
+	return new Integer(si);
 }
 
 private void writeActiveElement(GameClient client) {
@@ -186,34 +225,44 @@ private void writeActiveElement(GameClient client) {
 		if (test==null) {
 			Log.error("DevMode activeElement unrecognised: "+activeElement);
 		} else {
-			if (activeElement instanceof HBTComment) {
-				//TODO: Button handling code
-			} else {
-				int index = test.getData().indexOf(activeElement);
-				HBTTag old = activeElement;
-				test.getData().remove(activeElement);
-				try {
-					for (HBTTag tag : FileHandler.parseTextHBT(textField.getText()))
-						test.getData().add(index, tag);
-				} catch (IOException e) {
-					test.getData().add(index, old); //Reset incase adding new tag fails.
-					e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-				}
-				targetUpdate(client);
+			int index = test.getData().indexOf(activeElement);
+			HBTTag old = activeElement;
+			test.getData().remove(activeElement);
+			try {
+				for (HBTTag tag : FileHandler.parseTextHBT(textField.getText()))
+					test.getData().add(index, tag);
+			} catch (IOException e) {
+				test.getData().add(index, old); //Reset incase adding new tag fails.
+				e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
 			}
+			targetUpdate(client);
 		}
 	}
 }
 
 private void targetUpdate(GameClient client) {
+	String target = "";
+	String subtarget = "";
+	if (this.target.contains(".")) {
+		target = this.target.split("\\.", 2)[0];
+		subtarget = this.target.split("\\.", 2)[1];
+	} else {
+		target = this.target;
+	}
+
 	if (target.equals("NULL")) {
-	} else if (target.equals("NEW")) {
+	} else if (targets.containsKey(target)) {
+		targets.get(target).set(list, subtarget, client);
+	} else {
+		Log.error("Unrecognised target "+target+".");
+	}
+	/*} else if (target.equals("NEW")) {
 		listNew = list; //Unneeded?
 	} else if (target.startsWith("ENT")) {
 		String sub = target.split("\\.", 2)[1];
 		Entity ent = client.getPlayer().getRegion().entities.get(Integer.parseInt(sub));
 		ent.fromHBT(list);
-	}
+	}*/
 }
 
 private HBTCompound getActiveParent(HBTCompound search) {
@@ -230,7 +279,16 @@ private HBTCompound getActiveParent(HBTCompound search) {
 }
 
 private boolean updateList(GameClient client) {
+
 	if (target.equals("NULL")) {
+		list = null;
+	} else if (targets.containsKey(target)) {
+		list = targets.get(target).getList(client);
+	} else {
+		Log.error("Unrecognised target "+target+".");
+		return false;
+	}
+	/*if (target.equals("NULL")) {
 		list = null;
 	} else if (target.equals("NEW")) {
 		list = listNew;
@@ -240,7 +298,7 @@ private boolean updateList(GameClient client) {
 		list = ent.toHBT(false);
 	} else {
 		return false;
-	}
+	}*/
 	return true;
 }
 

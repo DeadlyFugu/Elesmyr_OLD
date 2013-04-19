@@ -1,6 +1,6 @@
 package net.sekien.elesmyr.ui;
 
-import net.sekien.elesmyr.msgsys.MessageReceiver;
+import net.sekien.elesmyr.msgsys.MessageEndPoint;
 import net.sekien.elesmyr.player.Camera;
 import net.sekien.elesmyr.system.FontRenderer;
 import net.sekien.elesmyr.system.GameClient;
@@ -39,7 +39,7 @@ public void addPage(String page) {
 }
 
 @Override
-public void init(GameContainer gc, StateBasedGame sbg, MessageReceiver receiver) throws SlickException {
+public void init(GameContainer gc, StateBasedGame sbg, MessageEndPoint receiver) throws SlickException {
 	inited = true;
 	bg = FileHandler.getImage("ui.book");
 }

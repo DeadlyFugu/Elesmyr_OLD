@@ -4,7 +4,7 @@ import com.esotericsoftware.minlog.Log;
 import net.sekien.elesmyr.GameElement;
 import net.sekien.elesmyr.Save;
 import net.sekien.elesmyr.msgsys.Message;
-import net.sekien.elesmyr.msgsys.MessageReceiver;
+import net.sekien.elesmyr.msgsys.MessageEndPoint;
 import net.sekien.elesmyr.player.Camera;
 import net.sekien.elesmyr.system.GameClient;
 import net.sekien.elesmyr.system.GameServer;
@@ -40,7 +40,7 @@ public void render(GameContainer gc, StateBasedGame sbg, Graphics g, Camera cam,
 }
 
 @Override
-public void init(GameContainer gc, StateBasedGame sbg, MessageReceiver receiver) throws SlickException {
+public void init(GameContainer gc, StateBasedGame sbg, MessageEndPoint receiver) throws SlickException {
 	for (Region r : regions.values()) {
 		r.init(gc, sbg, receiver);
 	}
@@ -119,7 +119,7 @@ public void touchRegionClient(String name) {
 }
 
 @Override
-public void receiveMessage(Message msg, MessageReceiver receiver) {
+public void receiveMessage(Message msg, MessageEndPoint receiver) {
 	if (msg.getTarget().equals("WORLD")) {
 		String name = msg.getName();
 		if (name.equals("someName")) {

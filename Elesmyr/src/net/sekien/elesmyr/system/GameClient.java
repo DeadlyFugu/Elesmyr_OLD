@@ -5,7 +5,7 @@ import net.sekien.elesmyr.Save;
 import net.sekien.elesmyr.ScriptObject;
 import net.sekien.elesmyr.lighting.LightMap;
 import net.sekien.elesmyr.msgsys.Message;
-import net.sekien.elesmyr.msgsys.MessageReceiver;
+import net.sekien.elesmyr.msgsys.MessageEndPoint;
 import net.sekien.elesmyr.msgsys.MessageSystem;
 import net.sekien.elesmyr.player.Camera;
 import net.sekien.elesmyr.player.PlayerClient;
@@ -29,7 +29,7 @@ import java.net.InetAddress;
 import java.util.Iterator;
 import java.util.LinkedList;
 
-public class GameClient extends BasicGameState implements MessageReceiver {
+public class GameClient extends BasicGameState implements MessageEndPoint {
 
 public class ChatMessage {
 	private String msg;

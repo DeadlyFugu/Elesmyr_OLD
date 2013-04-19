@@ -5,7 +5,7 @@ import net.sekien.elesmyr.Element;
 import net.sekien.elesmyr.lighting.Light;
 import net.sekien.elesmyr.msgsys.Connection;
 import net.sekien.elesmyr.msgsys.Message;
-import net.sekien.elesmyr.msgsys.MessageReceiver;
+import net.sekien.elesmyr.msgsys.MessageEndPoint;
 import net.sekien.elesmyr.msgsys.MessageSystem;
 import net.sekien.elesmyr.player.Camera;
 import net.sekien.elesmyr.player.PlayerClient;
@@ -53,7 +53,7 @@ public void setSERVDAT(Connection connection, PlayerData pdat) {
 }
 
 @Override
-public void init(GameContainer gc, StateBasedGame sbg, MessageReceiver receiver)
+public void init(GameContainer gc, StateBasedGame sbg, MessageEndPoint receiver)
 		throws SlickException {
 	spr = new SpriteSheet(FileHandler.getImage("player.player_reg"), 32, 48);
 	torchLight = new Light(600, 550, 256, 0.8f, 0.5f, 0.2f, 0.4f); //TORCH LIGHT
@@ -146,7 +146,7 @@ private void draw(float xd, float yd, int x, int y, int px, int py, float spx, f
 }
 
 @Override
-public void receiveMessageExt(Message msg, MessageReceiver server) {
+public void receiveMessageExt(Message msg, MessageEndPoint server) {
 	if (msg.getName().equals("moveClient")) {
 		this.cx = msg.getData().getInt("x", 0);
 		this.cy = msg.getData().getInt("y", 0);
@@ -207,7 +207,7 @@ public String getName() {
 }
 
 @Override
-public void hurt(Region region, Entity entity, MessageReceiver receiver) {
+public void hurt(Region region, Entity entity, MessageEndPoint receiver) {
 	if (Globals.get("godmode", false))
 		return;
 	pdat.health -= 1;

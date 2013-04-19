@@ -1,6 +1,6 @@
 package net.sekien.elesmyr.msgsys;
 
-public interface MessageReceiver {
+public interface MessageEndPoint {
 public boolean receiveMessage(Message msg);
 
 public boolean isServer();

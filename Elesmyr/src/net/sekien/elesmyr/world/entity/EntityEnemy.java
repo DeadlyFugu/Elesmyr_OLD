@@ -2,7 +2,7 @@ package net.sekien.elesmyr.world.entity;
 
 import com.esotericsoftware.minlog.Log;
 import net.sekien.elesmyr.msgsys.Message;
-import net.sekien.elesmyr.msgsys.MessageReceiver;
+import net.sekien.elesmyr.msgsys.MessageEndPoint;
 import net.sekien.elesmyr.msgsys.MessageSystem;
 import net.sekien.elesmyr.player.Camera;
 import net.sekien.elesmyr.system.GameClient;
@@ -39,7 +39,7 @@ public void initSERV() {
 }
 
 @Override
-public void init(GameContainer gc, StateBasedGame sbg, MessageReceiver receiver)
+public void init(GameContainer gc, StateBasedGame sbg, MessageEndPoint receiver)
 		throws SlickException {
 	spr = FileHandler.getImage("ent.enemy");
 }
@@ -110,7 +110,7 @@ private void attack(Region region, GameServer receiver) {
 }
 
 @Override
-public void hurt(Region region, Entity entity, MessageReceiver receiver) {
+public void hurt(Region region, Entity entity, MessageEndPoint receiver) {
 	float dmg = 1;
 	if (entity.getEquipped()!=null) {
 		Item i = entity.getEquipped().getItem();
@@ -132,7 +132,7 @@ public void hurt(Region region, Entity entity, MessageReceiver receiver) {
 }
 
 @Override
-public void receiveMessageExt(Message msg, MessageReceiver receiver) {
+public void receiveMessageExt(Message msg, MessageEndPoint receiver) {
 	if (msg.getName().equals("setHealth")) {
 		this.health = msg.getData().getInt("health", 0);
 	} else {

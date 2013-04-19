@@ -4,7 +4,7 @@ import com.esotericsoftware.minlog.Log;
 import net.sekien.elesmyr.GameElement;
 import net.sekien.elesmyr.Save;
 import net.sekien.elesmyr.msgsys.Message;
-import net.sekien.elesmyr.msgsys.MessageReceiver;
+import net.sekien.elesmyr.msgsys.MessageEndPoint;
 import net.sekien.elesmyr.msgsys.MessageSystem;
 import net.sekien.elesmyr.system.GameClient;
 import net.sekien.elesmyr.system.GameServer;
@@ -48,7 +48,7 @@ public PlayerClient(GameClient gs, World world) {
 }
 
 @Override
-public void init(GameContainer gc, StateBasedGame sbg, MessageReceiver receiver)
+public void init(GameContainer gc, StateBasedGame sbg, MessageEndPoint receiver)
 		throws SlickException {
 	controller = (gc.getInput().getControllerCount() > 0);
 	if (controller)
@@ -275,7 +275,7 @@ private boolean isSolid(int id) {
 }
 
 @Override
-public void receiveMessage(Message msg, MessageReceiver receiver) {
+public void receiveMessage(Message msg, MessageEndPoint receiver) {
 	String name = msg.getName();
 	if (name.equals("playerInfo")) {
 		regionName = msg.getData().getString("region", "error");

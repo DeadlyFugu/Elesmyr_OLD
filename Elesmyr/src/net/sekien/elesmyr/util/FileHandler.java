@@ -378,4 +378,8 @@ public static List<File> getDataFolderContents(String name) {
 	}
 	return ret;
 }
+
+public static HBTCompound getData() {
+	return data;
+}
 }

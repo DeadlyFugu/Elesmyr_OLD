@@ -2,7 +2,7 @@ package net.sekien.elesmyr.world.entity;
 
 import net.sekien.elesmyr.lighting.Light;
 import net.sekien.elesmyr.msgsys.Message;
-import net.sekien.elesmyr.msgsys.MessageReceiver;
+import net.sekien.elesmyr.msgsys.MessageEndPoint;
 import net.sekien.elesmyr.player.Camera;
 import net.sekien.elesmyr.system.GameClient;
 import net.sekien.elesmyr.system.GameServer;
@@ -26,7 +26,7 @@ private EntityPlayer targetEP;
 private Light light = null;
 
 @Override
-public void init(GameContainer gc, StateBasedGame sbg, MessageReceiver receiver)
+public void init(GameContainer gc, StateBasedGame sbg, MessageEndPoint receiver)
 		throws SlickException {
 	this.item = ItemFactory.getItem(extd.split(",", 2)[0]);
 	spr = item.spr;
@@ -68,7 +68,7 @@ public void update(Region region, GameServer receiver) {
 }
 
 @Override
-public void interact(Region region, EntityPlayer entityPlayer, MessageReceiver receiver, Message msg) {
+public void interact(Region region, EntityPlayer entityPlayer, MessageEndPoint receiver, Message msg) {
 	if (destTimer==-1)
 		if (entityPlayer.putItem(item, extd.split(",", 2)[1])) {
 			destTimer = 40;

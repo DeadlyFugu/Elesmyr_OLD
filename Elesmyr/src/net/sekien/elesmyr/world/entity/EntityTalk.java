@@ -3,7 +3,7 @@ package net.sekien.elesmyr.world.entity;
 import com.esotericsoftware.minlog.Log;
 import net.sekien.elesmyr.msgsys.Connection;
 import net.sekien.elesmyr.msgsys.Message;
-import net.sekien.elesmyr.msgsys.MessageReceiver;
+import net.sekien.elesmyr.msgsys.MessageEndPoint;
 import net.sekien.elesmyr.msgsys.MessageSystem;
 import net.sekien.elesmyr.player.Camera;
 import net.sekien.elesmyr.system.GameClient;
@@ -21,7 +21,7 @@ Image spr;
 private DialogueHandler dh;
 
 @Override
-public void init(GameContainer gc, StateBasedGame sbg, MessageReceiver receiver)
+public void init(GameContainer gc, StateBasedGame sbg, MessageEndPoint receiver)
 		throws SlickException {
 	spr = FileHandler.getImage("ent."+extd.split(",", 2)[0]);
 }
@@ -40,12 +40,12 @@ public void render(GameContainer gc, StateBasedGame sbg, Graphics g,
 }
 
 @Override
-public void interact(Region region, EntityPlayer entityPlayer, MessageReceiver receiver, Message msg) {
+public void interact(Region region, EntityPlayer entityPlayer, MessageEndPoint receiver, Message msg) {
 	MessageSystem.sendClient(this, msg.getConnection(), new Message("CLIENT.echointwl", new HBTCompound("p")), false);
 }
 
 @Override
-public void receiveMessageExt(Message msg, MessageReceiver receiver) {
+public void receiveMessageExt(Message msg, MessageEndPoint receiver) {
 	if (msg.getName().equals("tresponse")) {
 		dh.response(this, msg.getDataStr().split("\\|", 2)[0], msg.getDataStr().split("\\|", 2)[1], msg.getConnection());
 	} else {
