@@ -9,7 +9,7 @@ private float data;
 
 public HBTFloat(String name, float data) {
 	super(name);
-	this.data=data;
+	this.data = data;
 }
 
 @Override

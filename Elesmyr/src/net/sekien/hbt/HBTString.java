@@ -9,7 +9,7 @@ private String data;
 
 public HBTString(String name, String data) {
 	super(name);
-	this.data=data;
+	this.data = data;
 }
 
 @Override

@@ -8,7 +8,7 @@ public abstract class HBTTag {
 private String name;
 
 public HBTTag(String name) {
-	this.name=name;
+	this.name = name;
 }
 
 public String getName() {

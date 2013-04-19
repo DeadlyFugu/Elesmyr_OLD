@@ -9,7 +9,7 @@ private byte data;
 
 public HBTByte(String name, byte data) {
 	super(name);
-	this.data=data;
+	this.data = data;
 }
 
 @Override

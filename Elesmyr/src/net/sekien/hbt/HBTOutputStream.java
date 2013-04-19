@@ -11,7 +11,7 @@ import java.util.zip.GZIPOutputStream;
  * File Templates.
  */
 public class HBTOutputStream implements Closeable {
-public static final int MAGIC_HEADER=0x48425430;
+public static final int MAGIC_HEADER = 0x48425430;
 private DataOutputStream os;
 
 public HBTOutputStream(OutputStream os) throws IOException {
@@ -20,9 +20,9 @@ public HBTOutputStream(OutputStream os) throws IOException {
 
 public HBTOutputStream(OutputStream os, boolean gzip) throws IOException {
 	if (gzip)
-		this.os=new DataOutputStream(new GZIPOutputStream(os));
+		this.os = new DataOutputStream(new GZIPOutputStream(os));
 	else
-		this.os=new DataOutputStream(os);
+		this.os = new DataOutputStream(os);
 }
 
 public void write(net.sekien.hbt.HBTTag root) throws IOException {
@@ -31,7 +31,7 @@ public void write(net.sekien.hbt.HBTTag root) throws IOException {
 }
 
 private void writeTag(net.sekien.hbt.HBTTag tag) throws IOException {
-	Class type=tag.getClass();
+	Class type = tag.getClass();
 	if (type==HBTByte.class) {
 		os.writeByte(1);
 		os.writeUTF(tag.getName());

@@ -16,9 +16,9 @@ public HBTInputStream(InputStream is) throws IOException {
 
 public HBTInputStream(InputStream is, boolean gzip) throws IOException {
 	if (gzip)
-		this.is=new DataInputStream(new GZIPInputStream(is));
+		this.is = new DataInputStream(new GZIPInputStream(is));
 	else
-		this.is=new DataInputStream(is);
+		this.is = new DataInputStream(is);
 }
 
 public net.sekien.hbt.HBTTag read() throws IOException {
@@ -32,12 +32,12 @@ public net.sekien.hbt.HBTTag read() throws IOException {
 private net.sekien.hbt.HBTTag readTag() throws IOException {
 	byte type;
 	try {
-		type=is.readByte();
+		type = is.readByte();
 	} catch (EOFException e) {
 		return null;
 	}
 	if (type==0) return null;
-	String name=is.readUTF();
+	String name = is.readUTF();
 	switch (type) {
 		case 1:
 			return new HBTByte(name, is.readByte());
@@ -67,15 +67,15 @@ private net.sekien.hbt.HBTTag readTag() throws IOException {
 }
 
 private net.sekien.hbt.HBTTag readByteArray(String name) throws IOException {
-	byte[] data=new byte[is.readInt()];
+	byte[] data = new byte[is.readInt()];
 	is.readFully(data);
 	return new net.sekien.hbt.HBTByteArray(name, data);
 }
 
 private HBTCompound readCompound(String name) throws IOException {
-	HBTCompound compound=new HBTCompound(name);
+	HBTCompound compound = new HBTCompound(name);
 	net.sekien.hbt.HBTTag tag;
-	while ((tag=readTag())!=null) {
+	while ((tag = readTag())!=null) {
 		compound.addTag(tag);
 	}
 	return compound;

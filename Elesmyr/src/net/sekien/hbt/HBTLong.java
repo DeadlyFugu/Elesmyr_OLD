@@ -9,7 +9,7 @@ private long data;
 
 public HBTLong(String name, long data) {
 	super(name);
-	this.data=data;
+	this.data = data;
 }
 
 @Override

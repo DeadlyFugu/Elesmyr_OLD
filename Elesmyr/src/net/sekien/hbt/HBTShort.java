@@ -4,20 +4,20 @@ package net.sekien.hbt;
  * Created with IntelliJ IDEA. User: matt Date: 29/03/13 Time: 9:03 AM To change this template use File | Settings |
  * File Templates.
  */
-public class HBTInt extends HBTTag {
-private int data;
+public class HBTShort extends HBTTag {
+private short data;
 
-public HBTInt(String name, int data) {
+public HBTShort(String name, short data) {
 	super(name);
-	this.data=data;
+	this.data = data;
 }
 
 @Override
 public String toString() {
-	return "int "+getName()+" = "+data;
+	return "short "+getName()+" = "+data;
 }
 
-public int getData() {
+public short getData() {
 	return data;
 }
 }

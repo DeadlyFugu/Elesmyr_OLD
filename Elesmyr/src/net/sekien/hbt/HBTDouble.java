@@ -9,7 +9,7 @@ private double data;
 
 public HBTDouble(String name, double data) {
 	super(name);
-	this.data=data;
+	this.data = data;
 }
 
 @Override

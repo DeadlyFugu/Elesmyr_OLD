@@ -9,14 +9,14 @@ private byte[] data;
 
 public HBTByteArray(String name, byte[] data) {
 	super(name);
-	this.data=data;
+	this.data = data;
 }
 
 @Override
 public String toString() {
-	StringBuilder builder=new StringBuilder();
+	StringBuilder builder = new StringBuilder();
 	builder.append("data "+getName()+" = ");
-	for (int i=0; i<data.length; i++) {
+	for (int i = 0; i < data.length; i++) {
 		builder.append(String.format("%02X", data[i]));
 	}
 	return builder.toString();
