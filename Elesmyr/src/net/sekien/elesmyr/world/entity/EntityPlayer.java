@@ -191,12 +191,21 @@ public void receiveMessageExt(Message msg, MessageEndPoint server) {
 		if (pdat==null)
 			pdat = new PlayerData(extd, msg.getConnection());
 		pdat.fromHBT(msg.getData());
+		pdat.updated(region, receiverName);
 	} else if (msg.getName().equals("setHealth")) {
 		pdat.health = msg.getData().getInt("health", 60);
 		pdat.updated(region, receiverName);
 	} else if (msg.getName().equals("setAffinity")) {
 		pdat.affinity = msg.getData().getFlag("element", "NEUTRAL").asElement();
 		pdat.updated(region, receiverName);
+	} else if (msg.getName().equals("pdat_SET")) {
+		if (pdat==null)
+			pdat = new PlayerData(extd, msg.getConnection());
+		pdat.fromHBT(msg.getData());
+		pdat.updated(region, receiverName);
+	} else if (msg.getName().equals("pdat_GET")) {
+		System.out.println("ent received pdat_GET from "+msg.getSender());
+		msg.reply("hbtResponse", (HBTCompound) pdat.toHBT(), this);
 	} else {
 		Log.info("ENTITYPLAYER: Ignored message "+msg.toString());
 	}

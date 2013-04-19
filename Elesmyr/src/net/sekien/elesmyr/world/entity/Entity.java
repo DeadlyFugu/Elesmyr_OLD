@@ -102,7 +102,7 @@ public void save(Save save) {
 public void fromHBT(HBTCompound tag) {
 	x = tag.getInt("x", 0);
 	y = tag.getInt("y", 0);
-	if (!tag.hasTag("name")) {} else {this.name = tag.getString("name", "ERROR");}
+	//if (!tag.hasTag("name")) {} else {this.name = tag.getInt("name", "ERROR");} //MAY ERROR (ERROR BEFORE BECAUSE tag.getString)
 	extd = tag.getString("extd", "");
 }
 

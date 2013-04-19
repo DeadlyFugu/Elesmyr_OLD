@@ -200,6 +200,15 @@ public void deleteTag(String child) {
 	data.remove(getTag(child));
 }
 
+@Override
+public HBTTag deepClone() {
+	HBTCompound clone = new HBTCompound(getName());
+	for (HBTTag tag : data) {
+		clone.addTag(tag.deepClone());
+	}
+	return clone;
+}
+
 public class TagNotFoundException extends RuntimeException {
 	public TagNotFoundException(String name) {
 		super(name);

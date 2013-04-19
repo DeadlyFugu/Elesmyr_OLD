@@ -47,6 +47,9 @@ void sendTCP(Message msg) throws IOException {
 	HBTCompound payload = new HBTCompound("d");
 	payload.getData().addAll(msg.getData().getData());
 	msgc.addTag(payload);
+	if (msg.getSender()!=null) {
+		msgc.addTag(new HBTString("s", msg.getSender()));
+	}
 	out.write(msgc);
 }
 
@@ -56,9 +59,13 @@ void sendUDP(Message msg) throws IOException {
 
 Message readMsg() throws IOException, HBTCompound.TagNotFoundException {
 	HBTCompound msgc = (HBTCompound) in.read();
-	return new Message(((HBTString) msgc.getTag("t")).getData()+"."+
-			                   ((HBTString) msgc.getTag("n")).getData(),
-			                  (HBTCompound) msgc.getTag("d"));
+	Message msg = new Message(((HBTString) msgc.getTag("t")).getData()+"."+
+			                          ((HBTString) msgc.getTag("n")).getData(),
+			                         (HBTCompound) msgc.getTag("d"));
+	if (msgc.hasTag("s")) {
+		msg.setSender(msgc.getString("s", null));
+	}
+	return msg;
 }
 
 void setFastlinked() {

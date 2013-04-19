@@ -65,4 +65,9 @@ public Element asElement() {
 		return Element.NEUTRAL;
 	}
 }
+
+@Override
+public HBTTag deepClone() {
+	return new HBTFlag(getName(), data);
+}
 }

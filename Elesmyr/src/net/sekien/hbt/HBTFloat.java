@@ -20,4 +20,9 @@ public String toString() {
 public float getData() {
 	return data;
 }
+
+@Override
+public HBTTag deepClone() {
+	return new HBTFloat(getName(), data);
+}
 }

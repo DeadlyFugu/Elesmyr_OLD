@@ -1,7 +1,6 @@
 package net.sekien.elesmyr.msgsys;
 
 import com.esotericsoftware.minlog.Log;
-import net.sekien.elesmyr.GameElement;
 import net.sekien.elesmyr.Save;
 import net.sekien.elesmyr.system.GameClient;
 import net.sekien.elesmyr.system.GameServer;
@@ -18,8 +17,8 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 public class MessageSystem {
 public static boolean CLIENT;
 public static boolean SERVER;
-private static HashMap<String, GameElement> clientReceivers;
-private static HashMap<String, GameElement> serverReceivers;
+private static HashMap<String, MessageReceiver> clientReceivers;
+private static HashMap<String, MessageReceiver> serverReceivers;
 public static GameClient client;
 public static GameServer server;
 private static ConcurrentLinkedQueue<Message> serverMsgQueue;
@@ -29,7 +28,7 @@ private static Server netServer;
 public static boolean fastLink = false;
 private static int fastlinkedID;
 
-public static void sendServer(GameElement sender, Message msg, boolean udp) {
+public static void sendServer(MessageReceiver sender, Message msg, boolean udp) {
 	if (sender!=null)
 		msg.setSender(sender.getReceiverName());
 	if (fastLink && netServer.getConnections().size() > 0) {
@@ -41,7 +40,7 @@ public static void sendServer(GameElement sender, Message msg, boolean udp) {
 		netClient.sendTCP(msg);
 }
 
-public static void sendClient(GameElement sender, int connection, Message msg, boolean udp) {
+public static void sendClient(MessageReceiver sender, int connection, Message msg, boolean udp) {
 	if (sender!=null)
 		msg.setSender(sender.getReceiverName());
 	if (fastLink && connection==fastlinkedID)
@@ -52,21 +51,21 @@ public static void sendClient(GameElement sender, int connection, Message msg, b
 		netServer.sendTCP(connection, msg);
 }
 
-public static void sendClient(GameElement sender, Connection connection, Message msg, boolean udp) {
+public static void sendClient(MessageReceiver sender, Connection connection, Message msg, boolean udp) {
 	sendClient(sender, connection.getID(), msg, udp);
 }
 
-public static void sendClient(GameElement sender, List<Connection> connections, Message msg, boolean udp) {
+public static void sendClient(MessageReceiver sender, List<Connection> connections, Message msg, boolean udp) {
 	for (Connection c : connections) {
 		sendClient(sender, c, msg, udp);
 	}
 }
 
-public static void registerReceiverClient(GameElement receiver) {
+public static void registerReceiverClient(MessageReceiver receiver) {
 	clientReceivers.put(receiver.getReceiverName(), receiver);
 }
 
-public static void registerReceiverServer(GameElement receiver) {
+public static void registerReceiverServer(MessageReceiver receiver) {
 	serverReceivers.put(receiver.getReceiverName(), receiver);
 }
 
@@ -82,13 +81,15 @@ public static void receiveClient(Message msg) {
 
 public static void receiveMessageServer() {
 	for (Message msg : serverMsgQueue) {
-		if (Globals.get("printAllMsg", false) || Globals.get("printMsg", false) && !msg.getName().equals("move") && !msg.getName().equals("pickupAt"))
+		if (Globals.get("printAllMsg", false) || Globals.get("printMsg", false) && !msg.getName().equals("move") && !msg.getName().equals("pickupAt") && !msg.getName().equals("time"))
 			Log.info("Server received "+msg);
 		if (serverReceivers.containsKey(msg.getTarget())) {
 			if (msg.getName().equals("_info"))
 				MessageSystem.sendClient(null, msg.getConnection(), new Message("CLIENT.chat", HBTTools.msgString("msg", serverReceivers.get(msg.getTarget()).toString())), false);
 			else if (msg.getName().equals("_hbt"))
 				MessageSystem.sendClient(null, msg.getConnection(), new Message(msg.getData().getString("receiver", "CLIENT")+".hbtResponse", serverReceivers.get(msg.getTarget()).toHBT(msg.getData().getFlag("full", "FALSE").isTrue())), false);
+			else if (msg.getName().equals("_hbtSET"))
+				serverReceivers.get(msg.getTarget()).fromHBT(msg.getData());
 			else serverReceivers.get(msg.getTarget()).receiveMessage(msg, server);
 		} else {
 			server.receiveMessage(msg);
@@ -100,7 +101,7 @@ public static void receiveMessageServer() {
 public static void receiveMessageClient() {
 	while (!clientMsgQueue.isEmpty()) {
 		Message msg = clientMsgQueue.poll();
-		if (Globals.get("printAllMsg", false) || Globals.get("printMsg", false) && !msg.getName().equals("move") && !msg.getName().equals("pickupAt"))
+		if (Globals.get("printAllMsg", false) || Globals.get("printMsg", false) && !msg.getName().equals("move") && !msg.getName().equals("pickupAt") && !msg.getName().equals("time"))
 			Log.info("Client received "+msg);
 		try {
 			if (clientReceivers.containsKey(msg.getTarget())) {
@@ -128,8 +129,8 @@ public static void initialise(GameClient client, boolean server, InetAddress con
 	} else {
 		fastLink = false;
 	}
-	clientReceivers = new HashMap<String, GameElement>();
-	serverReceivers = new HashMap<String, GameElement>();
+	clientReceivers = new HashMap<String, MessageReceiver>();
+	serverReceivers = new HashMap<String, MessageReceiver>();
 	clientMsgQueue = new ConcurrentLinkedQueue<Message>();
 	serverMsgQueue = new ConcurrentLinkedQueue<Message>();
 }

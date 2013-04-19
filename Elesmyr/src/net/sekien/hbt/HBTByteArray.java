@@ -25,4 +25,9 @@ public String toString() {
 public byte[] getData() {
 	return data;
 }
+
+@Override
+public HBTTag deepClone() {
+	return new HBTByteArray(getName(), data);
+}
 }

@@ -13,4 +13,9 @@ public HBTComment(String name) {
 public String toString() {
 	return "//"+getName();
 }
+
+@Override
+public HBTTag deepClone() {
+	return new HBTComment(getName());
+}
 }

@@ -103,9 +103,6 @@ public void init(GameContainer gc, StateBasedGame sbg) throws SlickException {
 	//msgList = new ConcurrentLinkedQueue<Message>();
 	chat = new LinkedList<ChatMessage>();
 	ui = new LinkedList<UserInterface>();
-	DevMode dm = new DevMode();
-	dm.init(gc, sbg, this);
-	ui.addFirst(dm);
 	HUDUI hud = new HUDUI();
 	hud.init(gc, sbg, this);
 	ui.addFirst(hud);
@@ -234,6 +231,8 @@ private void renderMap(Region region, boolean fg) {
 	}
 }
 
+private boolean devModeInited = false;
+
 public void update(GameContainer gc, StateBasedGame sbg, int delta) throws SlickException {
 	if (gc.getInput().isKeyPressed(Input.KEY_ESCAPE)) {
 		if (showTextField) {
@@ -248,6 +247,15 @@ public void update(GameContainer gc, StateBasedGame sbg, int delta) throws Slick
 			gc.getInput().clearKeyPressedRecord();
 			sbg.enterState(Main.MENUSTATE);
 			return;
+		}
+	}
+	if (Globals.get("debug", false) && regionLoaded) {
+		if (!devModeInited) {
+			System.out.println("hi");
+			DevMode dm = new DevMode();
+			dm.init(gc, sbg, this);
+			ui.addFirst(dm);
+			devModeInited = true;
 		}
 	}
 	if (gc.getInput().isKeyPressed(Input.KEY_ENTER)) {

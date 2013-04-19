@@ -3,6 +3,7 @@ package net.sekien.elesmyr.msgsys;
 import net.sekien.elesmyr.GameElement;
 import net.sekien.hbt.HBTCompound;
 import net.sekien.hbt.HBTString;
+import org.newdawn.slick.util.Log;
 
 public class Message {
 private String target, name;
@@ -86,16 +87,22 @@ public void setServerBound(boolean bound) {
 
 public void setSender(String sender) {
 	this.sender = sender;
+	//System.out.println(sender);
 }
 
 public String getSender() {
 	return sender;
 }
 
-public void reply(String name, HBTCompound data, GameElement sender) {
-	if (sender!=null) {
+public void reply(String name, HBTCompound data, MessageReceiver sender) {
+	Log.error("Message reply start");
+	if (this.sender!=null) {
 		if (!serverBound)
-			MessageSystem.sendServer(sender, new Message(name, data), false);
+			MessageSystem.sendServer(sender, new Message(this.sender+"."+name, data), false);
+		else if (connection!=null)
+			MessageSystem.sendClient(sender, (Connection) connection, new Message(this.sender+"."+name, data), false);
+		else
+			Log.error("Message reply failed, original was: Non-null sender; serverBound; Null connection.");
 	} else if (connection!=null) {
 		if (serverBound)
 			MessageSystem.sendClient(sender, ((Connection) connection).getID(), new Message(name, data), false);
@@ -103,6 +110,8 @@ public void reply(String name, HBTCompound data, GameElement sender) {
 			MessageSystem.sendServer(sender, new Message(name, data), false);
 	} else if (!serverBound) {
 		MessageSystem.sendServer(sender, new Message(name, data), false);
+	} else {
+		Log.error("Message reply failed, original was: Null sender; serverBound; Null connection");
 	}
 }
 }

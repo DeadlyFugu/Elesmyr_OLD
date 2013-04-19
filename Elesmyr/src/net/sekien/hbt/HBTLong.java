@@ -20,4 +20,9 @@ public String toString() {
 public long getData() {
 	return data;
 }
+
+@Override
+public HBTTag deepClone() {
+	return new HBTDouble(getName(), data);
+}
 }

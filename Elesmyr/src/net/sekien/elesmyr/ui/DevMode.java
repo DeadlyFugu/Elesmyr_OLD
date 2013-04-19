@@ -8,6 +8,7 @@ import net.sekien.elesmyr.system.GameClient;
 import net.sekien.elesmyr.system.Main;
 import net.sekien.elesmyr.ui.dm.DevModeTarget;
 import net.sekien.elesmyr.ui.dm.ReadOnlyTarget;
+import net.sekien.elesmyr.ui.dm.ServerSideTarget;
 import net.sekien.elesmyr.ui.dm.StoredListTarget;
 import net.sekien.elesmyr.util.FileHandler;
 import net.sekien.hbt.*;
@@ -28,7 +29,7 @@ public class DevMode implements UserInterface {
 private String target = "NULL";
 private HBTCompound list;
 private int panelWidth = 260;
-private boolean enabled = false;
+private boolean enabled = true;
 private HBTTag activeElement;
 private TextField textField;
 private boolean showTextField;
@@ -73,8 +74,9 @@ public void init(GameContainer gc, StateBasedGame sbg, MessageEndPoint receiver)
 	targets.get("NEW").getList(null).addTag(new HBTByteArray("r2", new byte[]{0, 54, 75, 44, 3, 45, 32, 6, 56, 54, 3, 64, 36, 46}));
 	targets.put("DEVMODE", new StoredListTarget());
 	targets.put("DATA", new ReadOnlyTarget(FileHandler.getData()));
+	targets.put("ENT", new ServerSideTarget("clearing_thing.12"));
+	targets.put("PDAT", new ServerSideTarget(((GameClient) receiver).player.getRegionName()+"."+((GameClient) receiver).player.entid, "pdat_GET", "pdat_SET"));
 	//targets.put("ENT",new ServerEntTarget());
-
 	openCompounds = new ArrayList<HBTCompound>();
 }
 
@@ -156,7 +158,7 @@ public void update(GameContainer gc, StateBasedGame sbg, GameClient receiver) {
 					activeElement = targetAETag;
 					setTextFieldActive(true);
 					setText(target);
-				} else {
+				} else if (list!=null) {
 					Object found = getElementAt((my-16)/16, list);
 					if (found instanceof Integer) {
 						activeElement = null;
@@ -174,6 +176,9 @@ public void update(GameContainer gc, StateBasedGame sbg, GameClient receiver) {
 						setTextFieldActive(true);
 						setText(element.toString());
 					}
+				} else {
+					activeElement = null;
+					setTextFieldActive(false);
 				}
 			} else {
 				activeElement = null;
