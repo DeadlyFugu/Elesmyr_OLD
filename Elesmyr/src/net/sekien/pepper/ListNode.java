@@ -19,6 +19,10 @@ public void render(Renderer renderer, int w, int h, boolean sel) {
 	renderer.rectPos(100, 0, w-100, 100, false, false, true, true, Renderer.BoxStyle.UPFADE);
 	renderer.rectPos(100, 100, w-100, h-100, false, false, true, true, Renderer.BoxStyle.FULL);
 	renderer.rectPos(100, h-100, w-100, h, false, false, true, true, Renderer.BoxStyle.DOWNFADE);
+
+	renderer.rectPos(0, 0, renderer.textWidth(name)+20, 32, false, true, false, true, Renderer.BoxStyle.FULL);
+	renderer.text(10, 11, name);
+
 	int y = 0;
 	int i = 0;
 	for (Node child : children) {
@@ -35,6 +39,10 @@ public void transitionEnter(Renderer renderer, int w, int h, boolean sel, float 
 	renderer.rectPos(100, 0, w-100, 100, false, false, true, true, Renderer.BoxStyle.UPFADE);
 	renderer.rectPos(100, 100, w-100, h-100, false, false, true, true, Renderer.BoxStyle.FULL);
 	renderer.rectPos(100, h-100, w-100, h, false, false, true, true, Renderer.BoxStyle.DOWNFADE);
+
+	renderer.rect((int) (-(renderer.textWidth(name)+20)*(1-time)), 0, renderer.textWidth(name)+20, 32, false, true, false, true, Renderer.BoxStyle.FULL);
+	renderer.text((int) (-(renderer.textWidth(name)+20)*(1-time)+10), 11, name);
+
 	int y = (int) ((-32-children.size()*32)*(1-time));
 	int i = 0;
 	for (Node child : children) {

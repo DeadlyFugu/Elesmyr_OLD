@@ -49,7 +49,6 @@ public static void render(GameContainer gc, Graphics g) {
 	g.scale(gc.getWidth()/(float) (Main.INTERNAL_RESX), gc.getHeight()/(float) (Main.INTERNAL_RESY));
 	if (!stateTrace.empty()) {
 		if (newState!=null) {
-			System.out.println(animtimer);
 			animtimer++;
 			if (animtimer < 20) {
 				stateTrace.peek().transitionLeave(renderer, Main.INTERNAL_RESX, Main.INTERNAL_RESY, true, animtimer/20f);
@@ -87,9 +86,10 @@ public static void update(GameContainer gc, StateBasedGame sbg) {
 			arg = gameSettings.split(" ", 2)[1];
 		}
 		if (mode.equals("SAVE")) {
-			Globals.set("save", arg);
+			String savename = arg.substring(0, arg.lastIndexOf('.'));
+			Globals.set("save", savename);
 			try {
-				((GameClient) sbg.getState(Main.GAMEPLAYSTATE)).loadSave(gc, arg, false, sbg);
+				((GameClient) sbg.getState(Main.GAMEPLAYSTATE)).loadSave(gc, savename, false, sbg);
 				((GameClient) sbg.getState(Main.GAMEPLAYSTATE)).init(gc, sbg);
 				gc.getInput().clearKeyPressedRecord();
 				sbg.enterState(Main.GAMEPLAYSTATE);

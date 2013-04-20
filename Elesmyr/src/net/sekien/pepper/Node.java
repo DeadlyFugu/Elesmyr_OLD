@@ -44,7 +44,10 @@ public abstract void setSel(int x, int y);
 
 public abstract void onAction(Action action);
 
-public void update(GameContainer gc) {}
+public void update(GameContainer gc) {
+	for (Node child : children)
+		child.update(gc);
+}
 
 public boolean wantKeys() {return false;}
 

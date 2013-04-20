@@ -48,7 +48,7 @@ public void onAction(Action enumAction) {
 @Override
 public void render(Renderer renderer, int w, int h, boolean sel) {
 	if (h==-1)
-		h = (sel?64:32);
+		h = (sel?32:32);
 	renderer.rect(0, 0, w, h, true, true, false, false, Renderer.BoxStyle.HFADE);
 	if (sel)
 		renderer.rect(0, 0, w, h, true, true, false, false, Renderer.BoxStyle.SEL);
@@ -57,6 +57,6 @@ public void render(Renderer renderer, int w, int h, boolean sel) {
 
 @Override
 public Dimension getDimensions(boolean sel) {
-	return new Dimension(440, (sel?64:32));
+	return new Dimension(440, (sel?32:32));
 }
 }

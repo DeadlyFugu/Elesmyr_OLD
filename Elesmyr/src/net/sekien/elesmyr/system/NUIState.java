@@ -34,6 +34,14 @@ public void init(GameContainer gameContainer, StateBasedGame stateBasedGame) thr
 
 	StateManager.registerState(new SaveSelectState("Saves"));
 
+	Node options = new ListNode("Options");
+	options.addChild(new GlobalsSetNode("debug", "Debug mode", "debug", new String[]{"Enabled", "Disabled"}, new String[]{"true", "false"}));
+	options.addChild(new GlobalsSetNode("vsync", "Vertical Sync", "vsync", new String[]{"Enabled", "Disabled"}, new String[]{"true", "false"}));
+	options.addChild(new GlobalsSetNode("lres", "Lightmap resolution", "lres", new String[]{"6", "12", "18", "24", "36", "48"}, new String[]{"6", "12", "18", "24", "36", "48"}));
+	options.addChild(new GlobalsEnumNode("lang", "Language", "lang", "EN_US", false, FontRenderer.Language.class));
+	options.addChild(new ButtonNode("done", "Done", "BACK"));
+	StateManager.registerState(options);
+
 	StateManager.setStateInitial("Main");
 }
 
