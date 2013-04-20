@@ -6,10 +6,7 @@ import net.sekien.elesmyr.player.Camera;
 import net.sekien.elesmyr.system.FontRenderer;
 import net.sekien.elesmyr.system.GameClient;
 import net.sekien.elesmyr.system.Main;
-import net.sekien.elesmyr.ui.dm.DevModeTarget;
-import net.sekien.elesmyr.ui.dm.ReadOnlyTarget;
-import net.sekien.elesmyr.ui.dm.ServerSideTarget;
-import net.sekien.elesmyr.ui.dm.StoredListTarget;
+import net.sekien.elesmyr.ui.dm.*;
 import net.sekien.elesmyr.util.FileHandler;
 import net.sekien.hbt.*;
 import org.newdawn.slick.*;
@@ -44,6 +41,8 @@ private ArrayList<HBTCompound> openCompounds;
 
 private boolean inited = false;
 
+private int updateTimer = 10;
+
 @Override
 public boolean inited() {return inited; }
 
@@ -67,14 +66,14 @@ public void init(GameContainer gc, StateBasedGame sbg, MessageEndPoint receiver)
 
 	targets = new HashMap<String, DevModeTarget>();
 	targets.put("NEW", new StoredListTarget());
-	targets.get("NEW").getList(null).addTag(new HBTInt("aint", 123));
-	targets.get("NEW").getList(null).addTag(new HBTString("cheese", "MARY HAD A LITTLE EGG"));
-	targets.get("NEW").getList(null).addTag(HBTTools.location("here", 42, 9001));
-	targets.get("NEW").getList(null).addTag(new HBTCompound("baa", new HBTTag[]{new HBTInt("aint", 123), new HBTComment("ADD FIELD")}));
-	targets.get("NEW").getList(null).addTag(new HBTByteArray("r2", new byte[]{0, 54, 75, 44, 3, 45, 32, 6, 56, 54, 3, 64, 36, 46}));
+	targets.get("NEW").getList(null, null).addTag(new HBTInt("aint", 123));
+	targets.get("NEW").getList(null, null).addTag(new HBTString("cheese", "MARY HAD A LITTLE EGG"));
+	targets.get("NEW").getList(null, null).addTag(HBTTools.location("here", 42, 9001));
+	targets.get("NEW").getList(null, null).addTag(new HBTCompound("baa", new HBTTag[]{new HBTInt("aint", 123), new HBTComment("ADD FIELD")}));
+	targets.get("NEW").getList(null, null).addTag(new HBTByteArray("r2", new byte[]{0, 54, 75, 44, 3, 45, 32, 6, 56, 54, 3, 64, 36, 46}));
 	targets.put("DEVMODE", new StoredListTarget());
 	targets.put("DATA", new ReadOnlyTarget(FileHandler.getData()));
-	targets.put("ENT", new ServerSideTarget("clearing_thing.12"));
+	targets.put("ENT", new ServerEntTarget("clearing_thing"));
 	targets.put("PDAT", new ServerSideTarget(((GameClient) receiver).player.getRegionName()+"."+((GameClient) receiver).player.entid, "pdat_GET", "pdat_SET"));
 	//targets.put("ENT",new ServerEntTarget());
 	openCompounds = new ArrayList<HBTCompound>();
@@ -149,7 +148,6 @@ public void update(GameContainer gc, StateBasedGame sbg, GameClient receiver) {
 		}
 
 		if (input.isMousePressed(Input.MOUSE_LEFT_BUTTON)) {
-			System.out.print("ML PRESS");
 			if (activeElement!=null)
 				writeActiveElement(receiver);
 			if (mx > (Main.INTERNAL_RESX-panelWidth)+16 && my > 16 && my < Main.INTERNAL_RESY-64) {
@@ -189,6 +187,12 @@ public void update(GameContainer gc, StateBasedGame sbg, GameClient receiver) {
 		if (mouseDragging) {
 			panelWidth = Math.min(Math.max(-(mx-Main.INTERNAL_RESX), 20), Main.INTERNAL_RESX-20);
 		}
+		if (activeElement==null)
+			updateTimer--;
+		if (updateTimer < 1) {
+			updateList(receiver);
+			updateTimer = 10;
+		}
 	}
 }
 
@@ -197,15 +201,12 @@ private Object getElementAt(int i, HBTCompound search) {
 		return null;
 	int si = 0;
 	for (HBTTag tag : search) {
-		System.out.println(tag.getName());
 		if (si==i) {
-			System.out.println("Found:"+tag);
 			return tag;
 		} else if (tag instanceof HBTCompound) {
 			if (openCompounds.contains(tag)) {
 				Object found = getElementAt(i-si-1, (HBTCompound) tag);
 				if (found instanceof HBTTag) {
-					System.out.println("Found:"+found);
 					return found;
 				} else {
 					si += (Integer) found;
@@ -284,11 +285,19 @@ private HBTCompound getActiveParent(HBTCompound search) {
 }
 
 private boolean updateList(GameClient client) {
+	String target = "";
+	String subtarget = "";
+	if (this.target.contains(".")) {
+		target = this.target.split("\\.", 2)[0];
+		subtarget = this.target.split("\\.", 2)[1];
+	} else {
+		target = this.target;
+	}
 
 	if (target.equals("NULL")) {
 		list = null;
 	} else if (targets.containsKey(target)) {
-		list = targets.get(target).getList(client);
+		list = targets.get(target).getList(client, subtarget);
 	} else {
 		Log.error("Unrecognised target "+target+".");
 		return false;

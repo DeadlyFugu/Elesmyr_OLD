@@ -14,7 +14,7 @@ import net.sekien.hbt.HBTTag;
  * Created with IntelliJ IDEA. User: matt Date: 19/04/13 Time: 4:13 PM To change this template use File | Settings |
  * File Templates.
  */
-public class ServerSideTarget implements DevModeTarget, MessageReceiver {
+public class ServerEntTarget implements DevModeTarget, MessageReceiver {
 
 private HBTCompound cached = new HBTCompound("DMRcache");
 
@@ -22,11 +22,11 @@ private String target, get, set;
 
 private boolean registered = false;
 
-public ServerSideTarget(String target) {
+public ServerEntTarget(String target) {
 	this(target, "_hbt", "_hbtSET");
 }
 
-public ServerSideTarget(String target, String get, String set) {
+public ServerEntTarget(String target, String get, String set) {
 	this.target = target;
 	this.get = get;
 	this.set = set;
@@ -38,7 +38,8 @@ public void setTarget(String target) {
 
 @Override
 public void set(HBTCompound list, String subTarget, GameClient client) {
-	MessageSystem.sendServer(this, new Message(target+"."+set, list), false);
+	MessageSystem.sendServer(this, new Message(target+"."+subTarget+
+			                                           "."+set, list), false);
 	cached = (HBTCompound) list.deepClone();
 }
 
@@ -46,7 +47,7 @@ public void set(HBTCompound list, String subTarget, GameClient client) {
 public HBTCompound getList(GameClient client, String subTarget) {
 	if (!registered)
 		MessageSystem.registerReceiverClient(this);
-	MessageSystem.sendServer(this, new Message(target+"."+get, new HBTCompound("p", new HBTTag[]{new HBTString("receiver", this.getReceiverName()), new HBTFlag("full", "TRUE")})), false);
+	MessageSystem.sendServer(this, new Message(target+"."+subTarget+"."+get, new HBTCompound("p", new HBTTag[]{new HBTString("receiver", this.getReceiverName()), new HBTFlag("full", "TRUE")})), false);
 	return cached;
 }
 

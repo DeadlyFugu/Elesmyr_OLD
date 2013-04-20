@@ -95,7 +95,6 @@ public String getSender() {
 }
 
 public void reply(String name, HBTCompound data, MessageReceiver sender) {
-	Log.error("Message reply start");
 	if (this.sender!=null) {
 		if (!serverBound)
 			MessageSystem.sendServer(sender, new Message(this.sender+"."+name, data), false);

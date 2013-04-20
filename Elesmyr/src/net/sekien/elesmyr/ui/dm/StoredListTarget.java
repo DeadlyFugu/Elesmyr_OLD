@@ -17,7 +17,7 @@ public void set(HBTCompound list, String subTarget, GameClient client) {
 }
 
 @Override
-public HBTCompound getList(GameClient client) {
+public HBTCompound getList(GameClient client, String subTarget) {
 	return list;
 }
 }

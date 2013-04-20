@@ -11,10 +11,7 @@ import net.sekien.elesmyr.player.PlayerData;
 import net.sekien.elesmyr.system.GameClient;
 import net.sekien.elesmyr.system.GameServer;
 import net.sekien.elesmyr.world.Region;
-import net.sekien.hbt.HBTCompound;
-import net.sekien.hbt.HBTInt;
-import net.sekien.hbt.HBTString;
-import net.sekien.hbt.HBTTools;
+import net.sekien.hbt.*;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.SlickException;
@@ -103,7 +100,8 @@ public void fromHBT(HBTCompound tag) {
 	x = tag.getInt("x", 0);
 	y = tag.getInt("y", 0);
 	//if (!tag.hasTag("name")) {} else {this.name = tag.getInt("name", "ERROR");} //MAY ERROR (ERROR BEFORE BECAUSE tag.getString)
-	extd = tag.getString("extd", "");
+	//extd = tag.getString("extd", "");
+	loadExtd(tag);
 }
 
 @Override
@@ -114,8 +112,17 @@ public HBTCompound toHBT(boolean msg) {
 	ret.addTag(new HBTInt("y", y));
 	if (msg)
 		ret.addTag(new HBTInt("name", Integer.parseInt(name)));
-	ret.addTag(new HBTString("extd", extd));
+	for (HBTTag tag : getExtd())
+		ret.addTag(tag);
 	return ret;
+}
+
+protected HBTCompound getExtd() {
+	return HBTTools.msgWrap(new HBTString("extd", extd));
+}
+
+protected void loadExtd(HBTCompound tag) {
+	this.extd = tag.getString("extd", "");
 }
 
 @Override

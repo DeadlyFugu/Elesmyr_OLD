@@ -11,5 +11,5 @@ public interface DevModeTarget {
 
 public void set(HBTCompound list, String subTarget, GameClient client);
 
-public HBTCompound getList(GameClient client);
+public HBTCompound getList(GameClient client, String subTarget);
 }

@@ -216,6 +216,11 @@ public void render(GameContainer gc, StateBasedGame sbg, Graphics g) throws Slic
 			long ms = TimeUnit.MILLISECONDS.convert(total, TimeUnit.NANOSECONDS);
 			debugText += "\nTotal: "+ms+"ms";
 			debugText += "\nFPS: "+(1000/ms);
+			if (ms <= 16) {
+				debugText += "\n"+(16-ms)+"ms under";
+			} else {
+				debugText += "\n"+(ms-16)+"ms over";
+			}
 		} catch (Exception e) {
 		}
 			/*try {
@@ -265,7 +270,6 @@ public void update(GameContainer gc, StateBasedGame sbg, int delta) throws Slick
 	}
 	if (Globals.get("debug", false) && regionLoaded) {
 		if (!devModeInited) {
-			System.out.println("hi");
 			DevMode dm = new DevMode();
 			dm.init(gc, sbg, this);
 			ui.addFirst(dm);
