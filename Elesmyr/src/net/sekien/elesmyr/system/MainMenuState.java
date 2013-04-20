@@ -347,6 +347,8 @@ public void update(GameContainer gc, StateBasedGame sbg, int delta) throws Slick
 			selection--;
 		}
 	}
+	if (gc.getInput().isKeyPressed(org.newdawn.slick.Input.KEY_F2))
+		sbg.enterState(Main.NUISTATE);
 	if (net.sekien.elesmyr.system.Input.isKeyPressed(gc, "pause")) {
 		if (showTextField) {
 			showTextField = false;

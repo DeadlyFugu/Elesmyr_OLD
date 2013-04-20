@@ -29,6 +29,7 @@ public static final int MENUSTATE = 1;
 public static final int GAMEPLAYSTATE = 2;
 public static final int ERRORSTATE = 3;
 public static final int LOGINSTATE = 4;
+public static final int NUISTATE = 5;
 
 public static float INTERNAL_ASPECT = (4/3f);
 public static int INTERNAL_RESY = 480; //Internal resolution y
@@ -49,11 +50,15 @@ public Main() {
 	this.addState(new GameClient(GAMEPLAYSTATE));
 	this.addState(new ErrorState(ERRORSTATE));
 	this.addState(new LoginState(LOGINSTATE));
+	this.addState(new NUIState(NUISTATE));
 
-	if (Globals.get("showIntro", true))
+	if (Globals.get("NUI", false)) {
+		this.enterState(NUISTATE);
+	} else if (Globals.get("showIntro", true)) {
 		this.enterState(INTROSTATE);
-	else
+	} else {
 		this.enterState(MENUSTATE);
+	}
 }
 
 public static void main(String[] args) throws SlickException {
