@@ -1,17 +1,21 @@
 package net.sekien.elesmyr;
 
+import org.newdawn.slick.Color;
+
 public enum Element {
 	//		Neu	Ear	Wat	Fir	Air	Void
-	NEUTRAL(1, 1, 1, 1, 1, 0.5f),
-	EARTH(1, 1, 2, .5f, 1, 0.5f),
-	WATER(1, .5f, 1, 1, 2, 0.5f),
-	FIRE(1, 2, 1, 1, .5f, 0.5f),
-	AIR(1, 1, .5f, 2, 1, 0.5f),
-	VOID(2, 2, 2, 2, 2, 1);            //...-AIR-FIRE-EARTH-WATER-AIR-...
+	NEUTRAL(1, 1, 1, 1, 1, 0.5f, Color.white),
+	EARTH(1, 1, 2, .5f, 1, 0.5f, new Color(120, 213, 0)),
+	WATER(1, .5f, 1, 1, 2, 0.5f, new Color(64, 169, 242)),
+	FIRE(1, 2, 1, 1, .5f, 0.5f, new Color(255, 68, 31)),
+	AIR(1, 1, .5f, 2, 1, 0.5f, new Color(0.87f, 0.97f, 1.0f, 0.35f)),
+	VOID(2, 2, 2, 2, 2, 1, new Color(84, 62, 78));            //...-AIR-FIRE-EARTH-WATER-AIR-...
 
 private float[] multTable;
+private Color color;
 
-private Element(float n, float e, float w, float f, float a, float v) {
+private Element(float n, float e, float w, float f, float a, float v, Color color) {
+	this.color = color;
 	this.multTable = new float[]{n, e, w, f, a, v};
 }
 
@@ -32,5 +36,9 @@ public float multAgainst(Element other) {
 		default:
 			return 1;
 	}
+}
+
+public Color color() {
+	return color;
 }
 }

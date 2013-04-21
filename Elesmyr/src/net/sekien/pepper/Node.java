@@ -32,6 +32,15 @@ public void addChild(Node child) {
 	children.add(child);
 }
 
+public Node getChild(String name) {
+	for (Node child : children) {
+		if (child.name.equals(name)) {
+			return child;
+		}
+	}
+	return null;
+}
+
 public void clear() {
 	children.clear();
 }

@@ -1,19 +1,15 @@
 package net.sekien.pepper;
 
-import java.awt.*;
-
 /**
  * Created with IntelliJ IDEA. User: matt Date: 20/04/13 Time: 1:15 PM To change this template use File | Settings |
  * File Templates.
  */
-public class ButtonNode extends ActionNode {
+public class CommandButtonNode extends AbstractButtonNode {
 
-private final String text;
 private final String action;
 
-public ButtonNode(String name, String text, String action) {
-	super(name);
-	this.text = text;
+public CommandButtonNode(String name, String text, String action) {
+	super(name, text);
 	this.action = action;
 }
 
@@ -43,20 +39,5 @@ public void onAction(Action enumAction) {
 			StateManager.updFunc("MAINMENU");
 		}
 	}
-}
-
-@Override
-public void render(Renderer renderer, int w, int h, boolean sel) {
-	if (h==-1)
-		h = (sel?32:32);
-	renderer.rect(0, 0, w, h, true, true, false, false, Renderer.BoxStyle.HFADE);
-	if (sel)
-		renderer.rect(0, 0, w, h, true, true, false, false, Renderer.BoxStyle.SEL);
-	renderer.text(w/2-renderer.textWidth(text)/2, 11, text);
-}
-
-@Override
-public Dimension getDimensions(boolean sel) {
-	return new Dimension(440, (sel?32:32));
 }
 }

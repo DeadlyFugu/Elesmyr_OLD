@@ -82,8 +82,8 @@ public void render(GameContainer gc, StateBasedGame sbg, Graphics g,
 		equip.draw(dx, dy);
 		if (ep.pdat.getEquipped()!=null)
 			ep.pdat.getEquipped().getItem().spr.draw(dx+16, dy+16);
-		FontRenderer.drawString(dx+62, dy+25, ep.getName(), g);
-		drawElement(dx+64, dy+45, ep.getElement());
+		FontRenderer.drawString(dx+62, dy+25, ep.getName(), ep.getElement().color(), g);
+		//drawElement(dx+64, dy+45, ep.getElement());
 		//FontRenderer.drawString(dx+62, dy+45, "("+ep.getElement().toString()+")", g);
 		int bdx = Main.INTERNAL_RESX-112;
 		bars.startUse();

@@ -1,6 +1,7 @@
 package net.sekien.elesmyr.system;
 
 import com.esotericsoftware.minlog.Log;
+import net.sekien.elesmyr.Profiler;
 import net.sekien.elesmyr.ScriptRunner;
 import net.sekien.elesmyr.util.FileHandler;
 import net.sekien.elesmyr.util.HashmapLoader;
@@ -210,6 +211,7 @@ private static class CustomAppGameContainer extends AppGameContainer {
 	public CustomAppGameContainer(Game game) throws SlickException {super(game);}
 
 	protected void updateAndRender(int delta) throws SlickException {
+		Profiler.startSection("Update");
 		if (smoothDeltas) {
 			if (getFPS()!=0) {
 				delta = 1000/getFPS();
@@ -251,6 +253,9 @@ private static class CustomAppGameContainer extends AppGameContainer {
 			game.update(this, 0);
 		}
 
+		Profiler.endSection();
+		Profiler.startSection("Render");
+
 		if (hasFocus() || getAlwaysRender()) {
 			if (clearEachFrame) {
 				GL.glClear(SGL.GL_COLOR_BUFFER_BIT|SGL.GL_DEPTH_BUFFER_BIT);
@@ -276,6 +281,8 @@ private static class CustomAppGameContainer extends AppGameContainer {
 
 			GL.flush();
 		}
+		Profiler.endSection();
+		Profiler.flush();
 
 		if (targetFPS!=-1) {
 			Display.sync(targetFPS);

@@ -1,5 +1,7 @@
 package net.sekien.pepper;
 
+import org.newdawn.slick.GameContainer;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -20,11 +22,28 @@ public List<Node> getList() {
 		}
 	}
 	ArrayList<Node> nodes = new ArrayList<Node>();
+	nodes.add(new CommandButtonNode("new", "New Game", "STATE NewSave"));
 	for (int i = 0; i < temp.size(); i++) {
 		File file = temp.get(i);
-		nodes.add(new ButtonNode("save_"+i, file.getName(), "SAVE "+file.getName()));
+		nodes.add(new CommandButtonNode("save_"+i, file.getName().split("\\.", 2)[0], "SAVE "+file.getName()));
 	}
 	return nodes;
+}
+
+private int prevSel = -1;
+
+@Override
+public void update(GameContainer gc) {
+	updTimer--;
+	if (updTimer < 1) {
+		updTimer = updateInterval();
+		children.clear();
+		children.addAll(getList());
+	}
+	if (sel!=prevSel) {
+		prevSel = sel;
+		StateManager.setBackground(((CommandButtonNode) children.get(sel)).getMessage().split("\\.", 2)[0]);
+	}
 }
 
 public SaveSelectState(String name) {

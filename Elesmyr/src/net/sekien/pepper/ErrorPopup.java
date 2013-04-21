@@ -26,12 +26,14 @@ public boolean receiveActions() {
 public void render(Renderer renderer, int w, int h, boolean sel) {
 	int cx = w/2;
 	int cy = h/2;
+	System.out.println(renderer.textHeight(message));
+	int height = Math.max(27, renderer.textHeight(message))+32+8;
 	int width = Math.max(200, renderer.textWidth(message)+38);
-	renderer.rect(cx-width/2, cy-48, width, 96, Renderer.BoxStyle.FULL);
-	renderer.textCentered(cx, cy-44, message);
-	renderer.rect(cx-width/2, cy+16, width, 32, true, false, false, false, Renderer.BoxStyle.OUTLINE);
-	renderer.sel(cx-width/2, cy+16, width, 32);
-	renderer.textCentered(cx, cy+24, "OK");
+	renderer.rect(cx-width/2, cy-height/2, width, height, Renderer.BoxStyle.FULL);
+	renderer.textCentered(cx, cy-height/2+4, message);
+	renderer.rect(cx-width/2, cy+height/2-32, width, 32, true, false, false, false, Renderer.BoxStyle.OUTLINE);
+	renderer.sel(cx-width/2, cy+height/2-32, width, 32);
+	renderer.textCentered(cx, cy+height/2-24, "OK");
 }
 
 @Override

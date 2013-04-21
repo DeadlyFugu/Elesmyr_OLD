@@ -8,11 +8,13 @@ import java.awt.*;
  */
 public class ListNode extends Node {
 
-private int sel = 0;
+protected int sel = 0;
 
 public ListNode(String name) {
 	super(name);
 }
+
+private int selh = 0;
 
 @Override
 public void render(Renderer renderer, int w, int h, boolean sel) {
@@ -23,12 +25,15 @@ public void render(Renderer renderer, int w, int h, boolean sel) {
 	renderer.rectPos(0, 0, renderer.textWidth(name)+20, 32, false, true, false, true, Renderer.BoxStyle.FULL);
 	renderer.text(10, 11, name);
 
-	int y = 0;
+	int basey = 100-selh;
+	int addy = 0;
 	int i = 0;
 	for (Node child : children) {
-		renderer.pushPos(100, y);
+		renderer.pushPos(100, basey+addy);
 		child.render(renderer, 440, -1, i==this.sel);
-		y += child.getDimensions(i==this.sel).height;
+		addy += child.getDimensions(i==this.sel).height;
+		if (i==this.sel)
+			selh += (addy-selh)/2;
 		i++;
 		renderer.popPos();
 	}
@@ -43,12 +48,15 @@ public void transitionEnter(Renderer renderer, int w, int h, boolean sel, float 
 	renderer.rect((int) (-(renderer.textWidth(name)+20)*(1-time)), 0, renderer.textWidth(name)+20, 32, false, true, false, true, Renderer.BoxStyle.FULL);
 	renderer.text((int) (-(renderer.textWidth(name)+20)*(1-time)+10), 11, name);
 
-	int y = (int) ((-32-children.size()*32)*(1-time));
+	int basey = (int) ((100-selh)-(children.size()*32+100)*(1-time));
+	int addy = 0;
 	int i = 0;
 	for (Node child : children) {
-		renderer.pushPos(100, y);
+		renderer.pushPos(100, basey+addy);
 		child.render(renderer, 440, -1, i==this.sel);
-		y += child.getDimensions(i==this.sel).height;
+		addy += child.getDimensions(i==this.sel).height;
+		if (i==this.sel)
+			selh += (addy-selh)/2;
 		i++;
 		renderer.popPos();
 	}

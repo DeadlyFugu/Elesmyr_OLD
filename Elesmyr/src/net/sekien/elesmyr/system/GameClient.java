@@ -127,7 +127,6 @@ public void init(GameContainer gc, StateBasedGame sbg) throws SlickException {
 }
 
 public void render(GameContainer gc, StateBasedGame sbg, Graphics g) throws SlickException {
-	Profiler.startSection("Render");
 	//g.scale(gc.getWidth()/((float) (Main.INTERNAL_RESY)*((float) gc.getWidth()/(float) gc.getHeight())),gc.getHeight()/(float) (Main.INTERNAL_RESY));
 	g.scale(gc.getWidth()/(float) (Main.INTERNAL_RESX), gc.getHeight()/(float) (Main.INTERNAL_RESY));
 	if (!regionLoaded) {
@@ -233,7 +232,6 @@ public void render(GameContainer gc, StateBasedGame sbg, Graphics g) throws Slic
 			i++;
 		}
 	}
-	Profiler.endSection();
 }
 
 private void renderMap(Region region, boolean fg) {
@@ -252,7 +250,6 @@ private void renderMap(Region region, boolean fg) {
 private boolean devModeInited = false;
 
 public void update(GameContainer gc, StateBasedGame sbg, int delta) throws SlickException {
-	Profiler.startSection("Client update");
 	if (gc.getInput().isKeyPressed(Input.KEY_ESCAPE)) {
 		if (showTextField) {
 			showTextField = false;
@@ -264,7 +261,8 @@ public void update(GameContainer gc, StateBasedGame sbg, int delta) throws Slick
 		} else {
 			MessageSystem.close();
 			gc.getInput().clearKeyPressedRecord();
-			sbg.enterState(Main.MENUSTATE);
+			//sbg.enterState(Main.MENUSTATE);
+			sbg.enterState(Main.NUISTATE);
 			return;
 		}
 	}
@@ -346,13 +344,9 @@ public void update(GameContainer gc, StateBasedGame sbg, int delta) throws Slick
 		lm.update(player.region, cam, time);
 		time += (servtime-time)/120;
 	}
-	Profiler.endSection();
-	Profiler.startSection("Server update");
 	if (MessageSystem.SERVER) {
 		server.gameUpdate();
 	}
-	Profiler.endSection();
-	Profiler.flush();
 }
 
 public boolean receiveMessage(Message msg) {

@@ -3,10 +3,7 @@ package net.sekien.pepper;
 import net.sekien.elesmyr.system.FontRenderer;
 import net.sekien.elesmyr.util.FileHandler;
 import net.sekien.elesmyr.util.ResourceType;
-import org.newdawn.slick.Color;
-import org.newdawn.slick.Graphics;
-import org.newdawn.slick.Image;
-import org.newdawn.slick.SlickException;
+import org.newdawn.slick.*;
 import org.newdawn.slick.util.Log;
 
 /**
@@ -17,7 +14,8 @@ public class Renderer {
 
 private Image error;
 private Image[][][] box;
-private Graphics g;
+public Graphics g;
+public GameContainer gc;
 
 Renderer() {
 	try {
@@ -54,8 +52,9 @@ private void loadBoxStyle(int i, Image boxfull) {
 	box[i][2][2] = boxfull.getSubImage(48, 48, 16, 16);
 }
 
-void setGraphics(Graphics g) {
+void setGraphicsAndGC(GameContainer gc, Graphics g) {
 	this.g = g;
+	this.gc = gc;
 }
 
 public void renderThing() {
@@ -119,15 +118,34 @@ public void text(int x, int y, String text) {
 }
 
 private void text(int x, int y, String text, Color color) {
-	FontRenderer.drawString(x, y, text, color, g);
+	String[] split = text.split("\n");
+	for (int i = 0, splitLength = split.length; i < splitLength; i++) {
+		String s = split[i];
+		FontRenderer.drawString(x, y+(i*12), s, color, g);
+	}
 }
 
 public int textWidth(String text) {
+	if (text.contains("\n")) {
+		int width = 0;
+		for (String s : text.split("\n")) {
+			width = Math.max(width, FontRenderer.getWidth(s));
+		}
+		return width;
+	}
 	return FontRenderer.getWidth(text);
 }
 
+public int textHeight(String text) {
+	return text.split("\n").length*12;
+}
+
 public void textCentered(int cx, int y, String text) {
-	text(cx-textWidth(text)/2, y, text);
+	String[] split = text.split("\n");
+	for (int i = 0, splitLength = split.length; i < splitLength; i++) {
+		String s = split[i];
+		FontRenderer.drawString(cx-textWidth(s)/2, y+(i*12), s, g);
+	}
 }
 
 public void sel(int x, int y, int width, int height) {

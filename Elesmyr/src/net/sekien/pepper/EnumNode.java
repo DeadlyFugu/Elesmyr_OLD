@@ -11,7 +11,7 @@ private String message;
 private boolean slide;
 protected boolean ordinal;
 protected Class options;
-private int sel = 0;
+protected int sel = 0;
 
 protected <E extends Enum<E>> EnumNode(String name, String message, boolean ordinal, Class<E> options) {
 	super(name);
@@ -21,10 +21,18 @@ protected <E extends Enum<E>> EnumNode(String name, String message, boolean ordi
 	this.options = options;
 }
 
+private int htarget;
+private int hcurrent;
+
 @Override
 public void render(Renderer renderer, int w, int h, boolean sel) {
-	if (h==-1)
-		h = (sel?64:32);
+	htarget = (sel?64:32);
+	if (hcurrent < htarget) {
+		hcurrent += 8;
+	} else if (hcurrent > htarget) {
+		hcurrent -= 8;
+	}
+	h = hcurrent;
 	renderer.rect(0, 0, w, h, true, true, false, false, Renderer.BoxStyle.HFADE);
 	renderer.text(w/2-renderer.textWidth(message)/2, 11, message);
 	if (sel) {
