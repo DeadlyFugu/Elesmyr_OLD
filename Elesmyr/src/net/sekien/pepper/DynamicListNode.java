@@ -18,9 +18,22 @@ public void update(GameContainer gc) {
 	updTimer--;
 	if (updTimer < 1) {
 		updTimer = updateInterval();
-		children.clear();
-		children.addAll(getList());
+		List<Node> newList = getList();
+		if (!listsEquals(children, newList)) {
+			children.clear();
+			children.addAll(getList());
+		}
 	}
+}
+
+private boolean listsEquals(List<Node> a, List<Node> b) {
+	if (a.size()!=b.size())
+		return false;
+	for (int i = 0, size = a.size(); i < size; i++) {
+		if (!a.get(i).getName().equals(b.get(i).getName()))
+			return false;
+	}
+	return true;
 }
 
 protected int updateInterval() {return 100;}

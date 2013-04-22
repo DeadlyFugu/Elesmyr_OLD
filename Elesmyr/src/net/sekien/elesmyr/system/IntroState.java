@@ -96,7 +96,7 @@ public void render(GameContainer gc, StateBasedGame sbg, Graphics g)
 		bg3.draw(vw-vh*(4/3f), 0, vh*(4/3f), h);
 	} else {
 		gc.getInput().clearKeyPressedRecord();
-		sbg.enterState(Main.MENUSTATE);
+		sbg.enterState(Main.NUISTATE);
 	}
 }
 

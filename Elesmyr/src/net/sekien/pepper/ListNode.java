@@ -9,6 +9,7 @@ import java.awt.*;
 public class ListNode extends Node {
 
 protected int sel = 0;
+private static final org.newdawn.slick.Color titleColor = new org.newdawn.slick.Color(1, 1, 1, 0.75f);
 
 public ListNode(String name) {
 	super(name);
@@ -18,22 +19,25 @@ private int selh = 0;
 
 @Override
 public void render(Renderer renderer, int w, int h, boolean sel) {
-	renderer.rectPos(100, 0, w-100, 100, false, false, true, true, Renderer.BoxStyle.UPFADE);
-	renderer.rectPos(100, 100, w-100, h-100, false, false, true, true, Renderer.BoxStyle.FULL);
-	renderer.rectPos(100, h-100, w-100, h, false, false, true, true, Renderer.BoxStyle.DOWNFADE);
-
-	renderer.rectPos(0, 0, renderer.textWidth(name)+20, 32, false, true, false, true, Renderer.BoxStyle.FULL);
-	renderer.text(10, 11, name);
+	renderer.rectPos(100, 0, w-100, h, false, false, true, true, Renderer.BoxStyle.FULL);
 
 	int basey = 100-selh;
 	int addy = 0;
 	int i = 0;
+
+	renderer.pushPos(100, basey-100);
+	renderer.g.pushTransform();
+	renderer.g.scale(4, 4);
+	renderer.text((220-renderer.textWidth(name)/2*4)/4, 5, name, titleColor);
+	renderer.g.popTransform();
+	renderer.popPos();
+
 	for (Node child : children) {
 		renderer.pushPos(100, basey+addy);
 		child.render(renderer, 440, -1, i==this.sel);
-		addy += child.getDimensions(i==this.sel).height;
 		if (i==this.sel)
-			selh += (addy-selh)/2;
+			selh += (addy-selh)/4;
+		addy += child.getDimensions(i==this.sel).height;
 		i++;
 		renderer.popPos();
 	}
@@ -41,16 +45,19 @@ public void render(Renderer renderer, int w, int h, boolean sel) {
 
 @Override
 public void transitionEnter(Renderer renderer, int w, int h, boolean sel, float time) {
-	renderer.rectPos(100, 0, w-100, 100, false, false, true, true, Renderer.BoxStyle.UPFADE);
-	renderer.rectPos(100, 100, w-100, h-100, false, false, true, true, Renderer.BoxStyle.FULL);
-	renderer.rectPos(100, h-100, w-100, h, false, false, true, true, Renderer.BoxStyle.DOWNFADE);
-
-	renderer.rect((int) (-(renderer.textWidth(name)+20)*(1-time)), 0, renderer.textWidth(name)+20, 32, false, true, false, true, Renderer.BoxStyle.FULL);
-	renderer.text((int) (-(renderer.textWidth(name)+20)*(1-time)+10), 11, name);
+	renderer.rectPos(100, 0, w-100, h, false, false, true, true, Renderer.BoxStyle.FULL);
 
 	int basey = (int) ((100-selh)-(children.size()*32+100)*(1-time));
 	int addy = 0;
 	int i = 0;
+
+	renderer.pushPos(100, basey-100);
+	renderer.g.pushTransform();
+	renderer.g.scale(4, 4);
+	renderer.text((220-renderer.textWidth(name)/2*4)/4, 5, name, titleColor);
+	renderer.g.popTransform();
+	renderer.popPos();
+
 	for (Node child : children) {
 		renderer.pushPos(100, basey+addy);
 		child.render(renderer, 440, -1, i==this.sel);

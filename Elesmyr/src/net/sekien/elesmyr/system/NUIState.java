@@ -25,21 +25,25 @@ public int getID() {
 public void init(GameContainer gameContainer, StateBasedGame stateBasedGame) throws SlickException {
 	StateManager.init(gameContainer);
 	Node main = new ListNode("Main");
+	//main.addChild(new ImageNode("logo","ui.elesmyr"));
 	main.addChild(new CommandButtonNode("singleplayer", "Single Player", "STATE Saves"));
 	main.addChild(new CommandButtonNode("multiplayer", "Join", "STATE Join"));
+	main.addChild(new CommandButtonNode("packs", "Packs", "STATE Packs"));
 	main.addChild(new CommandButtonNode("options", "Options", "STATE Options"));
-	main.addChild(new CommandButtonNode("old", "Old Menu", "MAINMENU"));
 	main.addChild(new CommandButtonNode("exit", "Quit", "BACK"));
 	StateManager.registerState(main);
 
 	StateManager.registerState(new SaveSelectState("Saves"));
 	StateManager.registerState(new NewSaveNode("NewSave"));
 
+	StateManager.registerState(new PackSelectState("Packs"));
+
 	Node options = new ListNode("Options");
 	options.addChild(new GlobalsSetNode("debug", "Debug mode", "debug", new String[]{"Enabled", "Disabled"}, new String[]{"true", "false"}));
 	options.addChild(new GlobalsSetNode("vsync", "Vertical Sync", "vsync", new String[]{"Enabled", "Disabled"}, new String[]{"true", "false"}));
 	options.addChild(new GlobalsSetNode("lres", "Lightmap resolution", "lres", new String[]{"6", "12", "18", "24", "36", "48"}, new String[]{"6", "12", "18", "24", "36", "48"}));
 	options.addChild(new GlobalsEnumNode("lang", "Language", "lang", "EN_US", false, FontRenderer.Language.class));
+	options.addChild(new CommandButtonNode("old", "Old Menu", "MAINMENU"));
 	StateManager.registerState(options);
 
 	StateManager.setStateInitial("Main");

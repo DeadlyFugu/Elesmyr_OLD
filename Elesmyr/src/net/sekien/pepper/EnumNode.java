@@ -34,7 +34,7 @@ public void render(Renderer renderer, int w, int h, boolean sel) {
 	}
 	h = hcurrent;
 	renderer.rect(0, 0, w, h, true, true, false, false, Renderer.BoxStyle.HFADE);
-	renderer.text(w/2-renderer.textWidth(message)/2, 11, message);
+	renderer.text(w/2-renderer.textWidth(message)/2, 11, message, sel);
 	if (sel) {
 		if (slide) {
 			Object[] optVal = options.getEnumConstants();

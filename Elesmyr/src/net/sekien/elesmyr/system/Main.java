@@ -53,12 +53,10 @@ public Main() {
 	this.addState(new LoginState(LOGINSTATE));
 	this.addState(new NUIState(NUISTATE));
 
-	if (Globals.get("NUI", false)) {
-		this.enterState(NUISTATE);
-	} else if (Globals.get("showIntro", true)) {
+	if (Globals.get("showIntro", true)) {
 		this.enterState(INTROSTATE);
 	} else {
-		this.enterState(MENUSTATE);
+		this.enterState(NUISTATE);
 	}
 }
 

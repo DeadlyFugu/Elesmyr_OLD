@@ -8,7 +8,7 @@ import java.awt.*;
  */
 public abstract class MultiChoiceButtonNode extends ActionNode {
 
-private String message;
+protected String message;
 protected String[] options;
 protected int sel = 0;
 
@@ -18,8 +18,8 @@ protected MultiChoiceButtonNode(String name, String message, String[] options) {
 	this.options = options;
 }
 
-private int htarget = 32;
-private int hcurrent = 32;
+protected int htarget = 32;
+protected int hcurrent = 32;
 
 @Override
 public void render(Renderer renderer, int w, int h, boolean sel) {
@@ -31,7 +31,7 @@ public void render(Renderer renderer, int w, int h, boolean sel) {
 	}
 	h = hcurrent;
 	renderer.rect(0, 0, w, h, true, true, false, false, Renderer.BoxStyle.HFADE);
-	renderer.text(w/2-renderer.textWidth(message)/2, 11, message);
+	renderer.text(w/2-renderer.textWidth(message)/2, 11, message, sel);
 	if (sel) {
 		renderer.rect(0, 32, w, 32, true, false, false, false, Renderer.BoxStyle.OUTLINE);
 		renderer.sel(this.sel*(w/options.length), 32, w/options.length, 32);

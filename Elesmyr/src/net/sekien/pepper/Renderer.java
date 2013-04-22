@@ -117,7 +117,7 @@ public void text(int x, int y, String text) {
 	text(x, y, text, Color.white);
 }
 
-private void text(int x, int y, String text, Color color) {
+public void text(int x, int y, String text, Color color) {
 	String[] split = text.split("\n");
 	for (int i = 0, splitLength = split.length; i < splitLength; i++) {
 		String s = split[i];
@@ -150,6 +150,10 @@ public void textCentered(int cx, int y, String text) {
 
 public void sel(int x, int y, int width, int height) {
 	rect(x, y, width, height, BoxStyle.SEL);
+}
+
+public void text(int x, int y, String text, boolean sel) {
+	text(x, y, text, new Color(1, 1, 1, sel?1f:0.25f));
 }
 
 public enum BoxStyle {FULL, OUTLINE, VFADE, HFADE, UPFADE, DOWNFADE, SEL}

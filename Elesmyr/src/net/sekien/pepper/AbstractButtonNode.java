@@ -22,7 +22,7 @@ public void render(Renderer renderer, int w, int h, boolean sel) {
 	renderer.rect(0, 0, w, h, true, true, false, false, Renderer.BoxStyle.HFADE);
 	if (sel)
 		renderer.rect(0, 0, w, h, true, true, false, false, Renderer.BoxStyle.SEL);
-	renderer.text(w/2-renderer.textWidth(text)/2, 11, text);
+	renderer.text(w/2-renderer.textWidth(text)/2, 11, text, sel);
 }
 
 @Override

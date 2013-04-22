@@ -29,6 +29,8 @@ private static HashMap<String, Node> states;
 private static Renderer renderer;
 private static Image background;
 private static Image newBG = null;
+private static Image vignette;
+private static Image alphabg;
 private static int bgAnim = 0;
 private static Stack<Node> stateTrace;
 private static List<PopupNode> popup;
@@ -48,6 +50,8 @@ public static void init(GameContainer gc) {
 	renderer = new Renderer();
 	try {
 		background = FileHandler.getImage("menu.bg");
+		vignette = FileHandler.getImage("ui.vignette");
+		alphabg = FileHandler.getImage("ui.alphabg");
 	} catch (Exception e) {}
 
 	textField = new TextField(gc, FontRenderer.getFont(), 0, 16, 530, 16);
@@ -74,6 +78,8 @@ public static void render(GameContainer gc, Graphics g) {
 			background.draw(0, 0, gc.getWidth(), gc.getHeight());
 		}
 	}
+	vignette.draw(0, 0, gc.getWidth(), gc.getHeight());
+	alphabg.draw(0, 0, gc.getWidth(), gc.getHeight());
 	g.scale(gc.getWidth()/(float) (Main.INTERNAL_RESX), gc.getHeight()/(float) (Main.INTERNAL_RESY));
 	if (!stateTrace.empty()) {
 		if (newState!=null) {
@@ -180,9 +186,9 @@ public static void update(GameContainer gc, StateBasedGame sbg) {
 }
 
 private static Action getAction(Input input) {
-	if (input.isKeyPressed(Input.KEY_ENTER)) {
+	if (input.isKeyPressed(Input.KEY_Z)) {
 		return Action.SELECT;
-	} else if (input.isKeyPressed(Input.KEY_ESCAPE)) {
+	} else if (input.isKeyPressed(Input.KEY_X)) {
 		return Action.BACK;
 	} else if (input.isKeyPressed(Input.KEY_UP)) {
 		return Action.UP;
