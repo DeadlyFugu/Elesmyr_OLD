@@ -13,7 +13,6 @@ import net.sekien.elesmyr.world.item.Item;
 import net.sekien.elesmyr.world.item.ItemWeapon;
 import net.sekien.hbt.HBTTools;
 import org.newdawn.slick.*;
-import org.newdawn.slick.state.StateBasedGame;
 
 import java.util.Random;
 
@@ -39,16 +38,16 @@ public void initSERV() {
 }
 
 @Override
-public void init(GameContainer gc, StateBasedGame sbg, MessageEndPoint receiver)
+public void init(GameContainer gc, MessageEndPoint receiver)
 		throws SlickException {
 	spr = FileHandler.getImage("ent.enemy");
 }
 
 @Override
-public void render(GameContainer gc, StateBasedGame sbg, Graphics g,
+public void render(GameContainer gc, Graphics g,
                    Camera cam, GameClient receiver) throws SlickException {
 	if (spr==null)
-		init(gc, sbg, receiver);
+		init(gc, receiver);
 	//spr.draw(x+cam.getXOff(),y+cam.getYOff());
 	spr.draw(xs+cam.getXOff(), ys+cam.getYOff());
 	drawHealthBar(xs+cam.getXOff(), ys+cam.getYOff(), g);

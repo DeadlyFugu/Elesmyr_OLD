@@ -8,7 +8,6 @@ import net.sekien.elesmyr.system.Globals;
 import net.sekien.elesmyr.system.Main;
 import net.sekien.elesmyr.util.FileHandler;
 import org.newdawn.slick.*;
-import org.newdawn.slick.state.StateBasedGame;
 
 import java.util.ArrayList;
 
@@ -39,13 +38,13 @@ public void addPage(String page) {
 }
 
 @Override
-public void init(GameContainer gc, StateBasedGame sbg, MessageEndPoint receiver) throws SlickException {
+public void init(GameContainer gc, MessageEndPoint receiver) throws SlickException {
 	inited = true;
 	bg = FileHandler.getImage("ui.book");
 }
 
 @Override
-public void render(GameContainer gc, StateBasedGame sbg, Graphics g, Camera cam, GameClient receiver) throws SlickException {
+public void render(GameContainer gc, Graphics g, Camera cam, GameClient receiver) throws SlickException {
 	int xoff = (Main.INTERNAL_RESX/2);
 	bg.draw(xoff-320, 0);
 	if (Globals.get("debug", false))
@@ -64,7 +63,7 @@ private void drawPage(int x, String s, Graphics g) {
 }
 
 @Override
-public void update(GameContainer gc, StateBasedGame sbg, GameClient receiver) {
+public void update(GameContainer gc, GameClient receiver) {
 	Input in = gc.getInput();
 	if (in.isKeyPressed(Input.KEY_LEFT))
 		if (page > 0)

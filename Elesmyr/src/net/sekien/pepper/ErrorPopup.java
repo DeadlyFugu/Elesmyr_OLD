@@ -26,7 +26,6 @@ public boolean receiveActions() {
 public void render(Renderer renderer, int w, int h, boolean sel) {
 	int cx = w/2;
 	int cy = h/2;
-	System.out.println(renderer.textHeight(message));
 	int height = Math.max(27, renderer.textHeight(message))+32+8;
 	int width = Math.max(200, renderer.textWidth(message)+38);
 	renderer.rect(cx-width/2, cy-height/2, width, height, Renderer.BoxStyle.FULL);

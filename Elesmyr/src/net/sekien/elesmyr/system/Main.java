@@ -6,6 +6,7 @@ import net.sekien.elesmyr.ScriptRunner;
 import net.sekien.elesmyr.util.FileHandler;
 import net.sekien.elesmyr.util.HashmapLoader;
 import net.sekien.hbt.HBTCompound;
+import net.sekien.pepper.StateManager;
 import org.lwjgl.opengl.Display;
 import org.newdawn.slick.*;
 import org.newdawn.slick.opengl.renderer.SGL;
@@ -153,6 +154,7 @@ public void initStatesList(GameContainer gameContainer) throws SlickException {
 	FontRenderer.initialise(gameContainer);
 	Main.gc = gameContainer;
 	Main.sbg = this;
+	gc.getInput().enableKeyRepeat();
 }
 
 public static void handleError(Exception e) {
@@ -162,8 +164,7 @@ public static void handleError(Exception e) {
 
 public static void handleError(String error) {
 	gc.getInput().clearKeyPressedRecord();
-	((ErrorState) sbg.getState(Main.ERRORSTATE)).errorText = error;
-	sbg.enterState(Main.ERRORSTATE);
+	StateManager.error(error, true);
 }
 
 private static class SlickToMinLogSystem implements LogSystem {

@@ -20,6 +20,7 @@ import net.sekien.hbt.HBTCompound;
 import net.sekien.hbt.HBTInt;
 import net.sekien.hbt.HBTString;
 import net.sekien.hbt.HBTTools;
+import net.sekien.pepper.StateManager;
 import org.newdawn.slick.*;
 import org.newdawn.slick.Input;
 import org.newdawn.slick.gui.TextField;
@@ -107,11 +108,11 @@ public void init(GameContainer gc, StateBasedGame sbg) throws SlickException {
 	chat = new LinkedList<ChatMessage>();
 	ui = new LinkedList<UserInterface>();
 	HUDUI hud = new HUDUI();
-	hud.init(gc, sbg, this);
+	hud.init(gc, this);
 	ui.addFirst(hud);
 	world = new World();
 	player = new PlayerClient(this, world);
-	player.init(gc, sbg, this);
+	player.init(gc, this);
 	cam = new Camera(10, 10);
 	lm = new LightMap(true, (int) (MainMenuState.lres*Main.INTERNAL_ASPECT), MainMenuState.lres);
 	vignette = FileHandler.getImage("ui.vignette");
@@ -128,7 +129,7 @@ public void init(GameContainer gc, StateBasedGame sbg) throws SlickException {
 
 public void render(GameContainer gc, StateBasedGame sbg, Graphics g) throws SlickException {
 	//g.scale(gc.getWidth()/((float) (Main.INTERNAL_RESY)*((float) gc.getWidth()/(float) gc.getHeight())),gc.getHeight()/(float) (Main.INTERNAL_RESY));
-	g.scale(gc.getWidth()/(float) (Main.INTERNAL_RESX), gc.getHeight()/(float) (Main.INTERNAL_RESY));
+	//g.scale(gc.getWidth()/(float) (Main.INTERNAL_RESX), gc.getHeight()/(float) (Main.INTERNAL_RESY));
 	if (!regionLoaded) {
 		//g.setColor(Color.black);
 		//g.fillRect(0,0,Main.INTERNAL_RESX,Main.INTERNAL_RESY);
@@ -136,8 +137,8 @@ public void render(GameContainer gc, StateBasedGame sbg, Graphics g) throws Slic
 	} else if (MessageSystem.CLIENT) {
 		g.pushTransform();
 		renderMap(player.region, false);
-		world.render(gc, sbg, g, cam, this);
-		player.render(gc, sbg, g, cam, this);
+		world.render(gc, g, cam, this);
+		player.render(gc, g, cam, this);
 		renderMap(player.region, true);
 		if (Globals.get("debug", false) && Globals.get("showEnt", true)) { //Show ent IDs.
 			for (Entity e : player.region.entities.values()) //TODO: Somehow this line throws an NPE occasionally O.o
@@ -168,14 +169,14 @@ public void render(GameContainer gc, StateBasedGame sbg, Graphics g) throws Slic
 		while (itui.hasNext()) {
 			UserInterface uii = itui.next();
 			if (!uii.inited()) {
-				uii.init(gc, sbg, this);
+				uii.init(gc, this);
 				Log.info(uii+" was init-ed");
 			}
 			if (uii.blockUpdates()) {
 				alphabg.draw(0, 0, Main.INTERNAL_RESX, Main.INTERNAL_RESY);
 				vignette.draw(0, 0, Main.INTERNAL_RESX, Main.INTERNAL_RESY);
 			}
-			uii.render(gc, sbg, g, cam, this);
+			uii.render(gc, g, cam, this);
 		}
 
 		if (showTextField) {
@@ -195,7 +196,7 @@ public void render(GameContainer gc, StateBasedGame sbg, Graphics g) throws Slic
 			g.fillRect(0, 0, Main.INTERNAL_RESX, Main.INTERNAL_RESY);
 			g.setColor(Color.white);
 		}
-		server.render(gc, sbg, g, MessageSystem.CLIENT);
+		server.render(gc, g, MessageSystem.CLIENT);
 	}
 	if (MessageSystem.CLIENT && Globals.get("debugInfo", true)) {
 		//Client debug mode
@@ -261,15 +262,14 @@ public void update(GameContainer gc, StateBasedGame sbg, int delta) throws Slick
 		} else {
 			MessageSystem.close();
 			gc.getInput().clearKeyPressedRecord();
-			//sbg.enterState(Main.MENUSTATE);
-			sbg.enterState(Main.NUISTATE);
+			StateManager.back();
 			return;
 		}
 	}
 	if (Globals.get("debug", false) && regionLoaded) {
 		if (!devModeInited) {
 			DevMode dm = new DevMode();
-			dm.init(gc, sbg, this);
+			dm.init(gc, this);
 			ui.addFirst(dm);
 			devModeInited = true;
 		}
@@ -309,7 +309,7 @@ public void update(GameContainer gc, StateBasedGame sbg, int delta) throws Slick
 			ui.removeFirst();
 		} else if (!ui.peekFirst().blockUpdates()) {
 			InventoryUI inv = new InventoryUI();
-			inv.init(gc, sbg, this);
+			inv.init(gc, this);
 			ui.addFirst(inv);
 		}
 	}
@@ -322,24 +322,23 @@ public void update(GameContainer gc, StateBasedGame sbg, int delta) throws Slick
 		if (error!=null) {
 			gc.getInput().clearKeyPressedRecord();
 			MessageSystem.close();
-			((ErrorState) sbg.getState(Main.ERRORSTATE)).errorText = error;
-			sbg.enterState(Main.ERRORSTATE);
+			StateManager.error(error, true);
 		}
 		boolean blocked = false;
 		if (ui.peekFirst().blockUpdates()) {
-			ui.peekFirst().update(gc, sbg, this);
+			ui.peekFirst().update(gc, this);
 			blocked = true;
 			gc.getInput().clearKeyPressedRecord();
 		}
 		for (UserInterface uii : ui) {
 			if (!blocked || !uii.blockUpdates())
-				uii.update(gc, sbg, this);
+				uii.update(gc, this);
 		}
 		for (ChatMessage cm : chat)
 			cm.update();
-		world.clientUpdate(gc, sbg, this);
+		world.clientUpdate(gc, this);
 		if (!blocked)
-			player.clientUpdate(gc, sbg, this);
+			player.clientUpdate(gc, this);
 		cam.update(player);
 		lm.update(player.region, cam, time);
 		time += (servtime-time)/120;

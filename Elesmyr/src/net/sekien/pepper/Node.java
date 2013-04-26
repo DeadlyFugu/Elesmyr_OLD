@@ -58,7 +58,7 @@ public void update(GameContainer gc) {
 		child.update(gc);
 }
 
-public boolean wantKeys() {return false;}
+public boolean rawKey() {return false;}
 
 public abstract Dimension getDimensions(boolean sel);
 

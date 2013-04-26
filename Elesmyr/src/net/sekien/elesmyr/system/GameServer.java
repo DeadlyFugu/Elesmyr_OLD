@@ -16,7 +16,6 @@ import net.sekien.elesmyr.world.entity.EntityPlayer;
 import net.sekien.hbt.*;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
-import org.newdawn.slick.state.StateBasedGame;
 
 import java.io.File;
 import java.io.IOException;
@@ -264,7 +263,7 @@ private List<Connection> getConnections() {
 	return MessageSystem.getConnections();
 }
 
-public void render(GameContainer gc, StateBasedGame sbg, Graphics g, boolean overlay) {
+public void render(GameContainer gc, Graphics g, boolean overlay) {
 	if (overlay) {
 		FontRenderer.drawString(10, 18, "Connections:", g);
 		int i = 0;

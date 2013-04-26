@@ -138,7 +138,9 @@ public static void update(GameContainer gc, StateBasedGame sbg) {
 				((GameClient) sbg.getState(Main.GAMEPLAYSTATE)).loadSave(gc, savename, false, sbg);
 				((GameClient) sbg.getState(Main.GAMEPLAYSTATE)).init(gc, sbg);
 				gc.getInput().clearKeyPressedRecord();
-				sbg.enterState(Main.GAMEPLAYSTATE);
+				//sbg.enterState(Main.GAMEPLAYSTATE);
+				((GameClientState) states.get("GameClient")).setClient(((GameClient) sbg.getState(Main.GAMEPLAYSTATE)), sbg);
+				setState("GameClient");
 			} catch (Exception e) {
 				if (e.getLocalizedMessage()!=null && e.getLocalizedMessage().equals("__BIND_EXCEPTION")) {
 					com.esotericsoftware.minlog.Log.error(e.getLocalizedMessage());
@@ -155,7 +157,9 @@ public static void update(GameContainer gc, StateBasedGame sbg) {
 	if (!stateTrace.empty()) {
 		if (newState==null) {
 			Input input = gc.getInput();
-			Action action = getAction(input);
+			Action action = null;
+			if (!stateTrace.peek().rawKey())
+				action = getAction(input);
 			boolean popupHasFocus = false;
 			List<PopupNode> removePopups = new ArrayList<PopupNode>(5);
 			for (PopupNode node : popup) {
@@ -186,9 +190,9 @@ public static void update(GameContainer gc, StateBasedGame sbg) {
 }
 
 private static Action getAction(Input input) {
-	if (input.isKeyPressed(Input.KEY_Z)) {
+	if (input.isKeyPressed(Input.KEY_ENTER)) {
 		return Action.SELECT;
-	} else if (input.isKeyPressed(Input.KEY_X)) {
+	} else if (input.isKeyPressed(Input.KEY_ESCAPE)) {
 		return Action.BACK;
 	} else if (input.isKeyPressed(Input.KEY_UP)) {
 		return Action.UP;
@@ -264,7 +268,9 @@ public static void back() {
 }
 
 public static void error(String string, boolean goBack) {
-	popup.add(new ErrorPopup("Error", string, goBack));
+	if (goBack)
+		back();
+	popup.add(new ErrorPopup("Error", string, false));
 }
 
 public static void updFunc(String func) {

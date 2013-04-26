@@ -13,7 +13,6 @@ import net.sekien.elesmyr.world.entity.EntityPlayer;
 import net.sekien.elesmyr.world.item.Item;
 import net.sekien.hbt.HBTTools;
 import org.newdawn.slick.*;
-import org.newdawn.slick.state.StateBasedGame;
 
 import java.util.ArrayList;
 
@@ -26,7 +25,7 @@ int smax = 1;
 String[] types = {"All", "Weapons", "Armor", "Potions", "Food", "Books", "Misc"};
 
 @Override
-public void init(GameContainer gc, StateBasedGame sbg,
+public void init(GameContainer gc,
                  MessageEndPoint receiver) throws SlickException {
 	inited = true;
 	bg = FileHandler.getImage("ui.inv");
@@ -41,7 +40,7 @@ public boolean inited() {
 }
 
 @Override
-public void render(GameContainer gc, StateBasedGame sbg, Graphics g,
+public void render(GameContainer gc, Graphics g,
                    Camera cam, GameClient receiver) throws SlickException {
 	int xoff = (Main.INTERNAL_RESX/2)-320;
 	bg.draw(xoff, 0);
@@ -76,7 +75,7 @@ public void render(GameContainer gc, StateBasedGame sbg, Graphics g,
 }
 
 @Override
-public void update(GameContainer gc, StateBasedGame sbg, GameClient receiver) {
+public void update(GameContainer gc, GameClient receiver) {
 	Input in = gc.getInput();
 	if (in.isKeyPressed(Input.KEY_LEFT))
 		if (sel > 0) {

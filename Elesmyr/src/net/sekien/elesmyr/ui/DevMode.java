@@ -11,7 +11,6 @@ import net.sekien.elesmyr.util.FileHandler;
 import net.sekien.hbt.*;
 import org.newdawn.slick.*;
 import org.newdawn.slick.gui.TextField;
-import org.newdawn.slick.state.StateBasedGame;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -51,7 +50,7 @@ public void ctor(String extd) {
 }
 
 @Override
-public void init(GameContainer gc, StateBasedGame sbg, MessageEndPoint receiver) throws SlickException {
+public void init(GameContainer gc, MessageEndPoint receiver) throws SlickException {
 	inited = true;
 
 	textField = new TextField(gc, FontRenderer.getFont(), 0, 16, 530, 16);
@@ -80,7 +79,7 @@ public void init(GameContainer gc, StateBasedGame sbg, MessageEndPoint receiver)
 }
 
 @Override
-public void render(GameContainer gc, StateBasedGame sbg, Graphics g, Camera cam, GameClient receiver) throws SlickException {
+public void render(GameContainer gc, Graphics g, Camera cam, GameClient receiver) throws SlickException {
 	if (enabled) {
 		g.setColor(new Color(0, 0, 0, 0.75f));
 		g.fillRect(Main.INTERNAL_RESX-panelWidth, 16, panelWidth, Main.INTERNAL_RESY-80);
@@ -128,7 +127,7 @@ private int renderList(int x, int y, HBTCompound list, Graphics g) {
 private boolean mouseDragging = false;
 
 @Override
-public void update(GameContainer gc, StateBasedGame sbg, GameClient receiver) {
+public void update(GameContainer gc, GameClient receiver) {
 	Input input = gc.getInput();
 	if (input.isKeyPressed(Input.KEY_TAB)) {
 		enabled = !enabled;

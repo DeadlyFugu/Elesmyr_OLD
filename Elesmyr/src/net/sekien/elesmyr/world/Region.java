@@ -24,7 +24,6 @@ import net.sekien.hbt.HBTTools;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.SlickException;
-import org.newdawn.slick.state.StateBasedGame;
 import org.newdawn.slick.tiled.TiledMap;
 
 import java.io.BufferedReader;
@@ -52,7 +51,7 @@ public Region(String name) {
 	connections = new ArrayList<Connection>();
 }
 
-public void init(GameContainer gc, StateBasedGame sbg, MessageEndPoint receiver) throws SlickException {
+public void init(GameContainer gc, MessageEndPoint receiver) throws SlickException {
 	try {
 		map = new TiledMap(FileHandler.parse("region."+name, ResourceType.MAP));
 		mapColLayer = map.getLayerIndex("col");
@@ -63,7 +62,7 @@ public void init(GameContainer gc, StateBasedGame sbg, MessageEndPoint receiver)
 	}
 }
 
-public void render(GameContainer gc, StateBasedGame sbg, Graphics g, Camera cam, GameClient receiver) throws SlickException {
+public void render(GameContainer gc, Graphics g, Camera cam, GameClient receiver) throws SlickException {
 	//Map is rendered in GameplayState
 	List<Entity> list = new ArrayList<Entity>(entities.values());
 	try {
@@ -72,7 +71,7 @@ public void render(GameContainer gc, StateBasedGame sbg, Graphics g, Camera cam,
 		e.printStackTrace();
 	}
 	for (Entity e : list) {
-		e.render(gc, sbg, g, cam, receiver);
+		e.render(gc, g, cam, receiver);
 	}
 }
 
@@ -150,9 +149,9 @@ public void update(Region region, GameServer receiver) {
 }
 
 @Override
-public void clientUpdate(GameContainer gc, StateBasedGame sbg, GameClient receiver) {
+public void clientUpdate(GameContainer gc, GameClient receiver) {
 	for (Entity e : entities.values()) {
-		e.clientUpdate(gc, sbg, receiver);
+		e.clientUpdate(gc, receiver);
 	}
 }
 

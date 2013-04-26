@@ -9,7 +9,6 @@ import net.sekien.elesmyr.world.Region;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.SlickException;
-import org.newdawn.slick.state.StateBasedGame;
 
 public interface GameElement extends MessageReceiver {
 
@@ -18,7 +17,7 @@ public interface GameElement extends MessageReceiver {
  *
  * @throws SlickException
  */
-public void init(GameContainer gc, StateBasedGame sbg, MessageEndPoint receiver) throws SlickException;
+public void init(GameContainer gc, MessageEndPoint receiver) throws SlickException;
 
 /**
  * Load this object from a save file
@@ -33,13 +32,13 @@ public void load(Save save);
  *
  * @throws SlickException
  */
-public void render(GameContainer gc, StateBasedGame sbg, Graphics g, Camera cam, GameClient receiver) throws SlickException;
+public void render(GameContainer gc, Graphics g, Camera cam, GameClient receiver) throws SlickException;
 
 /** Server-side updating */
 public void update(Region region, GameServer receiver);
 
 /** Client-side updating */
-public void clientUpdate(GameContainer gc, StateBasedGame sbg, GameClient receiver);
+public void clientUpdate(GameContainer gc, GameClient receiver);
 
 /** Save data Server-side */
 public void save(Save save);

@@ -12,7 +12,6 @@ import net.sekien.elesmyr.util.FileHandler;
 import net.sekien.elesmyr.world.entity.Entity;
 import net.sekien.elesmyr.world.entity.EntityPlayer;
 import org.newdawn.slick.*;
-import org.newdawn.slick.state.StateBasedGame;
 
 import java.util.ArrayList;
 
@@ -37,7 +36,7 @@ public HUDUI() {
 }
 
 @Override
-public void init(GameContainer gc, StateBasedGame sbg,
+public void init(GameContainer gc,
                  MessageEndPoint receiver) throws SlickException {
 	inited = true;
 	bart = FileHandler.getImage("ui.bar_t");
@@ -48,7 +47,7 @@ public void init(GameContainer gc, StateBasedGame sbg,
 }
 
 @Override
-public void render(GameContainer gc, StateBasedGame sbg, Graphics g,
+public void render(GameContainer gc, Graphics g,
                    Camera cam, GameClient receiver) throws SlickException {
 	bart.draw(0, 0, Main.INTERNAL_RESX, 16);
 	FontRenderer.drawString(0, 0, HUDUI.getTopString(), g);
@@ -133,7 +132,7 @@ private static String getTopString() {
 }
 
 @Override
-public void update(GameContainer gc, StateBasedGame sbg, GameClient receiver) {
+public void update(GameContainer gc, GameClient receiver) {
 	if (updtimer==0) { //Calculate nearest players
 		updtimer = 60;
 		if (receiver.player.region==null)

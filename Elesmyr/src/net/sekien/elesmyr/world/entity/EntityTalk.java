@@ -14,14 +14,13 @@ import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.SlickException;
-import org.newdawn.slick.state.StateBasedGame;
 
 public class EntityTalk extends Entity {
 Image spr;
 private DialogueHandler dh;
 
 @Override
-public void init(GameContainer gc, StateBasedGame sbg, MessageEndPoint receiver)
+public void init(GameContainer gc, MessageEndPoint receiver)
 		throws SlickException {
 	spr = FileHandler.getImage("ent."+extd.split(",", 2)[0]);
 }
@@ -32,10 +31,10 @@ public void initSERV() {
 }
 
 @Override
-public void render(GameContainer gc, StateBasedGame sbg, Graphics g,
+public void render(GameContainer gc, Graphics g,
                    Camera cam, GameClient receiver) throws SlickException {
 	if (spr==null)
-		init(gc, sbg, receiver);
+		init(gc, receiver);
 	spr.draw(xs+cam.getXOff(), ys+cam.getYOff());
 }
 

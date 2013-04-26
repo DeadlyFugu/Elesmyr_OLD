@@ -25,7 +25,6 @@ import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.SpriteSheet;
-import org.newdawn.slick.state.StateBasedGame;
 
 public class EntityPlayer extends Entity {
 
@@ -53,7 +52,7 @@ public void setSERVDAT(Connection connection, PlayerData pdat) {
 }
 
 @Override
-public void init(GameContainer gc, StateBasedGame sbg, MessageEndPoint receiver)
+public void init(GameContainer gc, MessageEndPoint receiver)
 		throws SlickException {
 	spr = new SpriteSheet(FileHandler.getImage("player.player_reg"), 32, 48);
 	torchLight = new Light(600, 550, 256, 0.8f, 0.5f, 0.2f, 0.4f); //TORCH LIGHT
@@ -62,12 +61,12 @@ public void init(GameContainer gc, StateBasedGame sbg, MessageEndPoint receiver)
 }
 
 @Override
-public void render(GameContainer gc, StateBasedGame sbg, Graphics g,
+public void render(GameContainer gc, Graphics g,
                    Camera cam, GameClient receiver) throws SlickException {
 	//if (!((GameplayState) sbg.getState(Main.GAMEPLAYSTATE)).getPlayer().getID().equals(name)) {
 	if (!isUser || Globals.get("serverpos", false)) {
 		if (spr==null)
-			init(gc, sbg, receiver);
+			init(gc, receiver);
 		draw(xs, ys, x, y, px, py, spx, spy, cam);
 		FontRenderer.drawString((xs+cam.getXOff())-FontRenderer.getWidth(getName())/2, (ys+cam.getYOff()-52), getName(), g);
 		px = (int) x;
@@ -79,7 +78,7 @@ public void render(GameContainer gc, StateBasedGame sbg, Graphics g,
 
 	} else {
 		if (spr==null)
-			init(gc, sbg, receiver);
+			init(gc, receiver);
 		draw(cx, cy, cx, cy, px, py, px, py, cam);
 		px = cx;
 		py = cy;
@@ -223,7 +222,7 @@ public void hurt(Region region, Entity entity, MessageEndPoint receiver) {
 	if (pdat.health <= 0) { //TODO: Proper player kill code
 		//this.drop(region);
 		region.receiveMessage(new Message(region.name+".killSERV", HBTTools.msgString("ent", this.name)), receiver);
-		//((GameServer) receiver).changePlayerRegion("start", 800, 532, connection, true);
+		//((GameServer) receiver).changePlayerRegion("start", 800, 532, connection, true); //TODO: Below line causes crash.
 		MessageSystem.sendClient(this, connection, new Message("PLAYER.playerInfo", HBTTools.location("start", 800, 532)), false); //TODO: proper respawn place maybe
 		pdat.health = pdat.healthMax;
 	}

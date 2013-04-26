@@ -8,12 +8,10 @@ import net.sekien.elesmyr.msgsys.MessageEndPoint;
 import net.sekien.elesmyr.player.Camera;
 import net.sekien.elesmyr.system.GameClient;
 import net.sekien.elesmyr.system.GameServer;
-import net.sekien.elesmyr.system.Main;
 import net.sekien.hbt.HBTCompound;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.SlickException;
-import org.newdawn.slick.state.StateBasedGame;
 
 import java.util.ArrayList;
 import java.util.concurrent.ConcurrentHashMap;
@@ -30,19 +28,19 @@ public World() {
 }
 
 @Override
-public void render(GameContainer gc, StateBasedGame sbg, Graphics g, Camera cam, GameClient receiver) throws SlickException {
+public void render(GameContainer gc, Graphics g, Camera cam, GameClient receiver) throws SlickException {
 	Region r = null;
-	String name = ((GameClient) sbg.getState(Main.GAMEPLAYSTATE)).getPlayer().getRegionName();
+	String name = receiver.getPlayer().getRegionName();
 	if (name!=null)
 		r = regions.get(name);
 	if (r!=null)
-		r.render(gc, sbg, g, cam, receiver);
+		r.render(gc, g, cam, receiver);
 }
 
 @Override
-public void init(GameContainer gc, StateBasedGame sbg, MessageEndPoint receiver) throws SlickException {
+public void init(GameContainer gc, MessageEndPoint receiver) throws SlickException {
 	for (Region r : regions.values()) {
-		r.init(gc, sbg, receiver);
+		r.init(gc, receiver);
 	}
 }
 
@@ -55,7 +53,7 @@ public void load(Save save) {
 public void update(Region region, GameServer receiver) {
 	for (Region r : needsInit) {
 		try {
-			r.init(null, null, receiver);
+			r.init(null, receiver);
 			regions.put(r.name, r);
 		} catch (SlickException e) {
 			e.printStackTrace();
@@ -77,10 +75,10 @@ public void update(Region region, GameServer receiver) {
 }
 
 @Override
-public void clientUpdate(GameContainer gc, StateBasedGame sbg, GameClient receiver) {
+public void clientUpdate(GameContainer gc, GameClient receiver) {
 	for (Region r : needsInit) {
 		try {
-			r.init(null, null, receiver);
+			r.init(null, receiver);
 			regions.clear();
 			regions.put(r.name, r);
 		} catch (SlickException e) {
@@ -89,7 +87,7 @@ public void clientUpdate(GameContainer gc, StateBasedGame sbg, GameClient receiv
 	}
 	needsInit.clear();
 	for (Region r : regions.values()) {
-		r.clientUpdate(gc, sbg, receiver);
+		r.clientUpdate(gc, receiver);
 	}
 }
 

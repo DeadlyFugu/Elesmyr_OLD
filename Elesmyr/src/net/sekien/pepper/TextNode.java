@@ -60,7 +60,6 @@ public void render(Renderer renderer, int w, int h, boolean sel) {
 
 @Override
 public void onAction(Action action) {
-	System.out.println(action);
 	if (action==Action.SELECT) {
 		onSelect();
 	}

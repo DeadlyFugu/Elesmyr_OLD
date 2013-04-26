@@ -20,7 +20,6 @@ import net.sekien.hbt.HBTTools;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.SlickException;
-import org.newdawn.slick.state.StateBasedGame;
 
 public class PlayerClient implements GameElement {
 public static boolean BIGSIZE = true;
@@ -48,7 +47,7 @@ public PlayerClient(GameClient gs, World world) {
 }
 
 @Override
-public void init(GameContainer gc, StateBasedGame sbg, MessageEndPoint receiver)
+public void init(GameContainer gc, MessageEndPoint receiver)
 		throws SlickException {
 	controller = (gc.getInput().getControllerCount() > 0);
 	if (controller)
@@ -66,7 +65,7 @@ public void load(Save save) {
 }
 
 @Override
-public void render(GameContainer gc, StateBasedGame sbg, Graphics g, Camera cam, GameClient receiver)
+public void render(GameContainer gc, Graphics g, Camera cam, GameClient receiver)
 		throws SlickException {
 }
 
@@ -75,7 +74,7 @@ public void update(Region region, GameServer receiver) {
 }
 
 @Override
-public void clientUpdate(GameContainer gc, StateBasedGame sbg, GameClient receiver) {
+public void clientUpdate(GameContainer gc, GameClient receiver) {
 	//Log.info((region==null)+" "+((region==null)?"":region.name)+" "+regionName);
 	if (region==null || !region.name.equals(regionName)) {
 		region = this.getRegion();

@@ -15,7 +15,6 @@ import net.sekien.hbt.*;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.SlickException;
-import org.newdawn.slick.state.StateBasedGame;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -49,7 +48,7 @@ protected void initSERV() {
 }
 
 @Override
-public void init(GameContainer gc, StateBasedGame sbg, MessageEndPoint receiver)
+public void init(GameContainer gc, MessageEndPoint receiver)
 		throws SlickException {
 }
 
@@ -58,7 +57,7 @@ public void load(Save save) {
 }
 
 @Override
-public void render(GameContainer gc, StateBasedGame sbg, Graphics g,
+public void render(GameContainer gc, Graphics g,
                    Camera cam, GameClient receiver) throws SlickException {
 }
 
@@ -67,7 +66,7 @@ public void update(Region region, GameServer receiver) {
 }
 
 @Override
-public void clientUpdate(GameContainer gc, StateBasedGame sbg, GameClient receiver) {
+public void clientUpdate(GameContainer gc, GameClient receiver) {
 	xs += (x-xs)/10;
 	ys += (y-ys)/10;
 }

@@ -1,5 +1,7 @@
 package net.sekien.pepper;
 
+import com.esotericsoftware.minlog.Log;
+
 import java.awt.*;
 
 /**
@@ -39,7 +41,6 @@ public void render(Renderer renderer, int w, int h, boolean sel) {
 
 @Override
 public void onAction(Action action) {
-	System.out.println(action+","+sel);
 	if (action==Action.SELECT) {
 		onSelect(sel);
 		close();
@@ -51,7 +52,7 @@ public void onAction(Action action) {
 	} else if (action==Action.RIGHT && sel==0) {
 		sel = 1;
 	} else {
-		System.out.println("Action ignored "+action);
+		Log.warn("Action ignored "+action);
 	}
 }
 

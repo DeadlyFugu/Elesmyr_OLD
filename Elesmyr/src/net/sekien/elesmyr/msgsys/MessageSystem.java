@@ -81,18 +81,23 @@ public static void receiveClient(Message msg) {
 
 public static void receiveMessageServer() {
 	for (Message msg : serverMsgQueue) {
-		if (Globals.get("printAllMsg", false) || Globals.get("printMsg", false) && !msg.getName().equals("move") && !msg.getName().equals("pickupAt") && !msg.getName().equals("time"))
-			Log.info("Server received "+msg);
-		if (serverReceivers.containsKey(msg.getTarget())) {
-			if (msg.getName().equals("_info"))
-				MessageSystem.sendClient(null, msg.getConnection(), new Message("CLIENT.chat", HBTTools.msgString("msg", serverReceivers.get(msg.getTarget()).toString())), false);
-			else if (msg.getName().equals("_hbt"))
-				MessageSystem.sendClient(null, msg.getConnection(), new Message(msg.getData().getString("receiver", "CLIENT")+".hbtResponse", serverReceivers.get(msg.getTarget()).toHBT(msg.getData().getFlag("full", "FALSE").isTrue())), false);
-			else if (msg.getName().equals("_hbtSET"))
-				serverReceivers.get(msg.getTarget()).fromHBT(msg.getData());
-			else serverReceivers.get(msg.getTarget()).receiveMessage(msg, server);
-		} else {
-			server.receiveMessage(msg);
+		try {
+			if (Globals.get("printAllMsg", false) || Globals.get("printMsg", false) && !msg.getName().equals("move") && !msg.getName().equals("pickupAt") && !msg.getName().equals("time"))
+				Log.info("Server received "+msg);
+			if (serverReceivers.containsKey(msg.getTarget())) {
+				if (msg.getName().equals("_info"))
+					MessageSystem.sendClient(null, msg.getConnection(), new Message("CLIENT.chat", HBTTools.msgString("msg", serverReceivers.get(msg.getTarget()).toString())), false);
+				else if (msg.getName().equals("_hbt"))
+					MessageSystem.sendClient(null, msg.getConnection(), new Message(msg.getData().getString("receiver", "CLIENT")+".hbtResponse", serverReceivers.get(msg.getTarget()).toHBT(msg.getData().getFlag("full", "FALSE").isTrue())), false);
+				else if (msg.getName().equals("_hbtSET"))
+					serverReceivers.get(msg.getTarget()).fromHBT(msg.getData());
+				else serverReceivers.get(msg.getTarget()).receiveMessage(msg, server);
+			} else {
+				server.receiveMessage(msg);
+			}
+		} catch (Exception e) {
+			Log.error("Exception caught receiving a message.\n_MSG:\n"+msg+"\n");
+			Log.error("_EXCEPTION:", e);
 		}
 	}
 	serverMsgQueue.clear();
@@ -110,7 +115,8 @@ public static void receiveMessageClient() {
 				client.receiveMessage(msg);
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			Log.error("Exception caught receiving a message.\n_MSG:\n"+msg+"\n");
+			Log.error("_EXCEPTION:", e);
 		}
 	}
 }

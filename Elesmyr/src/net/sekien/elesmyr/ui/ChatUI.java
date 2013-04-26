@@ -9,7 +9,6 @@ import net.sekien.elesmyr.system.Input;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.SlickException;
-import org.newdawn.slick.state.StateBasedGame;
 
 public class ChatUI implements UserInterface {
 
@@ -31,13 +30,13 @@ public boolean inited() {
 }
 
 @Override
-public void init(GameContainer gc, StateBasedGame sbg,
+public void init(GameContainer gc,
                  MessageEndPoint receiver) throws SlickException {
 	inited = true;
 }
 
 @Override
-public void render(GameContainer gc, StateBasedGame sbg, Graphics g,
+public void render(GameContainer gc, Graphics g,
                    Camera cam, GameClient receiver) throws SlickException { //TODO: Make this look good.
 	if (type.equals("talk")) {
 		FontRenderer.drawString(77, 17, msg, g);
@@ -63,7 +62,7 @@ public void render(GameContainer gc, StateBasedGame sbg, Graphics g,
 }
 
 @Override
-public void update(GameContainer gc, StateBasedGame sbg, GameClient receiver) {
+public void update(GameContainer gc, GameClient receiver) {
 	org.newdawn.slick.Input in = gc.getInput();
 	if (Input.isKeyPressed(gc, "int")) {
 		if (type.equals("ask"))

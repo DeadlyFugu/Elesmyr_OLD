@@ -46,6 +46,8 @@ public void init(GameContainer gameContainer, StateBasedGame stateBasedGame) thr
 	options.addChild(new CommandButtonNode("old", "Old Menu", "MAINMENU"));
 	StateManager.registerState(options);
 
+	StateManager.registerState(new GameClientState("GameClient"));
+
 	StateManager.setStateInitial("Main");
 }
 

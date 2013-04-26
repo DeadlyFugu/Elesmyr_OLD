@@ -6,7 +6,6 @@ import net.sekien.elesmyr.msgsys.MessageEndPoint;
 import net.sekien.elesmyr.player.Camera;
 import net.sekien.elesmyr.system.GameClient;
 import net.sekien.elesmyr.system.GameServer;
-import net.sekien.elesmyr.system.Main;
 import net.sekien.elesmyr.world.Region;
 import net.sekien.elesmyr.world.item.Item;
 import net.sekien.elesmyr.world.item.ItemFactory;
@@ -16,7 +15,6 @@ import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.SlickException;
-import org.newdawn.slick.state.StateBasedGame;
 
 public class EntityItem extends Entity {
 Image spr;
@@ -26,13 +24,13 @@ private EntityPlayer targetEP;
 private Light light = null;
 
 @Override
-public void init(GameContainer gc, StateBasedGame sbg, MessageEndPoint receiver)
+public void init(GameContainer gc, MessageEndPoint receiver)
 		throws SlickException {
 	this.item = ItemFactory.getItem(extd.split(",", 2)[0]);
 	spr = item.spr;
 	if (item instanceof ItemTorch) {
 		light = new Light(600, 550, 256, 0.8f, 0.5f, 0.2f, 0.4f); //TORCH LIGHT
-		((GameClient) sbg.getState(Main.GAMEPLAYSTATE)).lm.addLight(light);
+		((GameClient) receiver).lm.addLight(light);
 	}
 }
 
@@ -48,10 +46,10 @@ public void initSERV() {
 }
 
 @Override
-public void render(GameContainer gc, StateBasedGame sbg, Graphics g,
+public void render(GameContainer gc, Graphics g,
                    Camera cam, GameClient receiver) throws SlickException {
 	if (spr==null)
-		init(gc, sbg, receiver);
+		init(gc, receiver);
 	if (light!=null)
 		light.move((int) xs+16, (int) ys+16);
 	spr.draw(xs+cam.getXOff(), ys+cam.getYOff());

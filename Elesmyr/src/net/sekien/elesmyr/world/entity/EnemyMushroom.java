@@ -9,7 +9,6 @@ import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.SpriteSheet;
-import org.newdawn.slick.state.StateBasedGame;
 
 import java.util.ArrayList;
 
@@ -26,16 +25,16 @@ public EnemyMushroom() {
 }
 
 @Override
-public void init(GameContainer gc, StateBasedGame sbg, MessageEndPoint receiver)
+public void init(GameContainer gc, MessageEndPoint receiver)
 		throws SlickException {
 	spr = new SpriteSheet(FileHandler.getImage("ent.mushroom_enemy"), 32, 32);
 }
 
 @Override
-public void render(GameContainer gc, StateBasedGame sbg, Graphics g,
+public void render(GameContainer gc, Graphics g,
                    Camera cam, GameClient receiver) throws SlickException {
 	if (spr==null)
-		init(gc, sbg, receiver);
+		init(gc, receiver);
 	int danim = (int) anim;
 	if (danim==3) danim = 1;
 	spr.getSprite(danim+6, 0).draw(xs+cam.getXOff()-16, ys+cam.getYOff()-32, 32, 32);
