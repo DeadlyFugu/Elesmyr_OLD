@@ -225,6 +225,8 @@ public void saveScreen() {
 			image.setRGB(x, (height/scale)-(y+1), (0xFF<<24)|(r<<16)|(g<<8)|b);
 		}
 	try {
+		if (!new File("save/thumb").exists())
+			new File("save/thumb").mkdir();
 		File file = new File("save/thumb/"+name+".png");
 		file.createNewFile();
 		ImageIO.write(image, "PNG", file);

@@ -14,7 +14,10 @@ public class SaveSelectState extends DynamicListNode {
 @Override
 public List<Node> getList() {
 	ArrayList<File> temp = new ArrayList<File>();
-	File[] fileList = new File("save").listFiles();
+	File saves = new File("save");
+	if (!saves.exists())
+		saves.mkdir();
+	File[] fileList = saves.listFiles();
 	for (int i = 0; i < fileList.length; i++) {
 		File choose = fileList[i];
 		if (choose.isFile() && !temp.contains(choose) && choose.getName().endsWith(".hbt")) {
