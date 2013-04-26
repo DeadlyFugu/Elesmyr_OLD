@@ -1,9 +1,9 @@
 package net.sekien.pepper;
 
 import net.sekien.elesmyr.system.GameClient;
+import net.sekien.elesmyr.system.Main;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.SlickException;
-import org.newdawn.slick.state.StateBasedGame;
 
 import java.awt.*;
 
@@ -13,34 +13,34 @@ import java.awt.*;
  */
 public class GameClientState extends Node {
 private GameClient client;
-private StateBasedGame sbg;
 
 public GameClientState(String name) {
 	super(name);
 }
 
-public void setClient(GameClient client, StateBasedGame sbg) {
+public void setClient(GameClient client) {
 	this.client = client;
-	this.sbg = sbg;
 }
 
 @Override
 public void render(Renderer renderer, int w, int h, boolean sel) {
 	try {
-		client.render(renderer.gc, null, renderer.g);
+		client.render(renderer.gc, renderer.g);
 	} catch (SlickException e) {
-		StateManager.error(e.toString(), true);
+		StateManager.back();
+		Main.handleError(e);
 	}
-	renderer.rect(0, 0, 156, 48, false, true, false, true, Renderer.BoxStyle.FULL);
-	renderer.text(10, 11, "GameClientState");
+	//renderer.rect(0, 0, 156, 48, false, true, false, true, Renderer.BoxStyle.FULL);
+	//renderer.text(10, 11, "GameClientState");
 }
 
 @Override
 public void update(GameContainer gc) {
 	try {
-		client.update(gc, null, 1);
+		client.update(gc, 1);
 	} catch (SlickException e) {
-		StateManager.error(e.toString(), true);
+		StateManager.back();
+		Main.handleError(e);
 	}
 }
 

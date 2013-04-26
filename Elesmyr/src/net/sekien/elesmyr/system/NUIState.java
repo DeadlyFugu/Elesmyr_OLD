@@ -63,6 +63,6 @@ public void render(GameContainer gameContainer, StateBasedGame stateBasedGame, G
 
 @Override
 public void update(GameContainer gameContainer, StateBasedGame stateBasedGame, int i) throws SlickException {
-	StateManager.update(gameContainer, stateBasedGame);
+	StateManager.update(gameContainer);
 }
 }

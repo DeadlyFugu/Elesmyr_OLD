@@ -10,7 +10,6 @@ import net.sekien.elesmyr.util.FileHandler;
 import org.newdawn.slick.*;
 import org.newdawn.slick.gui.TextField;
 import org.newdawn.slick.opengl.Texture;
-import org.newdawn.slick.state.StateBasedGame;
 import org.newdawn.slick.util.BufferedImageUtil;
 import org.newdawn.slick.util.Log;
 
@@ -108,9 +107,12 @@ public static void render(GameContainer gc, Graphics g) {
 	for (PopupNode node : popup) {
 		node.render(renderer, Main.INTERNAL_RESX, Main.INTERNAL_RESY, false);
 	}
+	String ver = Main.verNum;
+	renderer.rect(0, 0, renderer.textWidth(ver)+4, renderer.textHeight(ver)+4, false, true, false, true, Renderer.BoxStyle.FULL);
+	renderer.text(0, 0, ver);
 }
 
-public static void update(GameContainer gc, StateBasedGame sbg) {
+public static void update(GameContainer gc) {
 	if (filtered!=null) {
 		try {
 			Texture texture = BufferedImageUtil.getTexture("", filtered);
@@ -135,23 +137,25 @@ public static void update(GameContainer gc, StateBasedGame sbg) {
 			String savename = arg.substring(0, arg.lastIndexOf('.'));
 			Globals.set("save", savename);
 			try {
-				((GameClient) sbg.getState(Main.GAMEPLAYSTATE)).loadSave(gc, savename, false, sbg);
-				((GameClient) sbg.getState(Main.GAMEPLAYSTATE)).init(gc, sbg);
+				GameClient client = new GameClient(-1);
+				client.init(gc);
+				client.loadSave(gc, savename, false);
 				gc.getInput().clearKeyPressedRecord();
 				//sbg.enterState(Main.GAMEPLAYSTATE);
-				((GameClientState) states.get("GameClient")).setClient(((GameClient) sbg.getState(Main.GAMEPLAYSTATE)), sbg);
+				((GameClientState) states.get("GameClient")).setClient(client);
 				setState("GameClient");
 			} catch (Exception e) {
 				if (e.getLocalizedMessage()!=null && e.getLocalizedMessage().equals("__BIND_EXCEPTION")) {
 					com.esotericsoftware.minlog.Log.error(e.getLocalizedMessage());
-					error("Could not bind to port.\nThis most likely means another\ncopy of the game is already running\n\n\n\nYeah", false);
+					error("Could not bind to port.\nThis most likely means another\ncopy of the game is already running.", false);
 					return;
 				} else {
-					error(e.toString(), false);
+					Main.handleError(e);
 				}
 			}
 		} else if (mode.equals("MAINMENU")) {
-			sbg.enterState(Main.MENUSTATE);
+			error("Old menu support removed.", false);
+			//sbg.enterState(Main.MENUSTATE);
 		}
 	}
 	if (!stateTrace.empty()) {

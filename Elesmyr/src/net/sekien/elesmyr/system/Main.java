@@ -10,7 +10,6 @@ import net.sekien.pepper.StateManager;
 import org.lwjgl.opengl.Display;
 import org.newdawn.slick.*;
 import org.newdawn.slick.opengl.renderer.SGL;
-import org.newdawn.slick.state.StateBasedGame;
 import org.newdawn.slick.util.LogSystem;
 
 import javax.swing.*;
@@ -24,7 +23,7 @@ import java.util.HashMap;
  *
  * @author DeadlyFugu
  */
-public class Main extends StateBasedGame {
+public class Main extends BasicGame {
 
 public static final int INTROSTATE = 0;
 public static final int MENUSTATE = 1;
@@ -42,12 +41,11 @@ public static final String verRelease = "PRE-ALPHA";
 public static final String version = "$version.prealpha| "+verNum; //0.0.1 = DEC 16
 
 private static GameContainer gc;
-private static StateBasedGame sbg;
 
 public Main() {
 	super("Elesmyr");
 
-	this.addState(new IntroState(INTROSTATE));
+	/*this.addState(new IntroState(INTROSTATE));
 	this.addState(new MainMenuState(MENUSTATE));
 	this.addState(new GameClient(GAMEPLAYSTATE));
 	this.addState(new ErrorState(ERRORSTATE));
@@ -58,7 +56,7 @@ public Main() {
 		this.enterState(INTROSTATE);
 	} else {
 		this.enterState(NUISTATE);
-	}
+	}*/
 }
 
 public static void main(String[] args) throws SlickException {
@@ -122,44 +120,63 @@ public static void handleCrash(Throwable e) {
 		e2.printStackTrace();
 	}
 	try {
-		String[] parts = writer.toString().trim().split("\n");
-		String out = parts[0];
-		boolean ellipsisYet = false;
-		boolean ignoreRest = false;
-		boolean server = false;
-		for (int i = 1; i < parts.length; i++) {
-			String s = parts[i];
-			if (s.trim().startsWith("at GameServer."))
-				server = true;
-			if (s.trim().startsWith("at ") && !(ignoreRest|s.trim().startsWith("at java.") || s.trim().startsWith("at sun."))) {
-				out = out+"\n    "+s.trim();
-				ellipsisYet = false;
-				if (s.trim().matches("at net\\.sekien\\.lote\\.system\\.(GameClient|GameServer|.*State).*"))
-					ignoreRest = true;
-			} else if (!ellipsisYet) {
-				out = out+"\n    ...";
-				ellipsisYet = true;
-			}
-		}
-		JOptionPane.showMessageDialog(null, "The Elesmyr "+(server?"server":"client")+" has crashed. Info for geeks:\n"+out+"\nA full log can be found at ./LOTE_CRASH_LOG", "Elesmyr "+(server?"server":"client")+" just kinda stopped working. :(", JOptionPane.ERROR_MESSAGE);
+		String msg = simplifyStackTrace(writer);
+		JOptionPane.showMessageDialog(null, msg, "Elesmyr just kinda stopped working. :(", JOptionPane.ERROR_MESSAGE);
 	} catch (Exception e2) {
 		e2.printStackTrace();
 	}
 	e.printStackTrace();
 }
 
+private static String simplifyStackTrace(StringWriter writer) {
+
+	String[] parts = writer.toString().trim().split("\n");
+	String out = parts[0];
+	boolean ellipsisYet = false;
+	boolean ignoreRest = false;
+	boolean server = false;
+	for (int i = 1; i < parts.length; i++) {
+		String s = parts[i];
+		if (s.trim().startsWith("at GameServer."))
+			server = true;
+		if (s.trim().startsWith("at ") && !(ignoreRest|s.trim().startsWith("at java.") || s.trim().startsWith("at sun."))) {
+			out = out+"\n    "+s.trim();
+			ellipsisYet = false;
+			if (s.trim().matches("at net\\.sekien\\.lote\\.system\\.(GameClient|GameServer|.*State).*"))
+				ignoreRest = true;
+		} else if (!ellipsisYet) {
+			out = out+"\n    ...";
+			ellipsisYet = true;
+		}
+	}
+	return "The Elesmyr "+(server?"server":"client")+" has crashed. Info for geeks:\n"+out+"\nA full log can be found at ./LOTE_CRASH_LOG";
+}
+
 @Override
-public void initStatesList(GameContainer gameContainer) throws SlickException {
+public void init(GameContainer gameContainer) throws SlickException {
 	FontRenderer.setLang(FontRenderer.Language.valueOf(Globals.get("lang", "EN_US")));
 	FontRenderer.initialise(gameContainer);
 	Main.gc = gameContainer;
-	Main.sbg = this;
 	gc.getInput().enableKeyRepeat();
+	(new NUIState(5)).init(gameContainer, null);
+}
+
+@Override
+public void update(GameContainer gameContainer, int i) throws SlickException {
+	StateManager.update(gameContainer);
+}
+
+@Override
+public void render(GameContainer gameContainer, Graphics graphics) throws SlickException {
+	StateManager.render(gameContainer, graphics);
 }
 
 public static void handleError(Exception e) {
-	e.printStackTrace();
-	handleError(e.getLocalizedMessage());
+	Log.error("Main.handleError(): ", e);
+	StringWriter writer = new StringWriter(256);
+	e.printStackTrace(new PrintWriter(writer));
+
+	handleError(simplifyStackTrace(writer));
 }
 
 public static void handleError(String error) {

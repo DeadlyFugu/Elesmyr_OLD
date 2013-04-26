@@ -24,8 +24,6 @@ import net.sekien.pepper.StateManager;
 import org.newdawn.slick.*;
 import org.newdawn.slick.Input;
 import org.newdawn.slick.gui.TextField;
-import org.newdawn.slick.state.BasicGameState;
-import org.newdawn.slick.state.StateBasedGame;
 
 import java.net.InetAddress;
 import java.util.Iterator;
@@ -33,7 +31,7 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-public class GameClient extends BasicGameState implements MessageEndPoint {
+public class GameClient implements MessageEndPoint {
 
 public class ChatMessage {
 	private String msg;
@@ -90,14 +88,13 @@ private Image vignette;
 private Image alphabg;
 private Object ChatUI;
 
-GameClient(int stateID) {
+public GameClient(int stateID) {
 	this.stateID = stateID;
 }
 
-@Override
 public int getID() {return stateID;}
 
-public void init(GameContainer gc, StateBasedGame sbg) throws SlickException {
+public void init(GameContainer gc) throws SlickException {
 	ItemFactory.init();
 	regionLoaded = false;
 	error = null;
@@ -127,7 +124,7 @@ public void init(GameContainer gc, StateBasedGame sbg) throws SlickException {
 	textField.setMaxLength(57);
 }
 
-public void render(GameContainer gc, StateBasedGame sbg, Graphics g) throws SlickException {
+public void render(GameContainer gc, Graphics g) throws SlickException {
 	//g.scale(gc.getWidth()/((float) (Main.INTERNAL_RESY)*((float) gc.getWidth()/(float) gc.getHeight())),gc.getHeight()/(float) (Main.INTERNAL_RESY));
 	//g.scale(gc.getWidth()/(float) (Main.INTERNAL_RESX), gc.getHeight()/(float) (Main.INTERNAL_RESY));
 	if (!regionLoaded) {
@@ -250,7 +247,7 @@ private void renderMap(Region region, boolean fg) {
 
 private boolean devModeInited = false;
 
-public void update(GameContainer gc, StateBasedGame sbg, int delta) throws SlickException {
+public void update(GameContainer gc, int delta) throws SlickException {
 	if (gc.getInput().isKeyPressed(Input.KEY_ESCAPE)) {
 		if (showTextField) {
 			showTextField = false;
@@ -413,7 +410,7 @@ public boolean receiveMessage(Message msg) {
 	return false;
 }
 
-public void loadSave(GameContainer gc, String saveName, boolean serverOnly, StateBasedGame sbg) throws Exception {
+public void loadSave(GameContainer gc, String saveName, boolean serverOnly) throws Exception {
 	Save save = new Save(saveName);
 	if (serverOnly) {
 		MessageSystem.SERVER = true;

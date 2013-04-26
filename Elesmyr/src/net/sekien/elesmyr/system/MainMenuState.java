@@ -625,8 +625,8 @@ public void update(GameContainer gc, StateBasedGame sbg, int delta) throws Slick
 				if (subMenu==1) {
 					Globals.set("save", levels[selection]);
 					try {
-						((GameClient) sbg.getState(Main.GAMEPLAYSTATE)).loadSave(gc, levels[selection], serverOnly, sbg);
-						((GameClient) sbg.getState(Main.GAMEPLAYSTATE)).init(gc, sbg);
+						//((GameClient) sbg.getState(Main.GAMEPLAYSTATE)).loadSave(gc, levels[selection], serverOnly, sbg);
+						//((GameClient) sbg.getState(Main.GAMEPLAYSTATE)).init(gc, sbg);
 						gc.getInput().clearKeyPressedRecord();
 						sbg.enterState(Main.GAMEPLAYSTATE);
 					} catch (Exception e) {
@@ -645,7 +645,7 @@ public void update(GameContainer gc, StateBasedGame sbg, int delta) throws Slick
 				} else if (subMenu==3) {
 					try {
 						((GameClient) sbg.getState(Main.GAMEPLAYSTATE)).join(lanServers.get(selection-2));
-						((GameClient) sbg.getState(Main.GAMEPLAYSTATE)).init(gc, sbg);
+						//((GameClient) sbg.getState(Main.GAMEPLAYSTATE)).init(gc, sbg);
 						gc.getInput().clearKeyPressedRecord();
 						sbg.enterState(Main.LOGINSTATE);
 					} catch (IOException e) {
