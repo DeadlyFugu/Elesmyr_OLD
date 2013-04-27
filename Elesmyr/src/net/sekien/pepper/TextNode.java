@@ -68,6 +68,14 @@ public void onAction(Action action) {
 protected abstract void onSelect();
 
 @Override
+public void onClose() {
+	if (hasTextLock) {
+		StateManager.freeTextLock(this);
+		hasTextLock = false;
+	}
+}
+
+@Override
 public Dimension getDimensions(boolean sel) {
 	return new Dimension(440, hcurrent);
 }

@@ -5,10 +5,7 @@ import net.sekien.elesmyr.system.Main;
 import net.sekien.hbt.HBTCompound;
 
 import java.io.IOException;
-import java.net.BindException;
-import java.net.ServerSocket;
-import java.net.Socket;
-import java.net.SocketException;
+import java.net.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,6 +16,7 @@ import java.util.List;
 public class Server {
 private final ArrayList<Connection> connections = new ArrayList<Connection>();
 private ServerSocket serverSocket;
+private DatagramSocket udpSocket;
 private boolean running = true;
 
 public List<Connection> getConnections() {
@@ -55,9 +53,12 @@ public void start() {
 public void bind(int port, int port2) throws BindException {
 	try {
 		serverSocket = new ServerSocket(port);
-		Log.info("msgsys", "Server bound to port "+port);
+		serverSocket.setSoTimeout(500);
+		udpSocket = new DatagramSocket(port2);
+		udpSocket.setSoTimeout(500);
+		Log.info("msgsys", "Server bound to ports TCP="+port+" UDP="+port2);
 	} catch (IOException e) {
-		Log.error("msgsys", "Could not listen on port: "+port);
+		Log.error("msgsys", "Could not listen on ports: TCP="+port+" UDP="+port2);
 		throw new BindException();
 	}
 
@@ -65,8 +66,8 @@ public void bind(int port, int port2) throws BindException {
 		public void run() {
 			this.setName("[server] Request listener");
 			while (running) {
-				Socket clientSocket = null;
 				try {
+					Socket clientSocket = null;
 					clientSocket = serverSocket.accept();
 					Connection connection = new Connection(connections.size(), clientSocket);
 					if (connections.size()==0 && MessageSystem.CLIENT) {
@@ -78,6 +79,19 @@ public void bind(int port, int port2) throws BindException {
 					}
 					createListenerThread(connection);
 					Log.info("msgsys", "Server connected to "+clientSocket.toString());
+				} catch (SocketTimeoutException ignored) {
+				} catch (Exception e) {
+					if (running) {
+						Main.handleCrash(e);
+						System.exit(1);
+					}
+				}
+				try {
+					DatagramPacket packet = new DatagramPacket(new byte[0], 0);
+					udpSocket.receive(packet);
+					packet.setData(new byte[]{7, 42, 98, 43, 64, 98});
+					udpSocket.send(packet); //TODO: Send actual server info.
+				} catch (SocketTimeoutException ignored) {
 				} catch (Exception e) {
 					if (running) {
 						Main.handleCrash(e);
@@ -139,5 +153,6 @@ public void close() throws IOException {
 		c.close();
 	}
 	serverSocket.close();
+	udpSocket.close();
 }
 }

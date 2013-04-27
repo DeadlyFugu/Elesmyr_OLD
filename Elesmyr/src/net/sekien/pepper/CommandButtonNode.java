@@ -35,6 +35,11 @@ public void onAction(Action enumAction) {
 				StateManager.updFunc("SAVE "+arg);
 			else
 				StateManager.error("Invalid action "+action, false);
+		} else if (func.equals("JOIN")) {
+			if (arg!=null)
+				StateManager.updFunc("JOIN "+arg);
+			else
+				StateManager.error("Invalid action "+action, false);
 		} else if (func.equals("MAINMENU")) {
 			StateManager.updFunc("MAINMENU");
 		}

@@ -28,6 +28,13 @@ public Iterator iterator() {
 	return children.iterator();
 }
 
+@Override
+public boolean equals(Object other) {
+	if (other instanceof Node)
+		return ((Node) other).getName().equals(name);
+	return false;
+}
+
 public void addChild(Node child) {
 	children.add(child);
 }
@@ -68,5 +75,10 @@ public void transitionEnter(Renderer renderer, int w, int h, boolean sel, float 
 
 public void transitionLeave(Renderer renderer, int w, int h, boolean sel, float time) {
 	transitionEnter(renderer, w, h, sel, 1-time);
+}
+
+public void onClose() {
+	for (Node child : children)
+		child.onClose();
 }
 }

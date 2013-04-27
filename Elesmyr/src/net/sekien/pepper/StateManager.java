@@ -17,6 +17,7 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.net.InetAddress;
 import java.util.*;
 
 /**
@@ -87,6 +88,7 @@ public static void render(GameContainer gc, Graphics g) {
 				stateTrace.peek().transitionLeave(renderer, Main.INTERNAL_RESX, Main.INTERNAL_RESY, true, animtimer/20f);
 			} else if (animtimer==20) {
 				stateTrace.peek().transitionLeave(renderer, Main.INTERNAL_RESX, Main.INTERNAL_RESY, true, animtimer/20f);
+				stateTrace.peek().onClose();
 				if (newState.equals("_POP")) {
 					stateTrace.pop();
 				} else {
@@ -141,7 +143,6 @@ public static void update(GameContainer gc) {
 				client.init(gc);
 				client.loadSave(gc, savename, false);
 				gc.getInput().clearKeyPressedRecord();
-				//sbg.enterState(Main.GAMEPLAYSTATE);
 				((GameClientState) states.get("GameClient")).setClient(client);
 				setState("GameClient");
 			} catch (Exception e) {
@@ -156,6 +157,25 @@ public static void update(GameContainer gc) {
 		} else if (mode.equals("MAINMENU")) {
 			error("Old menu support removed.", false);
 			//sbg.enterState(Main.MENUSTATE);
+		} else if (mode.equals("JOIN")) {
+			try {
+				GameClient client = new GameClient(-1);
+				client.init(gc);
+				client.join(InetAddress.getByName(arg));
+				gc.getInput().clearKeyPressedRecord();
+				client.login("Mr. Join", -1);
+				((GameClientState) states.get("GameClient")).setClient(client);
+				setState("GameClient");
+			} catch (IOException e) {
+				gc.getInput().clearKeyPressedRecord();
+				error("IOException caught joining server:\n"+
+						      e.getLocalizedMessage(), false);
+			} catch (Exception e) {
+				Main.handleCrash(e);
+				gc.exit();
+			}
+		} else {
+			Log.error("Unrecognised action "+gameSettings);
 		}
 	}
 	if (!stateTrace.empty()) {
@@ -290,7 +310,7 @@ public static boolean getTextLock(Node node) {
 		textField.setAcceptingInput(true);
 		textField.setFocus(true);
 		return true;
-	} else if (textLock==node) {
+	} else if (textLock.equals(node)) {
 		Log.error(node.getName()+" already has textLock!");
 		return true;
 	} else {
@@ -302,7 +322,7 @@ public static boolean getTextLock(Node node) {
 public static void freeTextLock(Node node) {
 	if (textLock==null) {
 		Log.error(node+" cannot free textLock, already freed!");
-	} else if (textLock==node) {
+	} else if (textLock.equals(node)) {
 		textLock = null;
 		textField.setText("");
 		textField.setCursorPos(0);
@@ -314,7 +334,7 @@ public static void freeTextLock(Node node) {
 }
 
 public static void setTextBox(Node node, int x, int y) {
-	if (textLock==node) {
+	if (textLock.equals(node)) {
 		textField.setLocation(x, y);
 	} else {
 		Log.error(node+" cannot setTextBox, it doesn't have the lock!"+(textLock==null?"":" The lock was obtained by "+textLock));
@@ -322,7 +342,7 @@ public static void setTextBox(Node node, int x, int y) {
 }
 
 public static void setTextBoxText(Node node, String text) {
-	if (textLock==node) {
+	if (textLock.equals(node)) {
 		textField.setText(text);
 		textField.setCursorPos(text.length());
 	} else {
@@ -331,7 +351,7 @@ public static void setTextBoxText(Node node, String text) {
 }
 
 public static void renderTextBox(Node node, Renderer renderer) {
-	if (textLock==node) {
+	if (textLock.equals(node)) {
 		textField.render(renderer.gc, renderer.g);
 		textField.setFocus(true);
 	} else {
@@ -340,7 +360,7 @@ public static void renderTextBox(Node node, Renderer renderer) {
 }
 
 public static void setTextBoxCentered(Node node, int x, int y) {
-	if (textLock==node) {
+	if (textLock.equals(node)) {
 		textField.setLocation(x-renderer.textWidth(textField.getText())/2, y);
 	} else {
 		Log.error(node+" cannot setTextBoxCentered, it doesn't have the lock!"+(textLock==null?"":" The lock was obtained by "+textLock));
@@ -348,7 +368,7 @@ public static void setTextBoxCentered(Node node, int x, int y) {
 }
 
 public static String getTextBoxText(Node node) {
-	if (textLock==node) {
+	if (textLock.equals(node)) {
 		return textField.getText();
 	} else {
 		Log.error(node+" cannot setTextBox, it doesn't have the lock!"+(textLock==null?"":" The lock was obtained by "+textLock));

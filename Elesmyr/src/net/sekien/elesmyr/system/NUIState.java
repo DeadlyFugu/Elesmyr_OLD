@@ -48,6 +48,8 @@ public void init(GameContainer gameContainer, StateBasedGame stateBasedGame) thr
 
 	StateManager.registerState(new GameClientState("GameClient"));
 
+	StateManager.registerState(new JoinState("Join"));
+
 	StateManager.setStateInitial("Main");
 }
 
