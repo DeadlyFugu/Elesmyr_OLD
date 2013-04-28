@@ -156,5 +156,10 @@ public void text(int x, int y, String text, boolean sel) {
 	text(x, y, text, new Color(1, 1, 1, sel?1f:0.25f));
 }
 
+public void fillRect(Color color, float x, float y, float w, float h) {
+	g.setColor(color);
+	g.fillRect(x, y, w, h);
+}
+
 public enum BoxStyle {FULL, OUTLINE, VFADE, HFADE, UPFADE, DOWNFADE, SEL}
 }

@@ -63,6 +63,7 @@ public static void init(GameContainer gc) {
 }
 
 public static void render(GameContainer gc, Graphics g) {
+	g.setColor(Color.white);
 	renderer.setGraphicsAndGC(gc, g);
 	background.draw(0, 0, gc.getWidth(), gc.getHeight());
 	if (newBG!=null) {
@@ -255,18 +256,22 @@ public static void registerState(Node node) {
 
 private static BufferedImage filtered;
 
+private static final Object bgLock = new Object();
+
 public static void setBackground(String name) {
 	try {
 		final File file = new File("save/thumb/"+name+".png");
 		if (file.exists()) {
 			new Thread() {
 				public void run() {
-					try {
-						BufferedImage src = ImageIO.read(file);
-						AbstractBufferedImageOp filter = new GaussianFilter(8);
-						filtered = filter.filter(src, null);
-					} catch (IOException e) {
-						e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+					synchronized (bgLock) {
+						try {
+							BufferedImage src = ImageIO.read(file);
+							AbstractBufferedImageOp filter = new GaussianFilter(8);
+							filtered = filter.filter(src, null);
+						} catch (IOException e) {
+							e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+						}
 					}
 				}
 			}.start();
@@ -289,6 +294,10 @@ public static void back() {
 					newState = "_POP";
 			}
 		});
+}
+
+public static void forcePop() {
+	stateTrace.pop();
 }
 
 public static void error(String string, boolean goBack) {

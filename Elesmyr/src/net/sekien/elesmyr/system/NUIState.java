@@ -1,6 +1,7 @@
 package net.sekien.elesmyr.system;
 
 import net.sekien.pepper.*;
+import net.sekien.pepper.IntroState;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.SlickException;
@@ -50,7 +51,11 @@ public void init(GameContainer gameContainer, StateBasedGame stateBasedGame) thr
 
 	StateManager.registerState(new JoinState("Join"));
 
-	StateManager.setStateInitial("Main");
+	StateManager.registerState(new IntroState("Intro"));
+
+	StateManager.setBackground(Globals.get("lastSave", ""));
+
+	StateManager.setStateInitial(Globals.get("showIntro", true)?"Intro":"Main");
 }
 
 @Override

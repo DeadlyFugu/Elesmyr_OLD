@@ -142,7 +142,7 @@ private static String simplifyStackTrace(StringWriter writer) {
 		if (s.trim().startsWith("at ") && !(ignoreRest|s.trim().startsWith("at java.") || s.trim().startsWith("at sun."))) {
 			out = out+"\n    "+s.trim();
 			ellipsisYet = false;
-			if (s.trim().matches("at net\\.sekien\\.lote\\.system\\.(GameClient|GameServer|.*State).*"))
+			if (s.trim().matches("at net\\.sekien\\.(elesmyr\\.system\\.(GameClient|GameServer)|pepper\\.StateManager).*"))
 				ignoreRest = true;
 		} else if (!ellipsisYet) {
 			out = out+"\n    ...";
