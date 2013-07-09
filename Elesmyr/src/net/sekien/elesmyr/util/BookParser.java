@@ -1,8 +1,7 @@
 package net.sekien.elesmyr.util;
 
-import org.newdawn.slick.SlickException;
-import org.newdawn.slick.UnicodeFont;
-import org.newdawn.slick.font.effects.ColorEffect;
+import org.newdawn.slick.*;
+import org.newdawn.slick.font.effects.*;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -20,7 +19,7 @@ private static UnicodeFont bookfont;
 
 static {
 	try {
-		bookfont = new UnicodeFont(FileHandler.parse("ui.book", ResourceType.FONT), 32, false, false);
+		bookfont = new UnicodeFont(FileHandler.parse("font.book", ResourceType.FONT), 32, false, false);
 		bookfont.addAsciiGlyphs();
 		bookfont.getEffects().add(new ColorEffect(java.awt.Color.BLACK));
 		bookfont.loadGlyphs();

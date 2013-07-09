@@ -28,5 +28,5 @@ public boolean onUse(GameServer receiver, EntityPlayer player, PlayerData.Invent
 }
 
 @Override
-public String getName(PlayerData.InventoryEntry entry) { return "book."+extd; }
+public String getName(PlayerData.InventoryEntry entry) { return "book."+extd.getString("extd", "testing"); }
 }

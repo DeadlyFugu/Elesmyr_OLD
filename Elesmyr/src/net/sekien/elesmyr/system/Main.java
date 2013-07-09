@@ -9,8 +9,8 @@ import net.sekien.hbt.HBTCompound;
 import net.sekien.pepper.StateManager;
 import org.lwjgl.opengl.Display;
 import org.newdawn.slick.*;
-import org.newdawn.slick.opengl.renderer.SGL;
-import org.newdawn.slick.util.LogSystem;
+import org.newdawn.slick.opengl.renderer.*;
+import org.newdawn.slick.util.*;
 
 import javax.swing.*;
 import java.io.*;
@@ -99,7 +99,15 @@ public static void main(String[] args) throws SlickException {
 	MainMenuState.disx[3] = app.getScreenWidth();
 	MainMenuState.disy[3] = app.getScreenHeight();
 
-	app.setDisplayMode(MainMenuState.disx[0], MainMenuState.disy[0], false);
+	if (Globals.containsKey("resdm")) {
+		int dm = Integer.parseInt(Globals.get("resdm", "0"));
+		app.setDisplayMode(MainMenuState.disx[dm], MainMenuState.disy[dm], dm==3 || dm==4);
+		app.setMouseGrabbed(dm==3 || dm==4);
+		Main.INTERNAL_ASPECT = ((float) MainMenuState.disx[dm]/(float) MainMenuState.disy[dm]);
+		Main.INTERNAL_RESX = (int) (Main.INTERNAL_RESY*Main.INTERNAL_ASPECT); //Internal resolution x
+	} else {
+		app.setDisplayMode(MainMenuState.disx[0], MainMenuState.disy[0], false);
+	}
 	//app.setIcons(new String[]{"data/icon32.tga", "data/icon16.tga"}); //TODO: Make this work
 
 	app.start();
@@ -129,7 +137,6 @@ public static void handleCrash(Throwable e) {
 }
 
 private static String simplifyStackTrace(StringWriter writer) {
-
 	String[] parts = writer.toString().trim().split("\n");
 	String out = parts[0];
 	boolean ellipsisYet = false;
@@ -154,11 +161,18 @@ private static String simplifyStackTrace(StringWriter writer) {
 
 @Override
 public void init(GameContainer gameContainer) throws SlickException {
+	gameContainer.setVSync(true); //True in release
+	gameContainer.setVerbose(false); //False in release
+	gameContainer.setClearEachFrame(false); //Set to false in release!
+	gameContainer.setShowFPS(false); //Set to false in release
+	gameContainer.setTargetFrameRate(60);
+	gameContainer.getInput().initControllers();
 	FontRenderer.setLang(FontRenderer.Language.valueOf(Globals.get("lang", "EN_US")));
 	FontRenderer.initialise(gameContainer);
 	Main.gc = gameContainer;
 	gc.getInput().enableKeyRepeat();
 	(new NUIState(5)).init(gameContainer, null);
+	Renderer.init(gameContainer);
 }
 
 @Override
@@ -168,7 +182,7 @@ public void update(GameContainer gameContainer, int i) throws SlickException {
 
 @Override
 public void render(GameContainer gameContainer, Graphics graphics) throws SlickException {
-	StateManager.render(gameContainer, graphics);
+	Renderer.render(gameContainer, graphics);
 }
 
 public static void handleError(Exception e) {

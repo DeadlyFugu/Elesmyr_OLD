@@ -4,7 +4,7 @@ import net.sekien.elesmyr.system.FontRenderer;
 import net.sekien.elesmyr.util.FileHandler;
 import net.sekien.elesmyr.util.ResourceType;
 import org.newdawn.slick.*;
-import org.newdawn.slick.util.Log;
+import org.newdawn.slick.util.*;
 
 /**
  * Created with IntelliJ IDEA. User: matt Date: 20/04/13 Time: 10:39 AM To change this template use File | Settings |
@@ -19,21 +19,21 @@ public GameContainer gc;
 
 Renderer() {
 	try {
-		error = new Image(FileHandler.parse("menu.error", ResourceType.IMAGE), false, 0);
+		error = new Image(FileHandler.parse("menu.error", ResourceType.IMAGE), Image.FILTER_NEAREST);
 		box = new Image[7][3][3];
-		Image boxfull = new Image(FileHandler.parse("ui.box", ResourceType.IMAGE), false, 0);
+		Image boxfull = new Image(FileHandler.parse("ui.box", ResourceType.IMAGE), Image.FILTER_NEAREST);
 		loadBoxStyle(0, boxfull);
-		Image boxoutline = new Image(FileHandler.parse("ui.boxoutline", ResourceType.IMAGE), false, 0);
+		Image boxoutline = new Image(FileHandler.parse("ui.boxoutline", ResourceType.IMAGE), Image.FILTER_NEAREST);
 		loadBoxStyle(1, boxoutline);
-		Image boxvfade = new Image(FileHandler.parse("ui.boxvfade", ResourceType.IMAGE), false, 0);
+		Image boxvfade = new Image(FileHandler.parse("ui.boxvfade", ResourceType.IMAGE), Image.FILTER_NEAREST);
 		loadBoxStyle(2, boxvfade);
-		Image boxhfade = new Image(FileHandler.parse("ui.boxhfade", ResourceType.IMAGE), false, 0);
+		Image boxhfade = new Image(FileHandler.parse("ui.boxhfade", ResourceType.IMAGE), Image.FILTER_NEAREST);
 		loadBoxStyle(3, boxhfade);
-		Image boxupfade = new Image(FileHandler.parse("ui.boxupfade", ResourceType.IMAGE), false, 0);
+		Image boxupfade = new Image(FileHandler.parse("ui.boxupfade", ResourceType.IMAGE), Image.FILTER_NEAREST);
 		loadBoxStyle(4, boxupfade);
-		Image boxdownfade = new Image(FileHandler.parse("ui.boxdownfade", ResourceType.IMAGE), false, 0);
+		Image boxdownfade = new Image(FileHandler.parse("ui.boxdownfade", ResourceType.IMAGE), Image.FILTER_NEAREST);
 		loadBoxStyle(5, boxdownfade);
-		Image boxsel = new Image(FileHandler.parse("ui.boxsel", ResourceType.IMAGE), false, 0);
+		Image boxsel = new Image(FileHandler.parse("ui.boxsel", ResourceType.IMAGE), Image.FILTER_NEAREST);
 		loadBoxStyle(6, boxsel);
 	} catch (SlickException e) {
 		Log.error(e);

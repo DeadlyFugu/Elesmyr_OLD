@@ -4,7 +4,7 @@ import net.sekien.elesmyr.util.FileHandler;
 import net.sekien.elesmyr.util.HashmapLoader;
 import net.sekien.elesmyr.util.ResourceType;
 import org.newdawn.slick.*;
-import org.newdawn.slick.font.effects.ColorEffect;
+import org.newdawn.slick.font.effects.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -57,7 +57,7 @@ public static Language getLang() {
 }
 
 public static void initialise(GameContainer gc) throws SlickException {
-	bpfont = new SpriteSheetFont(new SpriteSheet(new org.newdawn.slick.Image(FileHandler.parse("font.font", ResourceType.FONT), false, 0), 9, 16), ' ');
+	bpfont = new SpriteSheetFont(new SpriteSheet(new org.newdawn.slick.Image(FileHandler.parse("font.font", ResourceType.FONT), Image.FILTER_NEAREST), 9, 16), ' ');
 	i18n_backup = HashmapLoader.readHashmap(FileHandler.parse("lang.EN_US", ResourceType.PLAIN));
 	bookfont = new UnicodeFont(FileHandler.parse("font.book", ResourceType.FONT), 32, false, false);
 	bookfont.addAsciiGlyphs();

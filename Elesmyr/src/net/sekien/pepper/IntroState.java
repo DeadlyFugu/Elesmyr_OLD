@@ -3,9 +3,8 @@ package net.sekien.pepper;
 import net.sekien.elesmyr.system.Globals;
 import net.sekien.elesmyr.util.FileHandler;
 import org.newdawn.slick.Color;
-import org.newdawn.slick.GameContainer;
+import org.newdawn.slick.*;
 import org.newdawn.slick.Image;
-import org.newdawn.slick.SlickException;
 
 import java.awt.*;
 
@@ -32,13 +31,11 @@ private static final float stepTime = 100;
 
 @Override
 public void render(Renderer renderer, int w, int h, boolean sel) {
-	float vw = renderer.gc.getWidth();
-	float vh = renderer.gc.getHeight();
 	float bx, by, bw, bh;
-	bw = vh*1.778125f;
-	bh = vh;
-	bx = (vw-bw)/2;
-	by = 0;
+	bw = sekien.getWidth()/2;
+	bh = sekien.getHeight()/2;
+	bx = (w-bw)/2;
+	by = (h-bh)/2;
 	renderer.fillRect(Color.black, bx, by, bw, bh);
 	if (time < stepTime*0.5) {
 		sekien.setAlpha(time/(stepTime*0.5f));
@@ -81,6 +78,10 @@ public void setSel(int x, int y) {
 public void onAction(Action action) {
 	if (action.equals(Action.SELECT))
 		time = 5*(int) stepTime;
+	else if (action.equals(Action.LEFT))
+		time -= 11;
+	else if (action.equals(Action.RIGHT))
+		time += 9;
 }
 
 @Override

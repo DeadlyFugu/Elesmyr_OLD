@@ -2,9 +2,8 @@ package net.sekien.elesmyr.util;
 
 import net.sekien.elesmyr.system.Main;
 import net.sekien.hbt.*;
-import org.newdawn.slick.Image;
-import org.newdawn.slick.SlickException;
-import org.newdawn.slick.util.Log;
+import org.newdawn.slick.*;
+import org.newdawn.slick.util.*;
 
 import java.io.*;
 import java.util.*;
@@ -364,11 +363,11 @@ public static void writeMap(File file, Map<String, String> map) throws IOExcepti
 }
 
 public static Image getImage(String s) throws SlickException {
-	return new Image(FileHandler.parse(s, ResourceType.IMAGE), false, 0);
+	return new Image(FileHandler.parse(s, ResourceType.IMAGE), Image.FILTER_NEAREST);
 }
 
 public static Image getImageBlurry(String s) throws SlickException {
-	return new Image(FileHandler.parse(s, ResourceType.IMAGE), false, 1);
+	return new Image(FileHandler.parse(s, ResourceType.IMAGE), Image.FILTER_LINEAR);
 }
 
 public static List<File> getDataFolderContents(String name) {

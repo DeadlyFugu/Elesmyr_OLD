@@ -1,5 +1,3 @@
 Manifest-Version: 1.0
-Class-Path: lib/jinput.jar lib/groovy-all-2.0.6.jar lib/kryonet-debug-
- 2.18-all.jar lib/lwjgl.jar lib/slick.jar
 Main-Class: net.sekien.elesmyr.system.Main
 

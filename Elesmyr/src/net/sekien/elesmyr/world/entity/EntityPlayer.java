@@ -21,10 +21,7 @@ import net.sekien.elesmyr.world.item.Item;
 import net.sekien.elesmyr.world.item.ItemFactory;
 import net.sekien.hbt.HBTCompound;
 import net.sekien.hbt.HBTTools;
-import org.newdawn.slick.GameContainer;
-import org.newdawn.slick.Graphics;
-import org.newdawn.slick.SlickException;
-import org.newdawn.slick.SpriteSheet;
+import org.newdawn.slick.*;
 
 public class EntityPlayer extends Entity {
 
@@ -203,7 +200,6 @@ public void receiveMessageExt(Message msg, MessageEndPoint server) {
 		pdat.fromHBT(msg.getData());
 		pdat.updated(region, receiverName);
 	} else if (msg.getName().equals("pdat_GET")) {
-		System.out.println("ent received pdat_GET from "+msg.getSender());
 		msg.reply("hbtResponse", (HBTCompound) pdat.toHBT(), this);
 	} else {
 		Log.info("ENTITYPLAYER: Ignored message "+msg.toString());

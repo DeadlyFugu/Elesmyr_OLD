@@ -8,10 +8,9 @@ import net.sekien.elesmyr.system.Globals;
 import net.sekien.elesmyr.system.Main;
 import net.sekien.elesmyr.util.FileHandler;
 import org.newdawn.slick.*;
-import org.newdawn.slick.gui.TextField;
-import org.newdawn.slick.opengl.Texture;
-import org.newdawn.slick.util.BufferedImageUtil;
-import org.newdawn.slick.util.Log;
+import org.newdawn.slick.gui.*;
+import org.newdawn.slick.opengl.*;
+import org.newdawn.slick.util.*;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -81,7 +80,6 @@ public static void render(GameContainer gc, Graphics g) {
 	}
 	vignette.draw(0, 0, gc.getWidth(), gc.getHeight());
 	alphabg.draw(0, 0, gc.getWidth(), gc.getHeight());
-	g.scale(gc.getWidth()/(float) (Main.INTERNAL_RESX), gc.getHeight()/(float) (Main.INTERNAL_RESY));
 	if (!stateTrace.empty()) {
 		if (newState!=null) {
 			animtimer++;
