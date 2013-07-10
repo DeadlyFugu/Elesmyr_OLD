@@ -23,7 +23,7 @@ import net.sekien.hbt.HBTTools;
 import net.sekien.pepper.StateManager;
 import org.newdawn.slick.*;
 import org.newdawn.slick.Input;
-import org.newdawn.slick.gui.TextField;
+import org.newdawn.slick.gui.*;
 
 import java.net.InetAddress;
 import java.util.Iterator;
@@ -358,6 +358,7 @@ public boolean receiveMessage(Message msg) {
 			lm.addLight(world.getRegion(rname).getLights());
 			player.setRegion(rname);
 			regionLoaded = true;
+			StateManager.stopLoading();
 		} else if (name.equals("chat")) {
 			chat.addFirst(new ChatMessage(msg.getData().getString("msg", "ERROR: Badly formatted chat message")));
 			//if (chat.size()>5) {

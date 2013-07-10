@@ -18,7 +18,7 @@ import java.util.ArrayList;
 import java.util.Random;
 
 public class Entity implements GameElement, Comparable<Entity> {
-public String name, extd, receiverName; //TODO: Make name into an int
+public String name, receiverName; //TODO: Make name into an int
 public int x, y; //Actual location according to server
 private int cheese = -12;
 protected int cx1 = 0, cy1 = 0, cx2 = 32, cy2 = 32;
@@ -26,18 +26,19 @@ public float xs, ys; //Smoothed
 public boolean constantUpdate = false;
 public boolean tellClient = true;
 public Region region;
+protected HBTCompound inst_dat;
 
 /**
  * 'Constructor' for entity. Used because I suck at reflection and can't figure out how to pass arguments to a real
  * constructor.
  */
-public Entity ctor(String name, int x, int y, String extd, String receiverName, Region region) {
+public Entity ctor(String name, int x, int y, HBTCompound tag, String receiverName, Region region) {
 	this.name = name;
 	this.receiverName = receiverName;
 	xs = this.x = x;
 	ys = this.y = y;
 	this.region = region;
-	this.extd = extd;
+	this.inst_dat = tag;
 	this.initSERV();
 	return this;
 }
@@ -96,35 +97,29 @@ public void save(Save save) {
 public void fromHBT(HBTCompound tag) {
 	x = tag.getInt("x", 0);
 	y = tag.getInt("y", 0);
+	inst_dat = tag;
 	//if (!tag.hasTag("name")) {} else {this.name = tag.getInt("name", "ERROR");} //MAY ERROR (ERROR BEFORE BECAUSE tag.getString)
 	//extd = tag.getString("extd", "");
-	loadExtd(tag);
+	//loadExtd(tag);
 }
 
 @Override
 public HBTCompound toHBT(boolean msg) {
-	HBTCompound ret = new HBTCompound(name);
-	ret.addTag(new HBTString("class", this.getClass().getName().substring("net.sekien.elesmyr.world.entity.".length())));
-	ret.addTag(new HBTInt("x", x));
-	ret.addTag(new HBTInt("y", y));
-	if (msg)
-		ret.addTag(new HBTInt("name", Integer.parseInt(name)));
-	for (HBTTag tag : getExtd())
-		ret.addTag(tag);
+	HBTCompound ret = (HBTCompound) inst_dat.deepClone();
+	ret.setTag(new HBTString("class", this.getClass().getName().substring("net.sekien.elesmyr.world.entity.".length())));
+	ret.setTag(new HBTInt("x", x));
+	ret.setTag(new HBTInt("y", y));
+	ret.setName(name);
 	return ret;
 }
 
-protected HBTCompound getExtd() {
-	return HBTTools.msgWrap(new HBTString("extd", extd));
-}
-
-protected void loadExtd(HBTCompound tag) {
-	this.extd = tag.getString("extd", "");
+@Deprecated protected String gEXTD() {
+	return inst_dat.getString("extd", "ERROR NO EXTD TAG");
 }
 
 @Override
 public String toString() {
-	return this.getClass().getName().substring("net.sekien.elesmyr.world.entity.".length())+","+name+","+x+","+y+","+extd;
+	return this.getClass().getName().substring("net.sekien.elesmyr.world.entity.".length())+","+name+","+x+","+y+","+inst_dat.toString();
 }
 
 @Override

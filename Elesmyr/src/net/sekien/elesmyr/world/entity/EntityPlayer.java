@@ -190,7 +190,7 @@ public void receiveMessageExt(Message msg, MessageEndPoint server) {
 		CraftUI.getRecipe(msg.getData().getInt("i", 0)).addToPDAT(pdat, region, receiverName);
 	} else if (msg.getName().equals("setPDAT")) {
 		if (pdat==null)
-			pdat = new PlayerData(extd, msg.getConnection());
+			pdat = new PlayerData(getName(), msg.getConnection());
 		pdat.fromHBT(msg.getData());
 		pdat.updated(region, receiverName);
 	} else if (msg.getName().equals("setHealth")) {
@@ -201,7 +201,7 @@ public void receiveMessageExt(Message msg, MessageEndPoint server) {
 		pdat.updated(region, receiverName);
 	} else if (msg.getName().equals("pdat_SET")) {
 		if (pdat==null)
-			pdat = new PlayerData(extd, msg.getConnection());
+			pdat = new PlayerData(getName(), msg.getConnection());
 		pdat.fromHBT(msg.getData());
 		pdat.updated(region, receiverName);
 	} else if (msg.getName().equals("pdat_GET")) {
@@ -212,7 +212,7 @@ public void receiveMessageExt(Message msg, MessageEndPoint server) {
 }
 
 public String getName() {
-	return extd.split(",")[0];
+	return inst_dat.getString("extd", "").split(",")[0]; //TODO: NO USE EXTD
 }
 
 @Override

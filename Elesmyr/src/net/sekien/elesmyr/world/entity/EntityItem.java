@@ -11,10 +11,7 @@ import net.sekien.elesmyr.world.item.Item;
 import net.sekien.elesmyr.world.item.ItemFactory;
 import net.sekien.elesmyr.world.item.ItemTorch;
 import net.sekien.hbt.HBTTools;
-import org.newdawn.slick.GameContainer;
-import org.newdawn.slick.Graphics;
-import org.newdawn.slick.Image;
-import org.newdawn.slick.SlickException;
+import org.newdawn.slick.*;
 
 public class EntityItem extends Entity {
 Image spr;
@@ -26,7 +23,7 @@ private Light light = null;
 @Override
 public void init(GameContainer gc, MessageEndPoint receiver)
 		throws SlickException {
-	this.item = ItemFactory.getItem(extd.split(",", 2)[0]);
+	this.item = ItemFactory.getItem(inst_dat.getString("extd", "").split(",", 2)[0]);    //todo n extd
 	spr = item.spr;
 	if (item instanceof ItemTorch) {
 		light = new Light(600, 550, 256, 0.8f, 0.5f, 0.2f, 0.4f); //TORCH LIGHT
@@ -42,7 +39,7 @@ public void kill(GameClient gs) {
 
 @Override
 public void initSERV() {
-	this.item = ItemFactory.getItem(extd.split(",", 2)[0]);
+	this.item = ItemFactory.getItem(inst_dat.getString("extd", "").split(",", 2)[0]);    //todo n extd
 }
 
 @Override
@@ -68,7 +65,7 @@ public void update(Region region, GameServer receiver) {
 @Override
 public void interact(Region region, EntityPlayer entityPlayer, MessageEndPoint receiver, Message msg) {
 	if (destTimer==-1)
-		if (entityPlayer.putItem(item, extd.split(",", 2)[1])) {
+		if (entityPlayer.putItem(item, inst_dat.getString("extd", "").split(",", 2)[1])) { //todo n extd
 			destTimer = 40;
 			this.targetEP = entityPlayer;
 			constantUpdate = true;

@@ -8,10 +8,7 @@ import net.sekien.elesmyr.system.GameClient;
 import net.sekien.elesmyr.util.FileHandler;
 import net.sekien.elesmyr.world.Region;
 import net.sekien.hbt.HBTTools;
-import org.newdawn.slick.GameContainer;
-import org.newdawn.slick.Graphics;
-import org.newdawn.slick.Image;
-import org.newdawn.slick.SlickException;
+import org.newdawn.slick.*;
 
 public class EntityUI extends Entity {
 Image spr;
@@ -19,7 +16,7 @@ Image spr;
 @Override
 public void init(GameContainer gc, MessageEndPoint receiver)
 		throws SlickException {
-	spr = FileHandler.getImage("ent."+extd.split(",", 2)[0]);
+	spr = FileHandler.getImage("ent."+inst_dat.getString("extd", "").split(",", 2)[0]); //todo n extd
 }
 
 @Override
@@ -32,6 +29,6 @@ public void render(GameContainer gc, Graphics g,
 
 @Override
 public void interact(Region region, EntityPlayer entityPlayer, MessageEndPoint receiver, Message msg) {
-	MessageSystem.sendClient(this, msg.getConnection(), new Message("CLIENT.openUI", HBTTools.msgString("ui", extd.split(",", 2)[1])), false);
+	MessageSystem.sendClient(this, msg.getConnection(), new Message("CLIENT.openUI", HBTTools.msgString("ui", inst_dat.getString("extd", "").split(",", 2)[1])), false); //todo n extd
 }
 }

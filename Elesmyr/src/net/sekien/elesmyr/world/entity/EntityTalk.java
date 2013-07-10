@@ -10,10 +10,7 @@ import net.sekien.elesmyr.system.GameClient;
 import net.sekien.elesmyr.util.FileHandler;
 import net.sekien.elesmyr.world.Region;
 import net.sekien.hbt.HBTCompound;
-import org.newdawn.slick.GameContainer;
-import org.newdawn.slick.Graphics;
-import org.newdawn.slick.Image;
-import org.newdawn.slick.SlickException;
+import org.newdawn.slick.*;
 
 public class EntityTalk extends Entity {
 Image spr;
@@ -22,7 +19,7 @@ private DialogueHandler dh;
 @Override
 public void init(GameContainer gc, MessageEndPoint receiver)
 		throws SlickException {
-	spr = FileHandler.getImage("ent."+extd.split(",", 2)[0]);
+	spr = FileHandler.getImage("ent."+inst_dat.getString("extd", "").split(",", 2)[0]); //todo n extd
 }
 
 @Override

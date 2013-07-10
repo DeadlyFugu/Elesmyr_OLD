@@ -11,15 +11,14 @@ public static Entity getEntity(HBTCompound tag, Region r) {
 	int id = tag.getInt("name", 0); // why is ID called name? :S
 	int x = tag.getInt("x", 0);
 	int y = tag.getInt("y", 0);
-	String extd = tag.getString("extd", "");
 	try {
 		Entity e = (Entity) Class.forName("net.sekien.elesmyr.world.entity."+eclass).newInstance();
-		e.ctor(""+id, x, y, extd, r.name+"."+id, r);
+		e.ctor(""+id, x, y, tag, r.name+"."+id, r);
 		return e;
 	} catch (ClassNotFoundException e) {
 		GroovyObject go = ScriptRunner.get(eclass);
 		if (go!=null) {
-			go.invokeMethod("ctor", new Object[]{""+id, x, y, extd, r.name+"."+id, r});
+			go.invokeMethod("ctor", new Object[]{""+id, x, y, tag, r.name+"."+id, r});
 			return (Entity) go.invokeMethod("toEntity", new Object[0]);
 		}
 	} catch (InstantiationException e1) {

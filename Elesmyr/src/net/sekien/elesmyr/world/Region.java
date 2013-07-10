@@ -214,55 +214,7 @@ private ArrayList<Entity> getEntitiesAt(int x, int y) {
 	return ret;
 }
 
-public String getEntityString() {
-	String ret = "";
-	for (Entity e : entities.values()) {
-		ret = ret+"\\"+e.toString();
-	}
-	if (!ret.equals(""))
-		return ret.substring(1);
-	else
-		return ret;
-}
-
-/*public void parseEntityString(String str, boolean client) {
-	String[] ents = str.split("\\\\");
-	for (String s : ents) {
-		addEntity(s, client);
-	}
-}
-
-public void parseEntityStringGenIDs(String str, boolean client) {
-	String[] ents = str.split("\\\\");
-	int id = 0;
-	for (String s : ents) {
-		if (s.contains(","))
-			addEntity(s.split(",", 2)[0]+","+id+","+s.split(",", 2)[1], client);
-		id++;
-	}
-}*/
-
-/**
- * Adds an entity to this region, with a given ID
- *
- * @param data
- * 		String containing entity info, formatted the same as Entity.toString();
- */
-/*public void addEntity(String data, boolean client) {
-	if (data.split(",", 5).length==5) {
-		Entity ent = EntityFactory.getEntity(data, this);
-		if (ent!=null) {
-			entities.put(Integer.valueOf(data.split(",")[1]), ent);
-			if (client)
-				MessageSystem.registerReceiverClient(ent);
-			else
-				MessageSystem.registerReceiverServer(ent);
-		}
-	} else
-		Log.info("Ignored invalid entity '"+data+"'");
-}*/
 public void addEntity(HBTCompound data, boolean client) {
-	//Entity ent = EntityFactory.getEntity(data.getString("class", "Entity")+","+data.getInt("name", 0)+","+data.getInt("x", 0)+","+data.getInt("y", 0)+","+data.getString("extd", ""), this); //TODO: Use HBT instead
 	Entity ent = EntityFactory.getEntity(data, this);
 	if (ent!=null) {
 		entities.put(data.getInt("name", 0), ent);
@@ -274,38 +226,13 @@ public void addEntity(HBTCompound data, boolean client) {
 		Log.info("Ignored invalid entity: "+data);
 }
 
-/**
- * Adds an entity to this region, dynamically creating a new ID.
- *
- * @param data
- * 		String containing entity info, without the ID.
- * @return ID of the new entity. -1 if creation failed.
- */
-/*@Deprecated
-public int addEntityServer(String data) {
-	int idmax = 0;
-	for (Integer name : entities.keySet())
-		if (name > idmax) idmax = name;
-	//for (Connection c : connections)
-	//	c.sendTCP(new Message(name+".addEnt",data.split(",",2)[0]+","+(idmax+1)+","+data.split(",",2)[1]));	data.addTag(new HBTInt("name",idmax+1));
-	Entity ent = EntityFactory.getEntity(data.split(",", 2)[0]+","+(idmax+1)+","+data.split(",", 2)[1], this);
-	MessageSystem.sendClient(this, connections, new Message(name+".addEnt", ent), false);
-	if (ent!=null) {
-		entities.put(idmax+1, ent);
-		MessageSystem.registerReceiverServer(ent);
-		return idmax+1;
-	} else
-		return -1;
-}*/
 public int addEntityServer(HBTCompound data) {
 	int idmax = 0;
 	for (Integer name : entities.keySet())
 		if (name > idmax) idmax = name;
-	//for (Connection c : connections)
-	//	c.sendTCP(new Message(name+".addEnt",data.split(",",2)[0]+","+(idmax+1)+","+data.split(",",2)[1]));
-	data.addTag(new HBTInt("name", idmax+1));
+	data.setTag(new HBTInt("name", idmax+1));
 	MessageSystem.sendClient(this, connections, new Message(name+".addEnt", data), false);
-	Entity ent = EntityFactory.getEntity(data, this); //TODO: Use HBT instead
+	Entity ent = EntityFactory.getEntity(data, this);
 	if (ent!=null) {
 		entities.put(idmax+1, ent);
 		MessageSystem.registerReceiverServer(ent);

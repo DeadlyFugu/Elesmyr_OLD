@@ -16,4 +16,8 @@ public String getName() {
 }
 
 public abstract HBTTag deepClone();
+
+public void setName(String name) {
+	this.name = name;
+}
 }

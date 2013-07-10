@@ -36,6 +36,10 @@ private static List<PopupNode> popup;
 private static boolean enterGame = false;
 private static String gameSettings;
 
+private static boolean loading = false;
+private static long load_start = 0;
+private static Image load_img;
+
 private static int animtimer = 0;
 private static String newState = null;
 
@@ -51,6 +55,7 @@ public static void init(GameContainer gc) {
 		background = FileHandler.getImage("menu.bg");
 		vignette = FileHandler.getImage("ui.vignette");
 		alphabg = FileHandler.getImage("ui.alphabg");
+		load_img = FileHandler.getImage("ui.loading");
 	} catch (Exception e) {}
 
 	textField = new TextField(gc, FontRenderer.getFont(), 0, 16, 530, 16);
@@ -111,6 +116,13 @@ public static void render(GameContainer gc, Graphics g) {
 	String ver = Main.verNum;
 	renderer.rect(0, 0, renderer.textWidth(ver)+4, renderer.textHeight(ver)+4, false, true, false, true, Renderer.BoxStyle.FULL);
 	renderer.text(0, 0, ver);
+
+	if (loading) {
+		g.pushTransform();
+		g.rotate(16, 16, -(System.nanoTime()-load_start)/800000f);
+		load_img.draw(0, 0, 32, 32);
+		g.popTransform();
+	}
 }
 
 public static void update(GameContainer gc) {
@@ -138,6 +150,7 @@ public static void update(GameContainer gc) {
 			String savename = arg.substring(0, arg.lastIndexOf('.'));
 			Globals.set("save", savename);
 			try {
+				startLoading();
 				GameClient client = new GameClient(-1);
 				client.init(gc);
 				client.loadSave(gc, savename, false);
@@ -145,6 +158,7 @@ public static void update(GameContainer gc) {
 				((GameClientState) states.get("GameClient")).setClient(client);
 				setState("GameClient");
 			} catch (Exception e) {
+				stopLoading();
 				if (e.getLocalizedMessage()!=null && e.getLocalizedMessage().equals("__BIND_EXCEPTION")) {
 					com.esotericsoftware.minlog.Log.error(e.getLocalizedMessage());
 					error("Could not bind to port.\nThis most likely means another\ncopy of the game is already running.", false);
@@ -279,6 +293,15 @@ public static void setBackground(String name) {
 	} catch (SlickException e) {
 		Log.error(e);
 	}
+}
+
+public static void startLoading() {
+	loading = true;
+	load_start = System.nanoTime();
+}
+
+public static void stopLoading() {
+	loading = false;
 }
 
 public static void back() {

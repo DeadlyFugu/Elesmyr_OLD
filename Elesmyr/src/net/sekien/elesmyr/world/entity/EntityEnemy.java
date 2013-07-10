@@ -11,6 +11,7 @@ import net.sekien.elesmyr.util.FileHandler;
 import net.sekien.elesmyr.world.Region;
 import net.sekien.elesmyr.world.item.Item;
 import net.sekien.elesmyr.world.item.ItemWeapon;
+import net.sekien.hbt.HBTInt;
 import net.sekien.hbt.HBTTools;
 import org.newdawn.slick.*;
 
@@ -34,7 +35,12 @@ public EntityEnemy() {
 
 @Override
 public void initSERV() {
-	health = Integer.parseInt(extd.split(",", 2)[0]);
+	health = inst_dat.getInt("health", 0);
+	if (health==0) {
+		health = Integer.parseInt(inst_dat.getString("extd", "0"));
+		inst_dat.deleteTag("extd");
+		inst_dat.addTag(new HBTInt("health", health));
+	}
 }
 
 @Override
@@ -124,10 +130,7 @@ public void hurt(Region region, Entity entity, MessageEndPoint receiver) {
 	} else {
 		MessageSystem.sendClient(this, region.connections, new Message(this.getReceiverName()+".setHealth", HBTTools.msgInt("health", health)), false);
 	}
-	if (extd.contains(","))
-		extd = health+","+extd.split(",", 2)[1];
-	else
-		extd = ""+health;
+	inst_dat.setTag(new HBTInt("health", health));
 }
 
 @Override

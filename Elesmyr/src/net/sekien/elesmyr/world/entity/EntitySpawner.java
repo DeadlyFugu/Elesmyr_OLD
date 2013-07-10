@@ -22,14 +22,14 @@ public EntitySpawner() {
 public void update(Region region, GameServer receiver) {
 	int se = 0;
 	for (Entity e : region.entities.values())
-		if (e.getClass().getSimpleName().equals(extd.split(",", 2)[0]))
+		if (e.getClass().getSimpleName().equals(inst_dat.getString("extd", "").split(",", 2)[0])) //todo n extd
 			se++;
 	if (rand.nextInt((int) Math.floor(Math.pow(se, 3)/2)+1)==0) {
 		region.addEntityServer(new HBTCompound("spawn_dat", new HBTTag[]{
-				                                                                new HBTString("class", extd.split(",", 2)[0]),
+				                                                                new HBTString("class", inst_dat.getString("extd", "").split(",", 2)[0]),
 				                                                                new HBTInt("x", x),
 				                                                                new HBTInt("y", y),
-				                                                                new HBTString("extd", extd.split(",", 2)[1])
+				                                                                new HBTString("extd", inst_dat.getString("extd", "").split(",", 2)[1])
 		}));
 	}
 }
