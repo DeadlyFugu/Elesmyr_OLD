@@ -19,8 +19,7 @@ import net.sekien.elesmyr.util.FileHandler;
 import net.sekien.elesmyr.world.Region;
 import net.sekien.elesmyr.world.item.Item;
 import net.sekien.elesmyr.world.item.ItemFactory;
-import net.sekien.hbt.HBTCompound;
-import net.sekien.hbt.HBTTools;
+import net.sekien.hbt.*;
 import org.newdawn.slick.*;
 
 public class EntityPlayer extends Entity {
@@ -178,7 +177,13 @@ public void receiveMessageExt(Message msg, MessageEndPoint server) {
 					return;
 				}
 			}
-			region.addEntityServer("Entity"+(ie.getItem().stickyDrops()?"Placed":"")+"Item,"+dx+","+dy+","+ie.getItem().name+","+ie.getExtd());
+			//region.addEntityServer("Entity"+(ie.getItem().stickyDrops()?"Placed":"")+"Item,"+dx+","+dy+","+ie.getItem().name+","+ie.getExtd());
+			region.addEntityServer(new HBTCompound("player_dat", new HBTTag[]{
+					                                                                 new HBTString("class", "Entity"+(ie.getItem().stickyDrops()?"Placed":"")+"Item"),
+					                                                                 new HBTInt("x", dx),
+					                                                                 new HBTInt("y", dy),
+					                                                                 new HBTString("extd", ie.getItem().name+","+ie.getExtd())
+			}));
 			pdat.removeItem(msg.getData().getInt("i", 0), region, receiverName);
 		}
 	} else if (msg.getName().equals("craftItem")) {

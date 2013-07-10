@@ -14,8 +14,7 @@ import net.sekien.elesmyr.world.World;
 import net.sekien.elesmyr.world.entity.Entity;
 import net.sekien.elesmyr.world.entity.EntityPlayer;
 import net.sekien.hbt.*;
-import org.newdawn.slick.GameContainer;
-import org.newdawn.slick.Graphics;
+import org.newdawn.slick.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -233,7 +232,13 @@ public void changePlayerRegion(String data, int x, int y, Connection connection,
 	for (Entity e : world.getRegion(data).entities.values()) {
 		MessageSystem.sendClient(null, connection, new Message(data+".addEnt", e), false);
 	}
-	int entid = world.getRegion(data).addEntityServer("EntityPlayer,"+x+","+y+","+players.get(connection)); //Add a player entity
+	//int entid = world.getRegion(data).addEntityServer("EntityPlayer,"+x+","+y+","+players.get(connection)); //Add a player entity
+	int entid = world.getRegion(data).addEntityServer(new HBTCompound("player_dat", new HBTTag[]{
+			                                                                                            new HBTString("class", "EntityPlayer"),
+			                                                                                            new HBTInt("x", x),
+			                                                                                            new HBTInt("y", y),
+			                                                                                            new HBTString("extd", players.get(connection))
+	})); //Add a player entity
 	if (entid==-1) { //Shouldn't happen
 		MessageSystem.sendClient(null, connection, new Message("CLIENT.error", HBTTools.msgString("msg", "addEntityServer returned -1")), false);
 		return;

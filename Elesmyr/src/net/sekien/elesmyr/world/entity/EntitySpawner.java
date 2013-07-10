@@ -2,6 +2,10 @@ package net.sekien.elesmyr.world.entity;
 
 import net.sekien.elesmyr.system.GameServer;
 import net.sekien.elesmyr.world.Region;
+import net.sekien.hbt.HBTCompound;
+import net.sekien.hbt.HBTInt;
+import net.sekien.hbt.HBTString;
+import net.sekien.hbt.HBTTag;
 
 import java.util.Random;
 
@@ -21,7 +25,12 @@ public void update(Region region, GameServer receiver) {
 		if (e.getClass().getSimpleName().equals(extd.split(",", 2)[0]))
 			se++;
 	if (rand.nextInt((int) Math.floor(Math.pow(se, 3)/2)+1)==0) {
-		region.addEntityServer(extd.split(",", 2)[0]+","+x+","+y+","+extd.split(",", 2)[1]);
+		region.addEntityServer(new HBTCompound("spawn_dat", new HBTTag[]{
+				                                                                new HBTString("class", extd.split(",", 2)[0]),
+				                                                                new HBTInt("x", x),
+				                                                                new HBTInt("y", y),
+				                                                                new HBTString("extd", extd.split(",", 2)[1])
+		}));
 	}
 }
 }

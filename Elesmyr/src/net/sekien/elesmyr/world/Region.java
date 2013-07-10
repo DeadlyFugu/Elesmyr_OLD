@@ -21,10 +21,8 @@ import net.sekien.hbt.HBTCompound;
 import net.sekien.hbt.HBTInt;
 import net.sekien.hbt.HBTTag;
 import net.sekien.hbt.HBTTools;
-import org.newdawn.slick.GameContainer;
-import org.newdawn.slick.Graphics;
-import org.newdawn.slick.SlickException;
-import org.newdawn.slick.tiled.TiledMap;
+import org.newdawn.slick.*;
+import org.newdawn.slick.tiled.*;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -227,7 +225,7 @@ public String getEntityString() {
 		return ret;
 }
 
-public void parseEntityString(String str, boolean client) {
+/*public void parseEntityString(String str, boolean client) {
 	String[] ents = str.split("\\\\");
 	for (String s : ents) {
 		addEntity(s, client);
@@ -242,7 +240,7 @@ public void parseEntityStringGenIDs(String str, boolean client) {
 			addEntity(s.split(",", 2)[0]+","+id+","+s.split(",", 2)[1], client);
 		id++;
 	}
-}
+}*/
 
 /**
  * Adds an entity to this region, with a given ID
@@ -250,7 +248,7 @@ public void parseEntityStringGenIDs(String str, boolean client) {
  * @param data
  * 		String containing entity info, formatted the same as Entity.toString();
  */
-public void addEntity(String data, boolean client) {
+/*public void addEntity(String data, boolean client) {
 	if (data.split(",", 5).length==5) {
 		Entity ent = EntityFactory.getEntity(data, this);
 		if (ent!=null) {
@@ -262,10 +260,10 @@ public void addEntity(String data, boolean client) {
 		}
 	} else
 		Log.info("Ignored invalid entity '"+data+"'");
-}
-
+}*/
 public void addEntity(HBTCompound data, boolean client) {
-	Entity ent = EntityFactory.getEntity(data.getString("class", "Entity")+","+data.getInt("name", 0)+","+data.getInt("x", 0)+","+data.getInt("y", 0)+","+data.getString("extd", ""), this); //TODO: Use HBT instead
+	//Entity ent = EntityFactory.getEntity(data.getString("class", "Entity")+","+data.getInt("name", 0)+","+data.getInt("x", 0)+","+data.getInt("y", 0)+","+data.getString("extd", ""), this); //TODO: Use HBT instead
+	Entity ent = EntityFactory.getEntity(data, this);
 	if (ent!=null) {
 		entities.put(data.getInt("name", 0), ent);
 		if (client)
@@ -283,7 +281,7 @@ public void addEntity(HBTCompound data, boolean client) {
  * 		String containing entity info, without the ID.
  * @return ID of the new entity. -1 if creation failed.
  */
-@Deprecated
+/*@Deprecated
 public int addEntityServer(String data) {
 	int idmax = 0;
 	for (Integer name : entities.keySet())
@@ -298,8 +296,7 @@ public int addEntityServer(String data) {
 		return idmax+1;
 	} else
 		return -1;
-}
-
+}*/
 public int addEntityServer(HBTCompound data) {
 	int idmax = 0;
 	for (Integer name : entities.keySet())
@@ -308,7 +305,7 @@ public int addEntityServer(HBTCompound data) {
 	//	c.sendTCP(new Message(name+".addEnt",data.split(",",2)[0]+","+(idmax+1)+","+data.split(",",2)[1]));
 	data.addTag(new HBTInt("name", idmax+1));
 	MessageSystem.sendClient(this, connections, new Message(name+".addEnt", data), false);
-	Entity ent = EntityFactory.getEntity(data.getString("class", "Entity")+","+(idmax+1)+","+data.getInt("x", 0)+","+data.getInt("y", 0)+","+data.getString("extd", ""), this); //TODO: Use HBT instead
+	Entity ent = EntityFactory.getEntity(data, this); //TODO: Use HBT instead
 	if (ent!=null) {
 		entities.put(idmax+1, ent);
 		MessageSystem.registerReceiverServer(ent);

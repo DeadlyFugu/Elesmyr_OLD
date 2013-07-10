@@ -12,9 +12,7 @@ import net.sekien.elesmyr.system.GameClient;
 import net.sekien.elesmyr.system.GameServer;
 import net.sekien.elesmyr.world.Region;
 import net.sekien.hbt.*;
-import org.newdawn.slick.GameContainer;
-import org.newdawn.slick.Graphics;
-import org.newdawn.slick.SlickException;
+import org.newdawn.slick.*;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -182,7 +180,13 @@ protected ArrayList<String> getDrops() {
 protected void drop(Region region) {
 	Random rand = new Random();
 	for (String i : this.getDrops()) {
-		region.addEntityServer("EntityItem,"+(x-rand.nextInt(32))+","+(y-rand.nextInt(32))+","+i);
+		//region.addEntityServer("EntityItem,"+(x-rand.nextInt(32))+","+(y-rand.nextInt(32))+","+i);
+		region.addEntityServer(new HBTCompound("item_ent_dat", new HBTTag[]{
+				                                                                   new HBTString("class", "EntityItem"),
+				                                                                   new HBTInt("x", x-rand.nextInt(32)),
+				                                                                   new HBTInt("y", y-rand.nextInt(32)),
+				                                                                   new HBTString("extd", i)
+		}));
 	}
 }
 
