@@ -17,9 +17,8 @@ import net.sekien.hbt.HBTCompound;
 import net.sekien.hbt.HBTInt;
 import net.sekien.hbt.HBTString;
 import net.sekien.hbt.HBTTools;
-import org.newdawn.slick.GameContainer;
-import org.newdawn.slick.Graphics;
-import org.newdawn.slick.SlickException;
+import net.sekien.pepper.StateManager;
+import org.newdawn.slick.*;
 
 public class PlayerClient implements GameElement {
 public static boolean BIGSIZE = true;
@@ -106,6 +105,7 @@ public void clientUpdate(GameContainer gc, GameClient receiver) {
 						smx -= mvspd;
 				gs.cam.setPosition(this.x = smx, this.y = smy, this);
 				gs.regionLoaded = false;
+				StateManager.startLoading();
 				this.region = null;
 				this.entid = -1;
 				HBTCompound pTag = new HBTCompound("p");

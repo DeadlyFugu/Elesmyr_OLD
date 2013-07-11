@@ -43,7 +43,7 @@ public static final String version = "$version.prealpha| "+verNum; //0.0.1 = DEC
 private static GameContainer gc;
 
 public Main() {
-	super("Elesmyr");
+	super("Elesmyr "+verRelease+" "+verNum);
 
 	/*this.addState(new IntroState(INTROSTATE));
 	this.addState(new MainMenuState(MENUSTATE));

@@ -113,9 +113,6 @@ public static void render(GameContainer gc, Graphics g) {
 	for (PopupNode node : popup) {
 		node.render(renderer, Main.INTERNAL_RESX, Main.INTERNAL_RESY, false);
 	}
-	String ver = Main.verNum;
-	renderer.rect(0, 0, renderer.textWidth(ver)+4, renderer.textHeight(ver)+4, false, true, false, true, Renderer.BoxStyle.FULL);
-	renderer.text(0, 0, ver);
 
 	if (loading) {
 		g.pushTransform();
@@ -172,6 +169,7 @@ public static void update(GameContainer gc) {
 			//sbg.enterState(Main.MENUSTATE);
 		} else if (mode.equals("JOIN")) {
 			try {
+				startLoading();
 				GameClient client = new GameClient(-1);
 				client.init(gc);
 				client.join(InetAddress.getByName(arg));
@@ -180,10 +178,12 @@ public static void update(GameContainer gc) {
 				((GameClientState) states.get("GameClient")).setClient(client);
 				setState("GameClient");
 			} catch (IOException e) {
+				stopLoading();
 				gc.getInput().clearKeyPressedRecord();
 				error("IOException caught joining server:\n"+
 						      e.getLocalizedMessage(), false);
 			} catch (Exception e) {
+				stopLoading();
 				Main.handleCrash(e);
 				gc.exit();
 			}

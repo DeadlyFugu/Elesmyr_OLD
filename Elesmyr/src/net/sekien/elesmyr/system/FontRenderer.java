@@ -49,7 +49,7 @@ public static void reset(GameContainer gc) throws SlickException {
 		uFont.loadGlyphs();
 		jpfont = uFont;
 	}
-	((AppGameContainer) gc).setTitle(resolveI18n("bar.title"));
+	((AppGameContainer) gc).setTitle(resolveI18n("bar.title")+" "+resolveI18n(Main.version));
 }
 
 public static Language getLang() {
