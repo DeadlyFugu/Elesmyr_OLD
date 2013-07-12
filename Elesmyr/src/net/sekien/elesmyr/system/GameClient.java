@@ -139,7 +139,7 @@ public void render(GameContainer gc, Graphics g) throws SlickException {
 		renderMap(player.region, true);
 		if (Globals.get("debug", false) && Globals.get("showEnt", true)) { //Show ent IDs.
 			for (Entity e : player.region.entities.values()) //TODO: Somehow this line throws an NPE occasionally O.o
-				FontRenderer.drawString(e.x+cam.getXOff(), e.y+cam.getYOff(), e.name, g);
+				FontRenderer.drawString(e.x+cam.getXOff(), e.y+cam.getYOff(), ""+e.id, g);
 		}
 		g.popTransform();
 		g.pushTransform();

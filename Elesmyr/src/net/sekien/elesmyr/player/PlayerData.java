@@ -7,59 +7,14 @@ import net.sekien.elesmyr.msgsys.Message;
 import net.sekien.elesmyr.msgsys.MessageSystem;
 import net.sekien.elesmyr.world.Region;
 import net.sekien.elesmyr.world.item.Item;
-import net.sekien.elesmyr.world.item.ItemFactory;
-import net.sekien.hbt.*;
+import net.sekien.hbt.HBTCompound;
+import net.sekien.hbt.HBTFlag;
+import net.sekien.hbt.HBTInt;
+import net.sekien.hbt.HBTTag;
 
 import java.util.ArrayList;
 
 public class PlayerData {
-public class InventoryEntry {
-	Item item;
-	String extd;
-	int count;
-
-	InventoryEntry(Item item, String extd, int count) {
-		this.item = item;
-		this.extd = extd;
-		this.count = count;
-	}
-
-	public InventoryEntry(HBTCompound ietag) {
-		this(ItemFactory.getItem(ietag.getString("n", "Null")), ietag.getString("e", ""), ietag.getInt("c", 1));
-	}
-
-	private void upCount() {
-		count++;
-	}
-
-	private boolean downCount() {
-		count--;
-		return (count==0);
-	}
-
-	public String toString() {
-		return count+"x "+item.name+" ("+extd+")";
-	}
-
-	public Item getItem() {return item;}
-
-	public int getCount() {return count;}
-
-	public String getExtd() {return extd;}
-
-	public void setExtd(String extd) {this.extd = extd;}
-
-	@Override
-	public boolean equals(Object other) {
-		if (other==null)
-			return false;
-		return this.item.name.equals(((InventoryEntry) other).item.name) && this.extd.equals(((InventoryEntry) other).extd);
-	}
-
-	public HBTTag[] toHBT() {
-		return new HBTTag[]{new HBTInt("c", count), new HBTString("n", item.name), new HBTString("e", extd)};
-	}
-}
 
 private String name;
 private Connection connection;
@@ -118,26 +73,7 @@ public String toString() {
 		return name+","+health+"/"+healthMax+","+magicka+"/"+magickaMax+","+stamina+"/"+staminaMax+","+affinity.toString()+","+inventory.indexOf(equipped)+",";
 }
 
-public void fromString(String str) {
-	String[] parts = str.split(",", 7);
-	name = parts[0];
-	health = Integer.parseInt(parts[1].split("/")[0]);
-	healthMax = Integer.parseInt(parts[1].split("/")[1]);
-	magicka = Integer.parseInt(parts[2].split("/")[0]);
-	magickaMax = Integer.parseInt(parts[2].split("/")[1]);
-	stamina = Integer.parseInt(parts[3].split("/")[0]);
-	staminaMax = Integer.parseInt(parts[3].split("/")[1]);
-	affinity = Element.valueOf(parts[4]);
-	inventory.clear();
-	if (!parts[6].equals(""))
-		for (String is : parts[6].split("\\\\")) {
-			inventory.add(new InventoryEntry(ItemFactory.getItem(is.split(",", 3)[1]), is.split(",", 3)[2], Integer.parseInt(is.split(",", 3)[0])));
-		}
-	if (!parts[5].equals("-1"))
-		equipped = inventory.get(Integer.valueOf(parts[5]));
-}
-
-public boolean put(Item item, String extd, Region r, String ent) {
+public boolean put(Item item, HBTCompound extd, Region r, String ent) {
 	try {
 		InventoryEntry ieo = new InventoryEntry(item, extd, 1);
 		if (item.stackable() && inventory.contains(ieo))
@@ -170,8 +106,11 @@ public HBTTag toHBT() {
 	ret.addTag(new HBTFlag("affinity", affinity.toString()));
 	ret.addTag(new HBTInt("equip", inventory.indexOf(equipped)));
 	HBTCompound inv = new HBTCompound("inv");
-	for (InventoryEntry ie : inventory)
-		inv.addTag(new HBTCompound(Integer.toHexString(inventory.indexOf(ie)), ie.toHBT()));
+	for (InventoryEntry ie : inventory) {
+		HBTTag itag = ie.toHBT();
+		itag.setName(Integer.toHexString(inventory.indexOf(ie)));
+		inv.addTag(itag);
+	}
 	ret.addTag(inv);
 	return ret;
 	//return name+","+health+"/"+healthMax+","+magicka+"/"+magickaMax+","+stamina+"/"+staminaMax+","+affinity.toString()+","+inventory.indexOf(equipped)+","+inv.substring(1);

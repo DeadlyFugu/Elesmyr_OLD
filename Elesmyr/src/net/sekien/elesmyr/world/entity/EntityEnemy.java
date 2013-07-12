@@ -120,13 +120,13 @@ public void hurt(Region region, Entity entity, MessageEndPoint receiver) {
 	if (entity.getEquipped()!=null) {
 		Item i = entity.getEquipped().getItem();
 		if (i instanceof ItemWeapon)
-			dmg = ((ItemWeapon) i).getMult(entity.getEquipped().getExtd());
+			dmg = ((ItemWeapon) i).getMult(entity.getEquipped());
 		dmg *= i.getElement().multAgainst(this.getElement())*entity.getElement().multAgainst(this.getElement());
 	}
 	health -= dmg;
 	if (health <= 0) {
 		this.drop(region);
-		region.receiveMessage(new Message(region.name+".killSERV", HBTTools.msgString("ent", this.name)), receiver); //TODO: Merge all killSEV:<this> into one method in Entity
+		region.receiveMessage(new Message(region.name+".killSERV", HBTTools.msgString("ent", ""+this.id)), receiver); //TODO: Merge all killSEV:<this> into one method in Entity
 	} else {
 		MessageSystem.sendClient(this, region.connections, new Message(this.getReceiverName()+".setHealth", HBTTools.msgInt("health", health)), false);
 	}

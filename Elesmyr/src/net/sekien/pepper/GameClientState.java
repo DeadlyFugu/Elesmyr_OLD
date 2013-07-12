@@ -2,8 +2,8 @@ package net.sekien.pepper;
 
 import net.sekien.elesmyr.system.GameClient;
 import net.sekien.elesmyr.system.Main;
-import org.newdawn.slick.GameContainer;
-import org.newdawn.slick.SlickException;
+import org.newdawn.slick.Color;
+import org.newdawn.slick.*;
 
 import java.awt.*;
 
@@ -32,6 +32,18 @@ public void render(Renderer renderer, int w, int h, boolean sel) {
 	}
 	//renderer.rect(0, 0, 156, 48, false, true, false, true, Renderer.BoxStyle.FULL);
 	//renderer.text(10, 11, "GameClientState");
+}
+
+@Override
+public void transitionEnter(Renderer renderer, int w, int h, boolean sel, float time) {
+	StateManager.getBG().draw(0, 0, Main.INTERNAL_RESX, Main.INTERNAL_RESY, new Color(1, 1, 1, time));
+	render(renderer, w, h, sel);
+}
+
+@Override
+public void transitionLeave(Renderer renderer, int w, int h, boolean sel, float time) {
+	StateManager.getBG().draw(0, 0, Main.INTERNAL_RESX, Main.INTERNAL_RESY, new Color(1, 1, 1, time));
+	render(renderer, w, h, sel);
 }
 
 @Override

@@ -23,7 +23,7 @@ private Light light = null;
 @Override
 public void init(GameContainer gc, MessageEndPoint receiver)
 		throws SlickException {
-	this.item = ItemFactory.getItem(inst_dat.getString("extd", "").split(",", 2)[0]); //TODO: no use EXTD
+	this.item = ItemFactory.getItem(inst_dat.getString("ie.n", ""));
 	spr = item.spr;
 	if (item instanceof ItemTorch) {
 		light = new Light(600, 550, 256, 0.8f, 0.5f, 0.2f, 0.4f); //TORCH LIGHT
@@ -39,7 +39,7 @@ public void kill(GameClient gs) {
 
 @Override
 public void initSERV() {
-	this.item = ItemFactory.getItem(inst_dat.getString("extd", "").split(",", 2)[0]); //TODO no extd
+	this.item = ItemFactory.getItem(inst_dat.getString("ie.n", ""));
 }
 
 @Override
@@ -59,13 +59,13 @@ public void update(Region region, GameServer receiver) {
 		this.x = targetEP.x-16;
 		this.y = targetEP.y-16;
 	} else if (destTimer==0)
-		region.receiveMessage(new Message(region.name+".killSERV", HBTTools.msgString("ent", this.name)), receiver);
+		region.receiveMessage(new Message(region.name+".killSERV", HBTTools.msgString("ent", ""+this.id)), receiver);
 }
 
 @Override
 public void interact(Region region, EntityPlayer entityPlayer, MessageEndPoint receiver, Message msg) {
 	if (destTimer==-1)
-		if (entityPlayer.putItem(item, inst_dat.getString("extd", "").split(",", 2)[1])) {   //todo n extd
+		if (entityPlayer.putItem(item, inst_dat.getCompound("ie"))) {
 			destTimer = 40;
 			this.targetEP = entityPlayer;
 			constantUpdate = true;

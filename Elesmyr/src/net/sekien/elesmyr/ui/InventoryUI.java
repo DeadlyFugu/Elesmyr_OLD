@@ -4,6 +4,7 @@ import net.sekien.elesmyr.msgsys.Message;
 import net.sekien.elesmyr.msgsys.MessageEndPoint;
 import net.sekien.elesmyr.msgsys.MessageSystem;
 import net.sekien.elesmyr.player.Camera;
+import net.sekien.elesmyr.player.InventoryEntry;
 import net.sekien.elesmyr.player.PlayerData;
 import net.sekien.elesmyr.system.FontRenderer;
 import net.sekien.elesmyr.system.GameClient;
@@ -51,7 +52,7 @@ public void render(GameContainer gc, Graphics g,
 		int i = 0;
 		int ir = 0-Math.max(0, isel-4);
 		int iequip = 0;
-		for (PlayerData.InventoryEntry ie : pdat.inventory) {
+		for (InventoryEntry ie : pdat.inventory) {
 			Item iei = ie.getItem();
 			if (iei.getType().equalsIgnoreCase(types[sel]) || sel==0) {
 				if (ir >= 0 && ir <= 7) {
@@ -63,7 +64,7 @@ public void render(GameContainer gc, Graphics g,
 					FontRenderer.drawString(xoff+117, 128+ir*38, "#$item."+iei.getName(ie)+(ie.equals(pdat.getEquipped())?"| (|$inventory.equip|)":"|"), g);
 					FontRenderer.drawString(xoff+450, 128+ir*38, ""+ie.getCount(), g);
 					//Main.font.drawString(526,128+ir*40,"$"+ie.getValue()); //TODO: Value thingies
-					FontRenderer.drawString(xoff+526, 128+ir*38, ie.getExtd(), g);
+					//FontRenderer.drawString(xoff+526, 128+ir*38, ie.getExtd(), g);
 				}
 				i++;
 				ir++;
@@ -94,10 +95,10 @@ public void update(GameContainer gc, GameClient receiver) {
 		if (isel < smax-1)
 			isel++;
 	if (in.isKeyPressed(Input.KEY_X)) {
-		PlayerData.InventoryEntry i = getItem(isel, receiver);
+		InventoryEntry i = getItem(isel, receiver);
 		if (i!=null) {
 			EntityPlayer ep = ((EntityPlayer) receiver.player.region.entities.get(receiver.player.entid));
-			ArrayList<PlayerData.InventoryEntry> inv = ((EntityPlayer) receiver.player.region.entities.get(receiver.player.entid)).pdat.inventory;
+			ArrayList<InventoryEntry> inv = ((EntityPlayer) receiver.player.region.entities.get(receiver.player.entid)).pdat.inventory;
 			if (i.getItem().canEquip()) {
 				MessageSystem.sendServer(null, new Message(ep.getReceiverName()+".equip", HBTTools.msgInt("i", inv.indexOf(i))), false);
 			} else {
@@ -106,10 +107,10 @@ public void update(GameContainer gc, GameClient receiver) {
 		}
 	}
 	if (in.isKeyPressed(Input.KEY_Z)) {
-		PlayerData.InventoryEntry i = getItem(isel, receiver);
+		InventoryEntry i = getItem(isel, receiver);
 		if (i!=null) {
 			EntityPlayer ep = ((EntityPlayer) receiver.player.region.entities.get(receiver.player.entid));
-			ArrayList<PlayerData.InventoryEntry> inv = ((EntityPlayer) receiver.player.region.entities.get(receiver.player.entid)).pdat.inventory;
+			ArrayList<InventoryEntry> inv = ((EntityPlayer) receiver.player.region.entities.get(receiver.player.entid)).pdat.inventory;
 			MessageSystem.sendServer(null, new Message(ep.getReceiverName()+".drop", HBTTools.msgInt("i", inv.indexOf(i))), false);
 		}
 	}
@@ -119,9 +120,9 @@ public void update(GameContainer gc, GameClient receiver) {
 		isel = 0;
 }
 
-private PlayerData.InventoryEntry getItem(int isel, GameClient receiver) {
+private InventoryEntry getItem(int isel, GameClient receiver) {
 	int i = 0;
-	for (PlayerData.InventoryEntry ie : ((EntityPlayer) receiver.player.region.entities.get(receiver.player.entid)).pdat.inventory) {
+	for (InventoryEntry ie : ((EntityPlayer) receiver.player.region.entities.get(receiver.player.entid)).pdat.inventory) {
 		if (ie.getItem().getType().equalsIgnoreCase(types[sel]) || sel==0) {
 			if (i==isel)
 				return ie;

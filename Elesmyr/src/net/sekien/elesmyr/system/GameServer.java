@@ -237,7 +237,7 @@ public void changePlayerRegion(String data, int x, int y, Connection connection,
 			                                                                                            new HBTString("class", "EntityPlayer"),
 			                                                                                            new HBTInt("x", x),
 			                                                                                            new HBTInt("y", y),
-			                                                                                            new HBTString("extd", players.get(connection))
+			                                                                                            new HBTString("uname", players.get(connection))
 	})); //Add a player entity
 	if (entid==-1) { //Shouldn't happen
 		MessageSystem.sendClient(null, connection, new Message("CLIENT.error", HBTTools.msgString("msg", "addEntityServer returned -1")), false);

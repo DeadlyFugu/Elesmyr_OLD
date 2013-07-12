@@ -69,22 +69,22 @@ public static void init(GameContainer gc) {
 public static void render(GameContainer gc, Graphics g) {
 	g.setColor(Color.white);
 	renderer.setGraphicsAndGC(gc, g);
-	background.draw(0, 0, gc.getWidth(), gc.getHeight());
+	background.draw(0, 0, Main.INTERNAL_RESX, Main.INTERNAL_RESY);
 	if (newBG!=null) {
 		bgAnim++;
 		if (bgAnim < 10) {
 			newBG.setAlpha(bgAnim/10f);
-			newBG.draw(0, 0, gc.getWidth(), gc.getHeight());
+			newBG.draw(0, 0, Main.INTERNAL_RESX, Main.INTERNAL_RESY);
 		} else {
 			newBG.setAlpha(1);
 			bgAnim = 0;
 			background = newBG;
 			newBG = null;
-			background.draw(0, 0, gc.getWidth(), gc.getHeight());
+			background.draw(0, 0, Main.INTERNAL_RESX, Main.INTERNAL_RESY);
 		}
 	}
-	vignette.draw(0, 0, gc.getWidth(), gc.getHeight());
-	alphabg.draw(0, 0, gc.getWidth(), gc.getHeight());
+	vignette.draw(0, 0, Main.INTERNAL_RESX, Main.INTERNAL_RESY);
+	alphabg.draw(0, 0, Main.INTERNAL_RESX, Main.INTERNAL_RESY);
 	if (!stateTrace.empty()) {
 		if (newState!=null) {
 			animtimer++;
@@ -116,7 +116,21 @@ public static void render(GameContainer gc, Graphics g) {
 
 	if (loading) {
 		g.pushTransform();
+		g.translate(Main.INTERNAL_RESX-10-32, 10);
 		g.rotate(16, 16, -(System.nanoTime()-load_start)/800000f);
+		load_img.setAlpha(0.2f);
+		load_img.draw(0, 0, 32, 32);
+		g.rotate(16, 16, -10);
+		load_img.setAlpha(0.4f);
+		load_img.draw(0, 0, 32, 32);
+		g.rotate(16, 16, -10);
+		load_img.setAlpha(0.6f);
+		load_img.draw(0, 0, 32, 32);
+		g.rotate(16, 16, -10);
+		load_img.setAlpha(0.8f);
+		load_img.draw(0, 0, 32, 32);
+		g.rotate(16, 16, -10);
+		load_img.setAlpha(1.0f);
 		load_img.draw(0, 0, 32, 32);
 		g.popTransform();
 	}
@@ -174,7 +188,7 @@ public static void update(GameContainer gc) {
 				client.init(gc);
 				client.join(InetAddress.getByName(arg));
 				gc.getInput().clearKeyPressedRecord();
-				client.login("Mr. Join", -1);
+				client.login("MrJoin", -1);
 				((GameClientState) states.get("GameClient")).setClient(client);
 				setState("GameClient");
 			} catch (IOException e) {
@@ -404,6 +418,10 @@ public static String getTextBoxText(Node node) {
 		Log.error(node+" cannot setTextBox, it doesn't have the lock!"+(textLock==null?"":" The lock was obtained by "+textLock));
 		return "";
 	}
+}
+
+public static Image getBG() {
+	return background;
 }
 
 private static class StateNotFoundException extends RuntimeException {

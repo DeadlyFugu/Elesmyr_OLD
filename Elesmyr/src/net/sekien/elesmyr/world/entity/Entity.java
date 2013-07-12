@@ -7,7 +7,7 @@ import net.sekien.elesmyr.Save;
 import net.sekien.elesmyr.msgsys.Message;
 import net.sekien.elesmyr.msgsys.MessageEndPoint;
 import net.sekien.elesmyr.player.Camera;
-import net.sekien.elesmyr.player.PlayerData;
+import net.sekien.elesmyr.player.InventoryEntry;
 import net.sekien.elesmyr.system.GameClient;
 import net.sekien.elesmyr.system.GameServer;
 import net.sekien.elesmyr.world.Region;
@@ -18,9 +18,9 @@ import java.util.ArrayList;
 import java.util.Random;
 
 public class Entity implements GameElement, Comparable<Entity> {
-public String name, receiverName; //TODO: Make name into an int
+public int id;
+public String receiverName; //TODO: Make name into an int
 public int x, y; //Actual location according to server
-private int cheese = -12;
 protected int cx1 = 0, cy1 = 0, cx2 = 32, cy2 = 32;
 public float xs, ys; //Smoothed
 public boolean constantUpdate = false;
@@ -32,8 +32,8 @@ protected HBTCompound inst_dat;
  * 'Constructor' for entity. Used because I suck at reflection and can't figure out how to pass arguments to a real
  * constructor.
  */
-public Entity ctor(String name, int x, int y, HBTCompound tag, String receiverName, Region region) {
-	this.name = name;
+public Entity ctor(int id, int x, int y, HBTCompound tag, String receiverName, Region region) {
+	this.id = id;
 	this.receiverName = receiverName;
 	xs = this.x = x;
 	ys = this.y = y;
@@ -77,7 +77,6 @@ public void receiveMessage(Message msg, MessageEndPoint receiver) {
 	if (name.equals("move")) {
 		this.x = data.getInt("x", 0);
 		this.y = data.getInt("y", 0);
-		this.cheese = x;
 	} else if (name.equals("toString")) {
 		msg.reply("CLIENT.chat", HBTTools.msgString("msg", "ENT."+name+": "+this.toString()), this);
 	} else {
@@ -109,7 +108,7 @@ public HBTCompound toHBT(boolean msg) {
 	ret.setTag(new HBTString("class", this.getClass().getName().substring("net.sekien.elesmyr.world.entity.".length())));
 	ret.setTag(new HBTInt("x", x));
 	ret.setTag(new HBTInt("y", y));
-	ret.setName(name);
+	ret.setName(String.valueOf(id));
 	return ret;
 }
 
@@ -119,7 +118,7 @@ public HBTCompound toHBT(boolean msg) {
 
 @Override
 public String toString() {
-	return this.getClass().getName().substring("net.sekien.elesmyr.world.entity.".length())+","+name+","+x+","+y+","+inst_dat.toString();
+	return this.getClass().getName().substring("net.sekien.elesmyr.world.entity.".length())+","+id+","+x+","+y+","+inst_dat.toString();
 }
 
 @Override
@@ -134,7 +133,7 @@ public int compareTo(Entity other) {
 		return -1;
 	else if (thisy > othery)
 		return 1;
-	else if (Integer.parseInt(this.name) > Integer.parseInt(other.name))
+	else if (this.id > other.id)
 		return 1;
 	return -1;
 }
@@ -168,19 +167,20 @@ public void hurt(Region region, Entity entity, MessageEndPoint receiver) {
 public void interact(Region region, EntityPlayer entityPlayer, MessageEndPoint receiver, Message msg) {
 }
 
-protected ArrayList<String> getDrops() {
-	return new ArrayList<String>();
+protected ArrayList<HBTCompound> getDrops() {
+	return new ArrayList<HBTCompound>();
 }
 
 protected void drop(Region region) {
 	Random rand = new Random();
-	for (String i : this.getDrops()) {
+	for (HBTCompound ie : this.getDrops()) {
+		ie.setName("ie");
 		//region.addEntityServer("EntityItem,"+(x-rand.nextInt(32))+","+(y-rand.nextInt(32))+","+i);
 		region.addEntityServer(new HBTCompound("item_ent_dat", new HBTTag[]{
 				                                                                   new HBTString("class", "EntityItem"),
 				                                                                   new HBTInt("x", x-rand.nextInt(32)),
 				                                                                   new HBTInt("y", y-rand.nextInt(32)),
-				                                                                   new HBTString("extd", i)
+				                                                                   ie
 		}));
 	}
 }
@@ -197,7 +197,7 @@ public Entity toEntity() {
 
 public Element getElement() { return Element.NEUTRAL; }
 
-public PlayerData.InventoryEntry getEquipped() {
+public InventoryEntry getEquipped() {
 	return null;
 }
 }

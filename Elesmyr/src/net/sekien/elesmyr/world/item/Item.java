@@ -1,13 +1,12 @@
 package net.sekien.elesmyr.world.item;
 
 import net.sekien.elesmyr.Element;
-import net.sekien.elesmyr.player.PlayerData;
+import net.sekien.elesmyr.player.InventoryEntry;
 import net.sekien.elesmyr.system.GameServer;
 import net.sekien.elesmyr.util.FileHandler;
 import net.sekien.elesmyr.world.entity.EntityPlayer;
 import net.sekien.hbt.HBTCompound;
-import org.newdawn.slick.Image;
-import org.newdawn.slick.SlickException;
+import org.newdawn.slick.*;
 
 public class Item {
 public Image spr;
@@ -36,7 +35,7 @@ public boolean canEquip() {
 	return false;
 }
 
-public boolean onUse(GameServer reciever, EntityPlayer player, PlayerData.InventoryEntry entry) {
+public boolean onUse(GameServer reciever, EntityPlayer player, InventoryEntry entry) {
 	return false;
 }
 
@@ -47,7 +46,7 @@ public Item toItem() {
 
 public Element getElement() { return Element.NEUTRAL; }
 
-public String getName(PlayerData.InventoryEntry entry) {
+public String getName(InventoryEntry entry) {
 	return name;
 }
 

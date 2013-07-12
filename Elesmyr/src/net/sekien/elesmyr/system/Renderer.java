@@ -36,7 +36,7 @@ public static void init(GameContainer gameContainer) {
 			screen.bind();
 			screen.setUniform1i("tex0", 0); //texture 0
 			screen.setUniform2f("size", new Vector2f(640, 480)); //size of tex
-			screen.setUniform1i("frame", 0); //size of tex
+			screen.setUniform1i("frame", 0); //current frame
 			ShaderProgram.unbindAll();
 		} catch (SlickException e) {
 			// there was a problem compiling our source! show the log
@@ -51,6 +51,7 @@ public static void render(GameContainer gameContainer, Graphics g) {
 		postGraphics.clear();
 		StateManager.render(gameContainer, postGraphics);
 		postGraphics.flush();
+		g.clear();
 		screen.bind();
 		screen.setUniform1i("frame", frame);
 		g.drawImage(postImage, 0, 0, gameContainer.getWidth(), gameContainer.getHeight(), 0, 0, 640, 480);
@@ -59,5 +60,9 @@ public static void render(GameContainer gameContainer, Graphics g) {
 	} else {
 		StateManager.render(gameContainer, postGraphics);
 	}
+}
+
+public static Image getScreen() {
+	return postImage;
 }
 }

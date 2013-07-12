@@ -5,10 +5,10 @@ import net.sekien.elesmyr.msgsys.MessageEndPoint;
 import net.sekien.elesmyr.player.Camera;
 import net.sekien.elesmyr.system.GameClient;
 import net.sekien.elesmyr.util.FileHandler;
-import org.newdawn.slick.GameContainer;
-import org.newdawn.slick.Graphics;
-import org.newdawn.slick.SlickException;
-import org.newdawn.slick.SpriteSheet;
+import net.sekien.hbt.HBTCompound;
+import net.sekien.hbt.HBTString;
+import net.sekien.hbt.HBTTag;
+import org.newdawn.slick.*;
 
 import java.util.ArrayList;
 
@@ -46,13 +46,17 @@ public void render(GameContainer gc, Graphics g,
 }
 
 @Override
-protected ArrayList<String> getDrops() {
-	ArrayList<String> ret = new ArrayList<String>();
+protected ArrayList<HBTCompound> getDrops() {
+	ArrayList<HBTCompound> ret = new ArrayList<HBTCompound>();
 	for (int i = 0; i < airand.nextInt(5)+1; i++)
 		if (airand.nextBoolean())
-			ret.add("Fish,");
+			ret.add(new HBTCompound("ie", new HBTTag[]{
+					                                          new HBTString("n", "Fish")
+			}));
 		else
-			ret.add("Potato,");
+			ret.add(new HBTCompound("ie", new HBTTag[]{
+					                                          new HBTString("n", "Potato")
+			}));
 	return ret;
 }
 

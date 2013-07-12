@@ -9,7 +9,7 @@ import net.sekien.elesmyr.msgsys.Message;
 import net.sekien.elesmyr.msgsys.MessageEndPoint;
 import net.sekien.elesmyr.msgsys.MessageSystem;
 import net.sekien.elesmyr.player.Camera;
-import net.sekien.elesmyr.player.PlayerData;
+import net.sekien.elesmyr.player.InventoryEntry;
 import net.sekien.elesmyr.system.GameClient;
 import net.sekien.elesmyr.system.GameServer;
 import net.sekien.elesmyr.system.Globals;
@@ -89,7 +89,7 @@ public void save(Save save) {
 	for (Entity e : entities.values()) {
 		if (e instanceof EntityPlayer) {
 			EntityPlayer p = (EntityPlayer) e;
-			save.putPlayer(p.getName(), name+"."+p.name, this);
+			save.putPlayer(p.getName(), name+"."+p.id, this);
 		} else {
 			e.save(save); //TODO: remove
 			String[] parts = e.toString().split(",", 3);
@@ -141,7 +141,7 @@ public void update(Region region, GameServer receiver) {
 	for (Entity e : entities.values()) {
 		e.update(this, receiver);
 		if ((e instanceof EntityPlayer) || (sendEntities==1 && e.constantUpdate)) {
-			MessageSystem.sendClient(this, (ArrayList<Connection>) connections.clone(), new Message(name+"."+e.name+".move", HBTTools.position(e.x, e.y)), true);
+			MessageSystem.sendClient(this, (ArrayList<Connection>) connections.clone(), new Message(name+"."+e.id+".move", HBTTools.position(e.x, e.y)), true);
 		}
 	}
 }
@@ -175,7 +175,7 @@ public void receiveMessage(Message msg, MessageEndPoint receiver) {
 			}
 		} else if (msg.getName().equals("hitAt")) {
 			EntityPlayer ep = ((GameServer) receiver).getPlayerEnt(msg.getConnection());
-			PlayerData.InventoryEntry ie = ep.pdat.getEquipped();
+			InventoryEntry ie = ep.pdat.getEquipped();
 			if (ie!=null)
 				if (ie.getItem().onUse((GameServer) receiver, ep, ie))
 					ep.pdat.removeItem(ep.pdat.inventory.indexOf(ie), ep.region, ep.getReceiverName());
@@ -217,7 +217,7 @@ private ArrayList<Entity> getEntitiesAt(int x, int y) {
 public void addEntity(HBTCompound data, boolean client) {
 	Entity ent = EntityFactory.getEntity(data, this);
 	if (ent!=null) {
-		entities.put(data.getInt("name", 0), ent);
+		entities.put(data.getInt("id", 0), ent);
 		if (client)
 			MessageSystem.registerReceiverClient(ent);
 		else
@@ -230,7 +230,7 @@ public int addEntityServer(HBTCompound data) {
 	int idmax = 0;
 	for (Integer name : entities.keySet())
 		if (name > idmax) idmax = name;
-	data.setTag(new HBTInt("name", idmax+1));
+	data.setTag(new HBTInt("id", idmax+1));
 	MessageSystem.sendClient(this, connections, new Message(name+".addEnt", data), false);
 	Entity ent = EntityFactory.getEntity(data, this);
 	if (ent!=null) {

@@ -16,7 +16,7 @@ Image spr;
 @Override
 public void init(GameContainer gc, MessageEndPoint receiver)
 		throws SlickException {
-	spr = FileHandler.getImage("ent."+inst_dat.getString("extd", "").split(",", 2)[0]); //todo n extd
+	spr = FileHandler.getImage("ent."+inst_dat.getString("img", "null"));
 }
 
 @Override
@@ -29,6 +29,6 @@ public void render(GameContainer gc, Graphics g,
 
 @Override
 public void interact(Region region, EntityPlayer entityPlayer, MessageEndPoint receiver, Message msg) {
-	MessageSystem.sendClient(this, msg.getConnection(), new Message("CLIENT.openUI", HBTTools.msgString("ui", inst_dat.getString("extd", "").split(",", 2)[1])), false); //todo n extd
+	MessageSystem.sendClient(this, msg.getConnection(), new Message("CLIENT.openUI", HBTTools.msgString("ui", inst_dat.getString("ui", "null"))), false);
 }
 }

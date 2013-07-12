@@ -1,24 +1,21 @@
 package net.sekien.elesmyr;
 
 import net.sekien.elesmyr.system.Globals;
-import net.sekien.elesmyr.system.Main;
+import net.sekien.elesmyr.system.Renderer;
 import net.sekien.elesmyr.util.FileHandler;
 import net.sekien.elesmyr.world.Region;
 import net.sekien.elesmyr.world.World;
 import net.sekien.elesmyr.world.entity.Entity;
 import net.sekien.hbt.*;
-import org.lwjgl.BufferUtils;
-import org.lwjgl.opengl.Display;
-import org.lwjgl.opengl.GL11;
-import org.newdawn.slick.util.Log;
+import net.sekien.pepper.StateManager;
+import org.newdawn.slick.*;
+import org.newdawn.slick.imageout.*;
+import org.newdawn.slick.util.*;
 
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.nio.ByteBuffer;
 import java.util.Date;
 
 public class Save {
@@ -208,30 +205,13 @@ public void clearTag(String world) {
 }
 
 public void saveScreen() {
-	GL11.glReadBuffer(GL11.GL_FRONT);
-	int width = Display.getDisplayMode().getWidth();
-	int height = Display.getDisplayMode().getHeight();
-	int bpp = 4; // Assuming a 32-bit display with a byte each for red, green, blue, and alpha.
-	ByteBuffer buffer = BufferUtils.createByteBuffer(width*height*bpp);
-	GL11.glReadPixels(0, 0, width, height, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, buffer);
-	final int scale = height/Main.INTERNAL_RESY;
-	BufferedImage image = new BufferedImage(width/scale, height/scale, BufferedImage.TYPE_INT_RGB);
-	for (int x = 0; x < width/scale; x++)
-		for (int y = 0; y < height/scale; y++) {
-			int i = ((x*scale)+(width*(y*scale)))*bpp;
-			int r = buffer.get(i)&0xFF;
-			int g = buffer.get(i+1)&0xFF;
-			int b = buffer.get(i+2)&0xFF;
-			image.setRGB(x, (height/scale)-(y+1), (0xFF<<24)|(r<<16)|(g<<8)|b);
-		}
 	try {
 		if (!new File("save/thumb").exists())
 			new File("save/thumb").mkdir();
-		File file = new File("save/thumb/"+name+".png");
-		file.createNewFile();
-		ImageIO.write(image, "PNG", file);
-	} catch (IOException e) {
-		e.printStackTrace();
+		ImageOut.write(Renderer.getScreen(), ImageOut.PNG, "save/thumb/"+name+".png");
+		StateManager.setBackground(name);
+	} catch (SlickException e) {
+		e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
 	}
 }
 }

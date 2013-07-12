@@ -2,7 +2,7 @@ package net.sekien.elesmyr.world.item;
 
 import net.sekien.elesmyr.msgsys.Message;
 import net.sekien.elesmyr.msgsys.MessageSystem;
-import net.sekien.elesmyr.player.PlayerData;
+import net.sekien.elesmyr.player.InventoryEntry;
 import net.sekien.elesmyr.system.GameServer;
 import net.sekien.elesmyr.util.BookParser;
 import net.sekien.elesmyr.world.entity.EntityPlayer;
@@ -20,7 +20,7 @@ public class ItemBook extends Item {
 public String getType() { return "Books"; }
 
 @Override
-public boolean onUse(GameServer receiver, EntityPlayer player, PlayerData.InventoryEntry entry) {
+public boolean onUse(GameServer receiver, EntityPlayer player, InventoryEntry entry) {
 	ArrayList<String> pages = BookParser.parseBook(extd.getString("extd", "testing"));
 	for (String s : pages)
 		MessageSystem.sendClient(null, receiver.getPlayerConnection(player), new Message("CLIENT.book", HBTTools.msgString("page", s)), false);
@@ -28,5 +28,5 @@ public boolean onUse(GameServer receiver, EntityPlayer player, PlayerData.Invent
 }
 
 @Override
-public String getName(PlayerData.InventoryEntry entry) { return "book."+extd.getString("extd", "testing"); }
+public String getName(InventoryEntry entry) { return "book."+extd.getString("extd", "testing"); }
 }

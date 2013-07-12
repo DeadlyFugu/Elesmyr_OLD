@@ -8,6 +8,7 @@ import net.sekien.elesmyr.msgsys.Message;
 import net.sekien.elesmyr.msgsys.MessageEndPoint;
 import net.sekien.elesmyr.msgsys.MessageSystem;
 import net.sekien.elesmyr.player.Camera;
+import net.sekien.elesmyr.player.InventoryEntry;
 import net.sekien.elesmyr.player.PlayerClient;
 import net.sekien.elesmyr.player.PlayerData;
 import net.sekien.elesmyr.system.FontRenderer;
@@ -147,16 +148,16 @@ public void receiveMessageExt(Message msg, MessageEndPoint server) {
 		this.cy = msg.getData().getInt("y", 0);
 		this.isUser = true;
 	} else if (msg.getName().equals("putItem")) {
-		pdat.put(ItemFactory.getItem(msg.getData().getString("item", "Null")), msg.getData().getString("extd", ""), region, receiverName); //TODO: proper extd
+		pdat.put(ItemFactory.getItem(msg.getData().getString("n", "Null")), msg.getData(), region, receiverName); //TODO: proper extd
 	} else if (msg.getName().equals("equip")) {
 		pdat.setEquipped(pdat.inventory.get(msg.getData().getInt("i", 0)), region, receiverName);
 	} else if (msg.getName().equals("use")) {
-		PlayerData.InventoryEntry ie = pdat.inventory.get(msg.getData().getInt("i", 0));
+		InventoryEntry ie = pdat.inventory.get(msg.getData().getInt("i", 0));
 		if (ie!=null)
 			if (ie.getItem().onUse((GameServer) server, this, ie))
 				pdat.removeItem(msg.getData().getInt("i", 0), region, receiverName);
 	} else if (msg.getName().equals("drop")) {
-		PlayerData.InventoryEntry ie = pdat.inventory.get(msg.getData().getInt("i", 0));
+		InventoryEntry ie = pdat.inventory.get(msg.getData().getInt("i", 0));
 		if (ie!=null) {
 			int dx = x-16;
 			int dy = y-16;
@@ -178,11 +179,13 @@ public void receiveMessageExt(Message msg, MessageEndPoint server) {
 				}
 			}
 			//region.addEntityServer("Entity"+(ie.getItem().stickyDrops()?"Placed":"")+"Item,"+dx+","+dy+","+ie.getItem().name+","+ie.getExtd());
+			HBTCompound ietag = ie.getExtd();
+			ietag.setName("ie");
 			region.addEntityServer(new HBTCompound("player_dat", new HBTTag[]{
 					                                                                 new HBTString("class", "Entity"+(ie.getItem().stickyDrops()?"Placed":"")+"Item"),
 					                                                                 new HBTInt("x", dx),
 					                                                                 new HBTInt("y", dy),
-					                                                                 new HBTString("extd", ie.getItem().name+","+ie.getExtd())
+					                                                                 ietag
 			}));
 			pdat.removeItem(msg.getData().getInt("i", 0), region, receiverName);
 		}
@@ -212,7 +215,7 @@ public void receiveMessageExt(Message msg, MessageEndPoint server) {
 }
 
 public String getName() {
-	return inst_dat.getString("extd", "").split(",")[0]; //TODO: NO USE EXTD
+	return inst_dat.getString("uname", ""); //TODO: NO USE EXTD
 }
 
 @Override
@@ -222,7 +225,7 @@ public void hurt(Region region, Entity entity, MessageEndPoint receiver) {
 	pdat.health -= 1;
 	if (pdat.health <= 0) { //TODO: Proper player kill code
 		//this.drop(region);
-		region.receiveMessage(new Message(region.name+".killSERV", HBTTools.msgString("ent", this.name)), receiver);
+		region.receiveMessage(new Message(region.name+".killSERV", HBTTools.msgString("ent", ""+this.id)), receiver);
 		//((GameServer) receiver).changePlayerRegion("start", 800, 532, connection, true); //TODO: Below line causes crash.
 		MessageSystem.sendClient(this, connection, new Message("PLAYER.playerInfo", HBTTools.location("start", 800, 532)), false); //TODO: proper respawn place maybe
 		pdat.health = pdat.healthMax;
@@ -250,7 +253,7 @@ public void setConnection(Connection connection) {
  * 		Item to put into inventory
  * @return true if successful
  */
-public boolean putItem(Item item, String extd) {
+public boolean putItem(Item item, HBTCompound extd) {
 	return pdat.put(item, extd, region, receiverName);
 }
 
@@ -266,7 +269,7 @@ public Element getElement() {
 }
 
 @Override
-public PlayerData.InventoryEntry getEquipped() {
+public InventoryEntry getEquipped() {
 	return pdat.getEquipped();
 }
 }

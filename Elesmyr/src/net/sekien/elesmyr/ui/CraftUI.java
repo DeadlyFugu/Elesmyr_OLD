@@ -4,6 +4,7 @@ import net.sekien.elesmyr.msgsys.Message;
 import net.sekien.elesmyr.msgsys.MessageEndPoint;
 import net.sekien.elesmyr.msgsys.MessageSystem;
 import net.sekien.elesmyr.player.Camera;
+import net.sekien.elesmyr.player.InventoryEntry;
 import net.sekien.elesmyr.player.PlayerData;
 import net.sekien.elesmyr.system.FontRenderer;
 import net.sekien.elesmyr.system.GameClient;
@@ -14,6 +15,7 @@ import net.sekien.elesmyr.util.ResourceType;
 import net.sekien.elesmyr.world.Region;
 import net.sekien.elesmyr.world.entity.EntityPlayer;
 import net.sekien.elesmyr.world.item.ItemFactory;
+import net.sekien.hbt.HBTCompound;
 import net.sekien.hbt.HBTTools;
 import org.newdawn.slick.*;
 
@@ -31,11 +33,11 @@ public static class Craftable {
 		this.ingredients = recipe.split("\\|");
 	}
 
-	public boolean isCraftable(ArrayList<PlayerData.InventoryEntry> inv) {
+	public boolean isCraftable(ArrayList<InventoryEntry> inv) {
 		for (String s : ingredients) {
 			boolean matched = false;
 			String[] parts = parseIng(s);
-			for (PlayerData.InventoryEntry ie : inv) {
+			for (InventoryEntry ie : inv) {
 				if (ie.getItem().name.equals(parts[1]) && ie.getExtd().equals(parts[2]) && ie.getCount() >= Integer.parseInt(parts[0])) {
 					matched = true;
 					break;
@@ -79,7 +81,7 @@ public static class Craftable {
 		for (String s : ingredients) {
 			boolean matched = false;
 			String[] parts = parseIng(s);
-			for (PlayerData.InventoryEntry ie : pdat.inventory) {
+			for (InventoryEntry ie : pdat.inventory) {
 				if (ie.getItem().name.equals(parts[1]) && ie.getExtd().equals(parts[2]) && ie.getCount() >= Integer.parseInt(parts[0])) {
 					matched = true;
 					for (int i = 0; i < Integer.parseInt(parts[0]); i++)
@@ -90,7 +92,7 @@ public static class Craftable {
 			if (!matched)
 				return;
 		}
-		pdat.put(ItemFactory.getItem(result), "", r, ent);
+		pdat.put(ItemFactory.getItem(result), new HBTCompound("iextd"), r, ent);
 	}
 }
 
@@ -131,7 +133,7 @@ public void render(GameContainer gc, Graphics g,
 	FontRenderer.drawString(xoff+77, 17, "Crafting", g);
 
 	int i = 0;
-	ArrayList<PlayerData.InventoryEntry> inv = ((EntityPlayer) receiver.player.region.entities.get(receiver.player.entid)).pdat.inventory;
+	ArrayList<InventoryEntry> inv = ((EntityPlayer) receiver.player.region.entities.get(receiver.player.entid)).pdat.inventory;
 	for (Craftable c : recipes) {
 		if (c.isCraftable(inv)) {
 			g.setColor(Color.lightGray);
@@ -160,7 +162,7 @@ public void update(GameContainer gc, GameClient receiver) {
 		if (isel < smax-1)
 			isel++;
 	if (in.isKeyPressed(Input.KEY_X)) {
-		ArrayList<PlayerData.InventoryEntry> inv = ((EntityPlayer) receiver.player.region.entities.get(receiver.player.entid)).pdat.inventory;
+		ArrayList<InventoryEntry> inv = ((EntityPlayer) receiver.player.region.entities.get(receiver.player.entid)).pdat.inventory;
 		int i = 0;
 		int iv = -1;
 		for (Craftable c : recipes) {
