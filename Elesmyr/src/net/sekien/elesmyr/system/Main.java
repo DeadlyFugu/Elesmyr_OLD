@@ -42,6 +42,8 @@ public static final String version = "$version.prealpha| "+verNum; //0.0.1 = DEC
 
 private static GameContainer gc;
 
+private int prev_res = 0;
+
 public Main() {
 	super("Elesmyr "+verRelease+" "+verNum);
 
@@ -98,6 +100,8 @@ public static void main(String[] args) throws SlickException {
 
 	MainMenuState.disx[3] = app.getScreenWidth();
 	MainMenuState.disy[3] = app.getScreenHeight();
+
+	app.setResizable(true);
 
 	if (Globals.containsKey("resdm")) {
 		int dm = Integer.parseInt(Globals.get("resdm", "0"));
@@ -182,6 +186,12 @@ public void update(GameContainer gameContainer, int i) throws SlickException {
 
 @Override
 public void render(GameContainer gameContainer, Graphics graphics) throws SlickException {
+	if (gc.getWidth()+gc.getHeight()!=prev_res) {
+		System.out.println("system.Main detected an IRES change was needed.");
+		handleResize(gc);
+		prev_res = gc.getWidth()+gc.getHeight();
+		System.out.println("IRES = "+INTERNAL_RESX+"x"+INTERNAL_RESY+" ("+INTERNAL_ASPECT+")");
+	}
 	Renderer.render(gameContainer, graphics);
 }
 
@@ -196,6 +206,19 @@ public static void handleError(Exception e) {
 public static void handleError(String error) {
 	gc.getInput().clearKeyPressedRecord();
 	StateManager.error(error, true);
+}
+
+public static void handleResize(GameContainer gc) {
+	INTERNAL_ASPECT = ((float) gc.getWidth()/(float) gc.getHeight());
+	int ires = gc.getHeight();
+	int i = 1;
+	while (ires/i > 600) {
+		i++;
+	}
+	ires /= i;
+	INTERNAL_RESY = ires; //Internal resolution y
+	INTERNAL_RESX = (int) (INTERNAL_RESY*INTERNAL_ASPECT); //Internal resolution x
+	Renderer.onResize();
 }
 
 private static class SlickToMinLogSystem implements LogSystem {

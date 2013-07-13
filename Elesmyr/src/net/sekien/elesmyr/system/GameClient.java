@@ -124,7 +124,9 @@ public void init(GameContainer gc) throws SlickException {
 	textField.setMaxLength(57);
 }
 
-public void render(GameContainer gc, Graphics g) throws SlickException {
+public void render(net.sekien.pepper.Renderer renderer) throws SlickException {
+	GameContainer gc = renderer.gc;
+	Graphics g = renderer.g;
 	//g.scale(gc.getWidth()/((float) (Main.INTERNAL_RESY)*((float) gc.getWidth()/(float) gc.getHeight())),gc.getHeight()/(float) (Main.INTERNAL_RESY));
 	//g.scale(gc.getWidth()/(float) (Main.INTERNAL_RESX), gc.getHeight()/(float) (Main.INTERNAL_RESY));
 	if (!regionLoaded) {

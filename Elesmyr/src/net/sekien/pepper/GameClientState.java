@@ -25,7 +25,7 @@ public void setClient(GameClient client) {
 @Override
 public void render(Renderer renderer, int w, int h, boolean sel) {
 	try {
-		client.render(renderer.gc, renderer.g);
+		client.render(renderer);
 	} catch (SlickException e) {
 		StateManager.back();
 		Main.handleError(e);

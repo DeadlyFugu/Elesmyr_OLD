@@ -24,7 +24,7 @@ public static void init(GameContainer gameContainer) {
 		Log.warn("Your GPU doesn't support GLSL shaders.");
 	} else {
 		try {
-			postImage = Image.createOffscreenImage(640, 480, Image.FILTER_NEAREST);
+			postImage = Image.createOffscreenImage(Main.INTERNAL_RESX, Main.INTERNAL_RESY, Image.FILTER_NEAREST);
 			postGraphics = postImage.getGraphics();
 
 			// load our vertex and fragment shaders
@@ -35,7 +35,7 @@ public static void init(GameContainer gameContainer) {
 			useshaders = true;
 			screen.bind();
 			screen.setUniform1i("tex0", 0); //texture 0
-			screen.setUniform2f("size", new Vector2f(640, 480)); //size of tex
+			screen.setUniform2f("size", new Vector2f(Main.INTERNAL_RESX, Main.INTERNAL_RESY)); //size of tex
 			screen.setUniform1i("frame", 0); //current frame
 			ShaderProgram.unbindAll();
 		} catch (SlickException e) {
@@ -54,11 +54,22 @@ public static void render(GameContainer gameContainer, Graphics g) {
 		g.clear();
 		screen.bind();
 		screen.setUniform1i("frame", frame);
-		g.drawImage(postImage, 0, 0, gameContainer.getWidth(), gameContainer.getHeight(), 0, 0, 640, 480);
+		g.drawImage(postImage, 0, 0, gameContainer.getWidth(), gameContainer.getHeight(), 0, 0, Main.INTERNAL_RESX, Main.INTERNAL_RESY);
 		screen.unbind();
 		frame++;
 	} else {
 		StateManager.render(gameContainer, postGraphics);
+	}
+}
+
+public static void onResize() {
+	try {
+		postImage.destroy();
+		postImage = Image.createOffscreenImage(Main.INTERNAL_RESX, Main.INTERNAL_RESY, Image.FILTER_NEAREST);
+		postGraphics = postImage.getGraphics();
+		screen.setUniform2f("size", new Vector2f(Main.INTERNAL_RESX, Main.INTERNAL_RESY)); //size of tex
+	} catch (SlickException e) {
+		e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
 	}
 }
 
