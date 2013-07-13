@@ -11,6 +11,7 @@ import net.sekien.elesmyr.system.Main;
 import net.sekien.elesmyr.util.FileHandler;
 import net.sekien.elesmyr.world.entity.Entity;
 import net.sekien.elesmyr.world.entity.EntityPlayer;
+import net.sekien.pepper.Renderer;
 import org.newdawn.slick.*;
 
 import java.util.ArrayList;
@@ -47,8 +48,8 @@ public void init(GameContainer gc,
 }
 
 @Override
-public void render(GameContainer gc, Graphics g,
-                   Camera cam, GameClient receiver) throws SlickException {
+public void render(Renderer renderer, Camera cam, GameClient receiver) throws SlickException {
+	Graphics g = renderer.g;
 	bart.draw(0, 0, Main.INTERNAL_RESX, 16);
 	FontRenderer.drawString(0, 0, HUDUI.getTopString(), g);
 	barb.draw(0, Main.INTERNAL_RESY-64, Main.INTERNAL_RESX, 64);

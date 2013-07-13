@@ -8,7 +8,7 @@ import java.awt.*;
  */
 public class ListNode extends Node {
 
-private static final int width = 440;
+public static final int width = 440;
 protected int sel = 0;
 private static final org.newdawn.slick.Color titleColor = new org.newdawn.slick.Color(1, 1, 1, 0.75f);
 
@@ -32,10 +32,10 @@ public void render(Renderer renderer, int w, int h, boolean sel) {
 	int addy = 0;
 	int i = 0;
 
-	renderer.pushPos(100, basey-100);
+	renderer.pushPos(border, basey-100);
 	renderer.g.pushTransform();
 	renderer.g.scale(4, 4);
-	renderer.text((220-renderer.textWidth(name)/2*4)/4, 5, name, titleColor);
+	renderer.text(((awidth/2)-renderer.textWidth(name)/2*4)/4, 5, name, titleColor);
 	renderer.g.popTransform();
 	renderer.popPos();
 
@@ -64,10 +64,10 @@ public void transitionEnter(Renderer renderer, int w, int h, boolean sel, float 
 	int addy = 0;
 	int i = 0;
 
-	renderer.pushPos(100, basey-100);
+	renderer.pushPos(border, basey-100);
 	renderer.g.pushTransform();
 	renderer.g.scale(4, 4);
-	renderer.text((220-renderer.textWidth(name)/2*4)/4, 5, name, titleColor);
+	renderer.text(((awidth/2)-renderer.textWidth(name)/2*4)/4, 5, name, titleColor);
 	renderer.g.popTransform();
 	renderer.popPos();
 

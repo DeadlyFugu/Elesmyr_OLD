@@ -6,9 +6,8 @@ import net.sekien.elesmyr.player.Camera;
 import net.sekien.elesmyr.system.FontRenderer;
 import net.sekien.elesmyr.system.GameClient;
 import net.sekien.elesmyr.system.Input;
-import org.newdawn.slick.GameContainer;
-import org.newdawn.slick.Graphics;
-import org.newdawn.slick.SlickException;
+import net.sekien.pepper.Renderer;
+import org.newdawn.slick.*;
 
 public class ChatUI implements UserInterface {
 
@@ -36,8 +35,8 @@ public void init(GameContainer gc,
 }
 
 @Override
-public void render(GameContainer gc, Graphics g,
-                   Camera cam, GameClient receiver) throws SlickException { //TODO: Make this look good.
+public void render(Renderer renderer, Camera cam, GameClient receiver) throws SlickException { //TODO: Make this look good.
+	Graphics g = renderer.g;
 	if (type.equals("talk")) {
 		FontRenderer.drawString(77, 17, msg, g);
 	} else if (type.equals("talkwf")) {

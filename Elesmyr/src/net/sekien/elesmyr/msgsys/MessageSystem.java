@@ -32,7 +32,7 @@ public static void sendServer(MessageReceiver sender, Message msg, boolean udp) 
 	if (sender!=null)
 		msg.setSender(sender.getReceiverName());
 	if (fastLink && netServer.getConnections().size() > 0) {
-		msg.addConnection(netServer.getConnections().get(netServer.getConnections().size()-1));
+		msg.addConnection(netServer.getConnections().get(0));
 		receiveServer(msg);
 	} else if (udp)
 		netClient.sendUDP(msg);
@@ -47,8 +47,10 @@ public static void sendClient(MessageReceiver sender, int connection, Message ms
 		receiveClient(msg);
 	else if (udp)
 		netServer.sendUDP(connection, msg);
-	else
+	else if (SERVER)
 		netServer.sendTCP(connection, msg);
+	else
+		Log.warn("Client tried to send a message to other clients.");
 }
 
 public static void sendClient(MessageReceiver sender, Connection connection, Message msg, boolean udp) {
@@ -130,8 +132,8 @@ public static void initialise(GameClient client, boolean server, InetAddress con
 	MessageSystem.client = client;
 	//MessageSystem.server=server; //Set in startServer(Save);
 	if (CLIENT && SERVER) {
-		//fastLink=true;
-		//Log.info("Fastlink established");
+		fastLink = true;
+		Log.info("Fastlink established");
 	} else {
 		fastLink = false;
 	}

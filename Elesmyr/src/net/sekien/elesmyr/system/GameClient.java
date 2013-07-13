@@ -175,7 +175,7 @@ public void render(net.sekien.pepper.Renderer renderer) throws SlickException {
 				alphabg.draw(0, 0, Main.INTERNAL_RESX, Main.INTERNAL_RESY);
 				vignette.draw(0, 0, Main.INTERNAL_RESX, Main.INTERNAL_RESY);
 			}
-			uii.render(gc, g, cam, this);
+			uii.render(renderer, cam, this);
 		}
 
 		if (showTextField) {

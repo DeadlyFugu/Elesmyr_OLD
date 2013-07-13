@@ -7,6 +7,7 @@ import net.sekien.elesmyr.system.GameClient;
 import net.sekien.elesmyr.system.Globals;
 import net.sekien.elesmyr.system.Main;
 import net.sekien.elesmyr.util.FileHandler;
+import net.sekien.pepper.Renderer;
 import org.newdawn.slick.*;
 
 import java.util.ArrayList;
@@ -44,7 +45,8 @@ public void init(GameContainer gc, MessageEndPoint receiver) throws SlickExcepti
 }
 
 @Override
-public void render(GameContainer gc, Graphics g, Camera cam, GameClient receiver) throws SlickException {
+public void render(Renderer renderer, Camera cam, GameClient receiver) throws SlickException {
+	Graphics g = renderer.g;
 	int xoff = (Main.INTERNAL_RESX/2);
 	bg.draw(xoff-320, 0);
 	if (Globals.get("debug", false))

@@ -13,23 +13,26 @@ import net.sekien.elesmyr.util.FileHandler;
 import net.sekien.elesmyr.world.entity.EntityPlayer;
 import net.sekien.elesmyr.world.item.Item;
 import net.sekien.hbt.HBTTools;
+import net.sekien.pepper.ListNode;
+import net.sekien.pepper.Renderer;
 import org.newdawn.slick.*;
 
 import java.util.ArrayList;
 
 public class InventoryUI implements UserInterface {
-Image bg;
+Image inv_bar;
 Image invsel;
 int sel = 0;
 int isel = 0;
 int smax = 1;
 String[] types = {"All", "Weapons", "Armor", "Potions", "Food", "Books", "Misc"};
+private static final int width = ListNode.width;
 
 @Override
 public void init(GameContainer gc,
                  MessageEndPoint receiver) throws SlickException {
 	inited = true;
-	bg = FileHandler.getImage("ui.inv");
+	inv_bar = FileHandler.getImage("ui.inv_bar");
 	invsel = FileHandler.getImage("ui.invsel");
 }
 
@@ -41,28 +44,41 @@ public boolean inited() {
 }
 
 @Override
-public void render(GameContainer gc, Graphics g,
-                   Camera cam, GameClient receiver) throws SlickException {
-	int xoff = (Main.INTERNAL_RESX/2)-320;
-	bg.draw(xoff, 0);
-	invsel.draw(xoff+84+sel*35, 66);
-	FontRenderer.drawString(xoff+77, 17, types[sel], g);
+public void render(Renderer renderer, Camera cam, GameClient receiver) throws SlickException {
+	Graphics g = renderer.g;
+	int w = Main.INTERNAL_RESX;
+	int h = Main.INTERNAL_RESY;
+	int awidth = width;
+	int border = (w-width)/2;
+	if (border < 0) {
+		border = 0;
+		awidth = w;
+	}
+	renderer.rectPos(border, 16, w-border, 16+82, false, true, true, true, Renderer.BoxStyle.FULL);
+	renderer.rectPos(border, 16+82, w-border, h-64, false, false, true, true, Renderer.BoxStyle.FULL);
+	inv_bar.draw(border+83, 16+32);
+
+	invsel.draw(border+84+sel*35, 66);
+	FontRenderer.drawString(border+77, 17, types[sel], g);
 	try {
 		PlayerData pdat = ((EntityPlayer) receiver.player.region.entities.get(receiver.player.entid)).pdat;
+		int ie_max_disp = (int) Math.floor((h-128-64)/38f);
 		int i = 0;
-		int ir = 0-Math.max(0, isel-4);
+		int ir = 0-Math.max(0, isel-(ie_max_disp-3));
 		int iequip = 0;
 		for (InventoryEntry ie : pdat.inventory) {
 			Item iei = ie.getItem();
 			if (iei.getType().equalsIgnoreCase(types[sel]) || sel==0) {
-				if (ir >= 0 && ir <= 7) {
+				if (ir >= 0 && ir <= ie_max_disp) {
 					g.setColor(Color.lightGray);
+					//if (i==isel)
+					//	g.fillRect(xoff+67, 116+ir*38, 506, 36);
 					if (i==isel)
-						g.fillRect(xoff+67, 116+ir*38, 506, 36);
+						renderer.rect(border, 116+ir*38, awidth, 36, Renderer.BoxStyle.SEL);
 					g.setColor(Color.white);
-					iei.spr.draw(xoff+78, 120+ir*38);
-					FontRenderer.drawString(xoff+117, 128+ir*38, "#$item."+iei.getName(ie)+(ie.equals(pdat.getEquipped())?"| (|$inventory.equip|)":"|"), g);
-					FontRenderer.drawString(xoff+450, 128+ir*38, ""+ie.getCount(), g);
+					iei.spr.draw(border+6, 120+ir*38);
+					FontRenderer.drawString(border+45, 128+ir*38, "#$item."+iei.getName(ie)+(ie.equals(pdat.getEquipped())?"| (|$inventory.equip|)":"|"), g);
+					FontRenderer.drawString(w-border-64, 128+ir*38, ""+ie.getCount(), g);
 					//Main.font.drawString(526,128+ir*40,"$"+ie.getValue()); //TODO: Value thingies
 					//FontRenderer.drawString(xoff+526, 128+ir*38, ie.getExtd(), g);
 				}

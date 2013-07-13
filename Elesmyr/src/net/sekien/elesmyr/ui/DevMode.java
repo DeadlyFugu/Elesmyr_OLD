@@ -9,8 +9,9 @@ import net.sekien.elesmyr.system.Main;
 import net.sekien.elesmyr.ui.dm.*;
 import net.sekien.elesmyr.util.FileHandler;
 import net.sekien.hbt.*;
+import net.sekien.pepper.Renderer;
 import org.newdawn.slick.*;
-import org.newdawn.slick.gui.TextField;
+import org.newdawn.slick.gui.*;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -79,7 +80,8 @@ public void init(GameContainer gc, MessageEndPoint receiver) throws SlickExcepti
 }
 
 @Override
-public void render(GameContainer gc, Graphics g, Camera cam, GameClient receiver) throws SlickException {
+public void render(Renderer renderer, Camera cam, GameClient receiver) throws SlickException {
+	Graphics g = renderer.g;
 	if (enabled) {
 		g.setColor(new Color(0, 0, 0, 0.75f));
 		g.fillRect(Main.INTERNAL_RESX-panelWidth, 16, panelWidth, Main.INTERNAL_RESY-80);

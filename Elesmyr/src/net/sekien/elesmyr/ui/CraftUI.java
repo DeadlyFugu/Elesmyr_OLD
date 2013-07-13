@@ -17,6 +17,8 @@ import net.sekien.elesmyr.world.entity.EntityPlayer;
 import net.sekien.elesmyr.world.item.ItemFactory;
 import net.sekien.hbt.HBTCompound;
 import net.sekien.hbt.HBTTools;
+import net.sekien.pepper.ListNode;
+import net.sekien.pepper.Renderer;
 import org.newdawn.slick.*;
 
 import java.util.ArrayList;
@@ -38,7 +40,7 @@ public static class Craftable {
 			boolean matched = false;
 			String[] parts = parseIng(s);
 			for (InventoryEntry ie : inv) {
-				if (ie.getItem().name.equals(parts[1]) && ie.getExtd().equals(parts[2]) && ie.getCount() >= Integer.parseInt(parts[0])) {
+				if (ie.getItem().name.equals(parts[1]) /*&& ie.getExtd().equals(parts[2])*/ && ie.getCount() >= Integer.parseInt(parts[0])) {
 					matched = true;
 					break;
 				}
@@ -106,6 +108,7 @@ static {
 
 private int isel = 0;
 private int smax = 1;
+private static final int width = ListNode.width;
 
 private boolean inited = false;
 
@@ -126,11 +129,20 @@ public void init(GameContainer gc,
 }
 
 @Override
-public void render(GameContainer gc, Graphics g,
-                   Camera cam, GameClient receiver) throws SlickException {
-	int xoff = (Main.INTERNAL_RESX/2)-320;
+public void render(Renderer renderer, Camera cam, GameClient receiver) throws SlickException {
+	Graphics g = renderer.g;
+	int w = Main.INTERNAL_RESX;
+	int h = Main.INTERNAL_RESY;
+	int awidth = width;
+	int border = (w-width)/2;
+	if (border < 0) {
+		border = 0;
+		awidth = w;
+	}
+	renderer.rectPos(border, 16, w-border, 16+82, false, true, true, true, Renderer.BoxStyle.FULL);
+	renderer.rectPos(border, 16+82, w-border, h-64, false, false, true, true, Renderer.BoxStyle.FULL);
 
-	FontRenderer.drawString(xoff+77, 17, "Crafting", g);
+	FontRenderer.drawString(border+77, 17, "Crafting", g);
 
 	int i = 0;
 	ArrayList<InventoryEntry> inv = ((EntityPlayer) receiver.player.region.entities.get(receiver.player.entid)).pdat.inventory;
@@ -138,10 +150,10 @@ public void render(GameContainer gc, Graphics g,
 		if (c.isCraftable(inv)) {
 			g.setColor(Color.lightGray);
 			if (i==isel)
-				g.fillRect(xoff+67, 116+i*38, 506, 36);
+				renderer.rect(border, 116+i*38, awidth, 36, Renderer.BoxStyle.SEL);
 			g.setColor(Color.white);
 			//iei.spr.draw(xoff+78,120+i*38);
-			FontRenderer.drawString(xoff+117, 128+i*38, "#$item."+c.toString(), g);
+			FontRenderer.drawString(border+117, 128+i*38, "#$item."+c.toString(), g);
 			//Main.font.drawString(xoff+450,128+i*38, ""+ie.getCount());
 			//Main.font.drawString(526,128+i*40,"$"+ie.getValue()); //TODO: Value thingies
 			//Main.font.drawString(xoff+526,128+i*38, ie.getExtd());
