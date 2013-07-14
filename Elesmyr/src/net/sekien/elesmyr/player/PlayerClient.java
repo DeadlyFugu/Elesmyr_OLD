@@ -10,6 +10,7 @@ import net.sekien.elesmyr.system.GameClient;
 import net.sekien.elesmyr.system.GameServer;
 import net.sekien.elesmyr.system.Globals;
 import net.sekien.elesmyr.system.Input;
+import net.sekien.elesmyr.util.PointSensor;
 import net.sekien.elesmyr.world.Region;
 import net.sekien.elesmyr.world.World;
 import net.sekien.elesmyr.world.entity.EntityPlayer;
@@ -187,12 +188,28 @@ public void clientUpdate(GameContainer gc, GameClient receiver) {
 				MessageSystem.sendServer(this, new Message(regionName+".intAt", HBTTools.position(x+xm*16, y+ym*16)), true);
 		}
 
+		int chkdist = 8;
+
 		if (region!=null) {
 			if (!in.isKeyDown(org.newdawn.slick.Input.KEY_SPACE)) {
-				if (placeFree(x, yp))
-					x = xp;
-				if (placeFree(x, y))
-					y = yp;
+				if (!placeFree(x, yp)) {
+					if (placeFree(x, yp+chkdist)) {
+						y += mvspd;
+					} else if (placeFree(x, yp-chkdist)) {
+						y -= mvspd;
+					} else {
+						x = xp;
+					}
+				}
+				if (!placeFree(x, y)) {
+					if (placeFree(x+chkdist, y)) {
+						x += mvspd;
+					} else if (placeFree(x-chkdist, y)) {
+						x -= mvspd;
+					} else {
+						y = yp;
+					}
+				}
 			}
 			try {
 				int colHere = region.map.getTileId((int) (x)/32, (int) (y)/32, region.mapColLayer);
@@ -259,19 +276,23 @@ private void useWarp(String dest) {
 }
 
 private boolean placeFree(float x, float y) {
-	try {
+	/*try {
 		return (isSolid(region.map.getTileId((int) (x-8)/32, (int) (y+3)/32, region.mapColLayer)-region.mapColTOff) ||
 				        isSolid(region.map.getTileId((int) (x+8)/32, (int) (y+3)/32, region.mapColLayer)-region.mapColTOff) ||
 				        isSolid(region.map.getTileId((int) (x-8)/32, (int) (y-3)/32, region.mapColLayer)-region.mapColTOff) ||
 				        isSolid(region.map.getTileId((int) (x+8)/32, (int) (y-3)/32, region.mapColLayer)-region.mapColTOff));
 	} catch (ArrayIndexOutOfBoundsException e) {
 		return true;
-	}
+	}*/
+	return !(PointSensor.update(region.map, (int) x-8, (int) y+3) ||
+			         PointSensor.update(region.map, (int) x+8, (int) y+3) ||
+			         PointSensor.update(region.map, (int) x-8, (int) y-3) ||
+			         PointSensor.update(region.map, (int) x+8, (int) y-3));
 }
 
-private boolean isSolid(int id) {
+/*private boolean isSolid(int id) {
 	return (id==0 || (id >= 4 && id < 12));
-}
+}*/
 
 @Override
 public void receiveMessage(Message msg, MessageEndPoint receiver) {

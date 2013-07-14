@@ -131,7 +131,7 @@ public static void initialise(GameClient client, boolean server, InetAddress con
 		startClient(connect);
 	MessageSystem.client = client;
 	//MessageSystem.server=server; //Set in startServer(Save);
-	if (CLIENT && SERVER) {
+	if (CLIENT && SERVER && Globals.get("allowFL", true)) {
 		fastLink = true;
 		Log.info("Fastlink established");
 	} else {

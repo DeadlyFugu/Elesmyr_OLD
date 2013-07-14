@@ -47,6 +47,7 @@ public static boolean running = true;
 private ConcurrentHashMap<String, String> playerEnt;
 
 private ConcurrentHashMap<String, PlayerData> playerDat;
+private int timerAutosave = 30;
 
 public GameServer(Save save, String hostUName) {
 	this.save = save;
@@ -118,8 +119,14 @@ public void gameUpdate() {
 	//Check stuff
 	if (timeCheck==0) {
 		timeCheck = 100;
-		if (Globals.get("autosave", true))
-			this.save();
+		if (Globals.get("autosave", true)) {
+			if (timerAutosave==0) {
+				this.save();
+				timerAutosave = 30;
+			} else {
+				timerAutosave--;
+			}
+		}
 		for (Connection c : players.keySet()) {
 			//Check if connection lost
 			if (!c.isConnected()) {

@@ -2,7 +2,7 @@ package net.sekien.elesmyr.player;
 
 import net.sekien.elesmyr.system.Main;
 import net.sekien.elesmyr.world.Region;
-import org.newdawn.slick.tiled.TiledMap;
+import net.sekien.tiled.TiledMapPlus;
 
 public class Camera {
 float x, tx;
@@ -23,7 +23,7 @@ public void update(PlayerClient player) {
 		ty = Main.INTERNAL_RESY/2;
 	Region pr = player.getRegion();
 	if (pr!=null) {
-		TiledMap map = pr.map;
+		TiledMapPlus map = pr.map;
 		if (tx > map.getWidth()*32-Main.INTERNAL_RESX/2)
 			tx = map.getWidth()*32-Main.INTERNAL_RESX/2;
 		if (ty > map.getHeight()*32-Main.INTERNAL_RESY/2)

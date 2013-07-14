@@ -21,6 +21,7 @@ import net.sekien.hbt.HBTInt;
 import net.sekien.hbt.HBTString;
 import net.sekien.hbt.HBTTools;
 import net.sekien.pepper.StateManager;
+import net.sekien.tiled.MapObject;
 import org.newdawn.slick.*;
 import org.newdawn.slick.Input;
 import org.newdawn.slick.gui.*;
@@ -151,6 +152,24 @@ public void render(net.sekien.pepper.Renderer renderer) throws SlickException {
 		lm.render();
 		g.setDrawMode(Graphics.MODE_NORMAL);
 		g.popTransform();
+
+		g.pushTransform();
+		g.translate(cam.getXOff(), cam.getYOff());
+		if (Globals.get("showCol", false) && regionLoaded) {
+			for (MapObject obj : player.region.map.getObjectGroup("col").getObjects()) {
+				g.setColor(new Color(1, 1, 1, 0.2f));
+				if (obj.objectType==MapObject.ObjectType.RECTANGLE) {
+					g.fillRect(obj.x, obj.y, obj.width, obj.height);
+				} else if (obj.objectType==MapObject.ObjectType.POLYGON) {
+					g.pushTransform();
+					g.translate(obj.x, obj.y);
+					g.fill(obj.points);
+					g.popTransform();
+				}
+			}
+		}
+		g.popTransform();
+
 		int i = 1;
 		for (ChatMessage cm : chat) {
 			if (i==22)

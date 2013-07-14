@@ -15,14 +15,15 @@ import net.sekien.elesmyr.system.GameServer;
 import net.sekien.elesmyr.system.Globals;
 import net.sekien.elesmyr.system.Main;
 import net.sekien.elesmyr.util.FileHandler;
+import net.sekien.elesmyr.util.PointSensor;
 import net.sekien.elesmyr.util.ResourceType;
 import net.sekien.elesmyr.world.entity.*;
 import net.sekien.hbt.HBTCompound;
 import net.sekien.hbt.HBTInt;
 import net.sekien.hbt.HBTTag;
 import net.sekien.hbt.HBTTools;
+import net.sekien.tiled.TiledMapPlus;
 import org.newdawn.slick.*;
-import org.newdawn.slick.tiled.*;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -37,7 +38,7 @@ public class Region implements GameElement {
 public String name;
 public ConcurrentHashMap<Integer, Entity> entities;
 public ArrayList<Connection> connections;
-public TiledMap map;
+public TiledMapPlus map;
 public int mapColLayer = 0; //Layer containing collision tiles
 public int mapColTOff = 0; //Offset of first collision tile
 private int sendEntities = 20;
@@ -51,7 +52,7 @@ public Region(String name) {
 
 public void init(GameContainer gc, MessageEndPoint receiver) throws SlickException {
 	try {
-		map = new TiledMap(FileHandler.parse("region."+name, ResourceType.MAP));
+		map = new TiledMapPlus(FileHandler.parse("region."+name, ResourceType.MAP));
 		mapColLayer = map.getLayerIndex("col");
 		int tsid = Integer.parseInt(map.getLayerProperty(mapColLayer, "tileset", "0"));
 		mapColTOff = map.getTileSet(tsid).firstGID;
@@ -243,7 +244,8 @@ public int addEntityServer(HBTCompound data) {
 
 public boolean aiPlaceFree(int x, int y) {
 	try {
-		return (map.getTileId(x/32, y/32, mapColLayer)==0);
+		//return (map.getTileId(x/32, y/32, mapColLayer)==0);
+		return !PointSensor.update(map, x, y);
 	} catch (ArrayIndexOutOfBoundsException e) {
 	}
 	return true;

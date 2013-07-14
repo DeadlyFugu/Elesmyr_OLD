@@ -27,7 +27,7 @@ public static String parse(String name, ResourceType type) {
 	try {
 		return parseFileName(name, type.getExtensions(), true).get(0);
 	} catch (IndexOutOfBoundsException e) {
-		Main.handleCrash(new FileNotFoundException(name));
+		Main.handleError(new FileNotFoundException(name));
 		System.exit(0);
 	}
 	return null;
