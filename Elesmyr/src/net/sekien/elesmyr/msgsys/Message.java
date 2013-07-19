@@ -1,9 +1,15 @@
+/*
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ */
+
 package net.sekien.elesmyr.msgsys;
 
 import net.sekien.elesmyr.GameElement;
 import net.sekien.hbt.HBTCompound;
 import net.sekien.hbt.HBTString;
-import org.newdawn.slick.util.Log;
+import org.newdawn.slick.util.*;
 
 public class Message {
 private String target, name;

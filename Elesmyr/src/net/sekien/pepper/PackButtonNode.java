@@ -1,7 +1,13 @@
+/*
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ */
+
 package net.sekien.pepper;
 
 import net.sekien.hbt.HBTCompound;
-import org.newdawn.slick.Color;
+import org.newdawn.slick.*;
 
 /**
  * Created with IntelliJ IDEA. User: matt Date: 22/04/13 Time: 12:44 PM To change this template use File | Settings |

@@ -1,3 +1,9 @@
+/*
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ */
+
 package net.sekien.elesmyr.system;
 
 import com.esotericsoftware.kryonet.FrameworkMessage;
@@ -7,11 +13,10 @@ import com.jhlabs.image.AbstractBufferedImageOp;
 import com.jhlabs.image.GaussianFilter;
 import net.sekien.elesmyr.util.FileHandler;
 import org.newdawn.slick.*;
-import org.newdawn.slick.gui.TextField;
-import org.newdawn.slick.opengl.Texture;
-import org.newdawn.slick.state.BasicGameState;
-import org.newdawn.slick.state.StateBasedGame;
-import org.newdawn.slick.util.BufferedImageUtil;
+import org.newdawn.slick.gui.*;
+import org.newdawn.slick.opengl.*;
+import org.newdawn.slick.state.*;
+import org.newdawn.slick.util.*;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;

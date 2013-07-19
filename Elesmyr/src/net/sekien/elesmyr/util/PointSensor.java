@@ -1,3 +1,9 @@
+/*
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ */
+
 package net.sekien.elesmyr.util;
 
 import net.sekien.tiled.MapObject;
@@ -11,6 +17,11 @@ import org.newdawn.slick.geom.*;
 public class PointSensor {
 
 public static boolean update(TiledMapPlus map, int x, int y) {
+	try {
+		map.getObjectGroup("col");
+	} catch (NullPointerException npe) {
+		return false;
+	}
 	for (MapObject obj : map.getObjectGroup("col").getObjects()) {
 		if (obj.objectType==MapObject.ObjectType.RECTANGLE || obj.objectType==MapObject.ObjectType.POLYGON) {
 			Shape shape;

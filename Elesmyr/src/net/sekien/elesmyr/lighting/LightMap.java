@@ -1,3 +1,9 @@
+/*
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ */
+
 package net.sekien.elesmyr.lighting;
 
 import net.sekien.elesmyr.player.Camera;
@@ -7,7 +13,7 @@ import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 import org.lwjgl.opengl.GL15;
-import org.newdawn.slick.Color;
+import org.newdawn.slick.*;
 
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
