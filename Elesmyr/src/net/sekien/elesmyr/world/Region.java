@@ -49,11 +49,13 @@ public int mapColLayer = 0; //Layer containing collision tiles
 public int mapColTOff = 0; //Offset of first collision tile
 private int sendEntities = 20;
 public WeatherCondition weather = new WeatherCondition();
+private MessageEndPoint msgreceiver;
 
-public Region(String name) {
+public Region(String name, MessageEndPoint receiver) {
 	this.name = name;
 	entities = new ConcurrentHashMap<Integer, Entity>();
 	connections = new ArrayList<Connection>();
+	msgreceiver = receiver;
 }
 
 public void init(GameContainer gc, MessageEndPoint receiver) throws SlickException {
@@ -114,7 +116,7 @@ public void save(Save save) {
 public void fromHBT(HBTCompound tag) {
 	for (HBTTag sub : tag) {
 		if (sub instanceof HBTCompound) {
-			addEntityServer((HBTCompound) sub);
+			addEntityServer((HBTCompound) sub, msgreceiver);
 		}
 	}
 }
@@ -141,7 +143,7 @@ public HBTCompound toHBT(boolean msg) {
 public void update(Region region, GameServer receiver) {
 	if (sendEntities==0) {
 		//sendEntities=Math.max(1,entities.size()/50);
-		sendEntities = 5;
+		sendEntities = 2;
 	} else {
 		sendEntities--;
 	}
@@ -164,13 +166,14 @@ public void clientUpdate(GameContainer gc, GameClient receiver) {
 public void receiveMessage(Message msg, MessageEndPoint receiver) {
 	if (msg.getTarget().equals(name)) {
 		if (msg.getName().equals("addEnt")) {
-			addEntity(msg.getData(), true);
+			addEntity(msg.getData(), true, receiver);
 		} else if (msg.getName().equals("addEntSERV")) {
-			if (addEntityServer(msg.getData())==-1) {
+			if (addEntityServer(msg.getData(), receiver)==-1) {
 				msg.reply("CLIENT.chat", HBTTools.msgString("msg", "ERROR: addEntityServer failed for input:"), this);
 				msg.reply("CLIENT.chat", HBTTools.msgString("msg", msg.getData().toString()), this);
 			}
 		} else if (msg.getName().equals("killSERV")) {
+			entities.get(Integer.parseInt(msg.getData().getString("ent", "error"))).killserv();
 			entities.remove(Integer.parseInt(msg.getData().getString("ent", "error"))); //TODO: Make ent id's ints
 			MessageSystem.sendClient(this, connections, new Message(name+".kill", msg.getData()), false);
 		} else if (msg.getName().equals("kill")) {
@@ -221,8 +224,8 @@ private ArrayList<Entity> getEntitiesAt(int x, int y) {
 	return ret;
 }
 
-public void addEntity(HBTCompound data, boolean client) {
-	Entity ent = EntityFactory.getEntity(data, this);
+public void addEntity(HBTCompound data, boolean client, MessageEndPoint receiver) {
+	Entity ent = EntityFactory.getEntity(data, this, msgreceiver);
 	if (ent!=null) {
 		entities.put(data.getInt("id", 0), ent);
 		if (client)
@@ -233,13 +236,13 @@ public void addEntity(HBTCompound data, boolean client) {
 		Log.info("Ignored invalid entity: "+data);
 }
 
-public int addEntityServer(HBTCompound data) {
+public int addEntityServer(HBTCompound data, MessageEndPoint receiver) {
 	int idmax = 0;
 	for (Integer name : entities.keySet())
 		if (name > idmax) idmax = name;
 	data.setTag(new HBTInt("id", idmax+1));
 	MessageSystem.sendClient(this, connections, new Message(name+".addEnt", data), false);
-	Entity ent = EntityFactory.getEntity(data, this);
+	Entity ent = EntityFactory.getEntity(data, this, msgreceiver);
 	if (ent!=null) {
 		entities.put(idmax+1, ent);
 		MessageSystem.registerReceiverServer(ent);

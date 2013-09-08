@@ -59,10 +59,10 @@ public void start() {
 public void bind(int port, int port2) throws BindException {
 	try {
 		serverSocket = new ServerSocket(port);
-		serverSocket.setSoTimeout(500);
+		serverSocket.setSoTimeout(480);
 		udpSocket = new DatagramSocket(port2);
-		udpSocket.setSoTimeout(500);
-		Log.info("msgsys", "Server bound to ports TCP="+port+" UDP="+port2);
+		udpSocket.setSoTimeout(20);
+		Log.info("server", "bound to ports TCP="+port+" UDP="+port2);
 	} catch (IOException e) {
 		Log.error("msgsys", "Could not listen on ports: TCP="+port+" UDP="+port2);
 		throw new BindException();
@@ -84,7 +84,7 @@ public void bind(int port, int port2) throws BindException {
 						connections.add(connection);
 					}
 					createListenerThread(connection);
-					Log.info("msgsys", "Server connected to "+clientSocket.toString());
+					Log.info("server", "Server connected to "+clientSocket.toString());
 				} catch (SocketTimeoutException ignored) {
 				} catch (Exception e) {
 					if (running) {
@@ -117,7 +117,7 @@ private void createListenerThread(final Connection connection) {
 				try {
 					received(connection, connection.readMsg());
 				} catch (HBTCompound.TagNotFoundException e) {
-					Log.error("msgsys", "Badly formed message received.");
+					Log.error("server", "Badly formed message received.");
 					e.printStackTrace();
 				} catch (NullPointerException npe) {
 					break;
@@ -151,6 +151,7 @@ public void received(Connection connection, Message msg) {
 }
 
 public void stop() {
+	Log.info("server", "Server stopped");
 	running = false;
 }
 

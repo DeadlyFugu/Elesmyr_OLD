@@ -8,18 +8,19 @@ package net.sekien.elesmyr.world.entity;
 
 import groovy.lang.GroovyObject;
 import net.sekien.elesmyr.ScriptRunner;
+import net.sekien.elesmyr.msgsys.MessageEndPoint;
 import net.sekien.elesmyr.world.Region;
 import net.sekien.hbt.HBTCompound;
 
 public class EntityFactory {
-public static Entity getEntity(HBTCompound tag, Region r) {
+public static Entity getEntity(HBTCompound tag, Region r, MessageEndPoint receiver) {
 	String eclass = tag.getString("class", "Entity");
 	int id = tag.getInt("id", 0);
 	int x = tag.getInt("x", 0);
 	int y = tag.getInt("y", 0);
 	try {
 		Entity e = (Entity) Class.forName("net.sekien.elesmyr.world.entity."+eclass).newInstance();
-		e.ctor(id, x, y, tag, r.name+"."+id, r);
+		e.ctor(id, x, y, tag, r.name+"."+id, r, receiver);
 		return e;
 	} catch (ClassNotFoundException e) {
 		GroovyObject go = ScriptRunner.get(eclass);

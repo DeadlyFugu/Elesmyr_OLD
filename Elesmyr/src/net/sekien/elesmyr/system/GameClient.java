@@ -380,7 +380,7 @@ public boolean receiveMessage(Message msg) {
 		if (name.equals("setRegion")) {
 			lm.clearLight();
 			String rname = msg.getData().getString("region", "error");
-			world.touchRegionClient(rname);
+			world.touchRegionClient(rname, this);
 			//world.getRegion(rname).parseEntityString(msg.getDataStr().split(":", 2)[1], true);
 			lm.addLight(world.getRegion(rname).getLights());
 			player.setRegion(rname);
@@ -408,7 +408,6 @@ public boolean receiveMessage(Message msg) {
 			servtime = msg.getData().getFloat("time", 0);
 			date = msg.getData().getInt("date", 0);
 			if (servtime > oltime+10 || servtime < oltime-10) {
-				Log.info("Time skip");
 				lm.skipFade(servtime/60f, player.region);
 				time = servtime;
 			}

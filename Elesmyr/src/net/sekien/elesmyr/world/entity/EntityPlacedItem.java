@@ -32,7 +32,7 @@ public void init(GameContainer gc, MessageEndPoint receiver)
 	this.item = ItemFactory.getItem(inst_dat.getString("ie.n", ""));
 	spr = item.spr;
 	if (item instanceof ItemTorch) {
-		light = new Light(600, 550, 256, 0.8f, 0.5f, 0.2f, 0.4f); //TORCH LIGHT
+		light = new Light(600, 550, 32, 0.8f, 0.5f, 0.2f, 0.4f); //TORCH LIGHT
 		((GameClient) receiver).lm.addLight(light);
 	}
 }
@@ -44,7 +44,7 @@ public void kill(GameClient gs) {
 }
 
 @Override
-public void initSERV() {
+public void initSERV(GameServer server, Region region) {
 	this.item = ItemFactory.getItem(inst_dat.getString("ie.n", ""));
 }
 

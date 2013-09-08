@@ -44,7 +44,7 @@ public void kill(GameClient gs) {
 }
 
 @Override
-public void initSERV() {
+public void initSERV(GameServer server, Region region) {
 	this.item = ItemFactory.getItem(inst_dat.getString("ie.n", ""));
 }
 

@@ -101,9 +101,9 @@ public void clientUpdate(GameContainer gc, GameClient receiver) {
  * @param name
  * 		Name of the region
  */
-public void touchRegion(String name) {
+public void touchRegion(String name, MessageEndPoint receiver) {
 	if (getRegion(name)==null) {
-		loadRegion(name);
+		loadRegion(name, receiver);
 	}
 }
 
@@ -113,9 +113,9 @@ public void touchRegion(String name) {
  * @param name
  * 		Name of the region
  */
-public void touchRegionClient(String name) {
+public void touchRegionClient(String name, MessageEndPoint receiver) {
 	if (getRegion(name)==null) {
-		Region r = new Region(name);
+		Region r = new Region(name, receiver);
 		needsInit.add(r);
 	}
 }
@@ -142,8 +142,8 @@ public void receiveMessage(Message msg, MessageEndPoint receiver) {
 	}
 }
 
-public void loadRegion(String name) {
-	Region r = new Region(name);
+public void loadRegion(String name, MessageEndPoint receiver) {
+	Region r = new Region(name, receiver);
 	r.load(save);
 	needsInit.add(r);
 }

@@ -193,10 +193,9 @@ public void update(GameContainer gameContainer, int i) throws SlickException {
 @Override
 public void render(GameContainer gameContainer, Graphics graphics) throws SlickException {
 	if (gc.getWidth()+gc.getHeight()!=prev_res) {
-		System.out.println("system.Main detected an IRES change was needed.");
 		handleResize(gc);
 		prev_res = gc.getWidth()+gc.getHeight();
-		System.out.println("IRES = "+INTERNAL_RESX+"x"+INTERNAL_RESY+" ("+INTERNAL_ASPECT+")");
+		//System.out.println("IRES = "+INTERNAL_RESX+"x"+INTERNAL_RESY+" ("+INTERNAL_ASPECT+")");
 	}
 	Renderer.render(gameContainer, graphics);
 }

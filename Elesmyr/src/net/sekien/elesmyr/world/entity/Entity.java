@@ -33,23 +33,27 @@ public boolean constantUpdate = false;
 public boolean tellClient = true;
 public Region region;
 protected HBTCompound inst_dat;
+private MessageEndPoint msgreceiver;
 
 /**
  * 'Constructor' for entity. Used because I suck at reflection and can't figure out how to pass arguments to a real
  * constructor.
  */
-public Entity ctor(int id, int x, int y, HBTCompound tag, String receiverName, Region region) {
+public Entity ctor(int id, int x, int y, HBTCompound tag, String receiverName, Region region, MessageEndPoint receiver) {
 	this.id = id;
 	this.receiverName = receiverName;
 	xs = this.x = x;
 	ys = this.y = y;
 	this.region = region;
 	this.inst_dat = tag;
-	this.initSERV();
+	if (receiver instanceof GameServer) {
+		initSERV((GameServer) receiver, region);
+	}
+	this.msgreceiver = receiver;
 	return this;
 }
 
-protected void initSERV() {
+protected void initSERV(GameServer server, Region region) {
 }
 
 @Override
@@ -187,7 +191,7 @@ protected void drop(Region region) {
 				                                                                   new HBTInt("x", x-rand.nextInt(32)),
 				                                                                   new HBTInt("y", y-rand.nextInt(32)),
 				                                                                   ie
-		}));
+		}), msgreceiver);
 	}
 }
 
@@ -206,4 +210,6 @@ public Element getElement() { return Element.NEUTRAL; }
 public InventoryEntry getEquipped() {
 	return null;
 }
+
+public void killserv() {}
 }

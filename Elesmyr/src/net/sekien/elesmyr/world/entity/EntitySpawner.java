@@ -32,7 +32,7 @@ public void update(Region region, GameServer receiver) {
 		HBTCompound ent = (HBTCompound) inst_dat.getCompound("spawn").deepClone();
 		ent.setTag(new HBTInt("x", x));
 		ent.setTag(new HBTInt("y", y));
-		region.addEntityServer(ent);
+		region.addEntityServer(ent, receiver);
 	}
 }
 }

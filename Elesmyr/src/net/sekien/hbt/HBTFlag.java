@@ -46,6 +46,15 @@ private byte stringToByte(String data) {
 	return 0;
 }
 
+public static boolean isValid(String data) {
+	for (byte i = 0; i < VALUES.length; i++) {
+		if (VALUES[i].equals(data)) {
+			return true;
+		}
+	}
+	return false;
+}
+
 @Override
 public String toString() {
 	return "flag "+getName()+" = "+VALUES[data];

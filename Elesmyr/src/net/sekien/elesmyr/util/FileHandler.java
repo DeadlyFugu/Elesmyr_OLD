@@ -92,7 +92,7 @@ public static void readData() throws IOException {
 	data = new HBTCompound("data");
 	for (String pack : packs) {
 		for (File f : getAllFiles(new File(pack+"/"))) {
-			if (f.getName().matches(".*\\.hbt(|x|c)"))
+			if (f.getName().matches(".*\\.hbt(|x|c)") && !f.getName().startsWith("pack."))
 				try {
 					for (HBTTag tag : readHBTFile(f.getPath())) {
 						data.addTag(tag);

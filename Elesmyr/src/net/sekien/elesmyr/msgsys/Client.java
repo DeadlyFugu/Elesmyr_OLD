@@ -50,7 +50,7 @@ public void start() {
 
 public void connect(int i, InetAddress address, int port, int port2) throws IOException {
 	Socket socket = new Socket(address, port);
-	Log.info("msgsys", "Client connected to "+socket.toString());
+	Log.info("client", "Client connected to "+socket.toString());
 	connection = new Connection(-1, socket);
 	new Thread() {
 		public void run() {
@@ -59,7 +59,7 @@ public void connect(int i, InetAddress address, int port, int port2) throws IOEx
 				try {
 					received(connection.readMsg());
 				} catch (HBTCompound.TagNotFoundException e) {
-					Log.error("msgsys", "Badly formed message received.");
+					Log.error("client", "Badly formed message received.");
 					e.printStackTrace();
 				} catch (NullPointerException npe) {
 					//Gets thrown when client is stopped

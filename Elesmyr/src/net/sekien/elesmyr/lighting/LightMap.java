@@ -108,17 +108,26 @@ public void update(Region r, Camera cam, float time) {
 	ambLight.a += (ambLightT.a-ambLight.a)/30f;
 	//ambLight = ambLightT;
 
+	int jsx = cam.getXOff() > 0?0:1;
+	int jsy = cam.getYOff() > 0?0:1;
+
 	for (int y = 0; y < resy; y++)
 		for (int x = 0; x < resx; x++) {
 			//setCol(col,x,y,0,0,0,0); //day;
 			//setCol(col,x,y,0.4f,0.2f,0.1f,0.5f); //sunset
 			//setCol(col,x,y,0.02f,0.02f,0.05f,0.995f); //night
-			setCol(col, x, y, ambLight.r, ambLight.g, ambLight.b, ambLight.a);
+			//float mul = Math.min(1, Math.max(0,Math.min(1, (x+cam.getXOff())/256f)+Math.min(1, (y+cam.getYOff())/256f)))
+			/*float xtf = (float) (Math.floor((cam.getXOff()-jsx)/(float) gw)*gw);
+			float ytf = (float) (Math.floor((cam.getYOff()-jsy)/(float) gh)*gh);
+			float mul = (1-Math.max(0,Math.min(1,(((-jsx+x)*gw-xtf)+jsx)/96f)))+
+					    (1-Math.max(0,Math.min(1,(((-jsy+y)*gh-ytf)+jsy)/96f)));*/
+			int mul = 1;
+			setCol(col, x, y, ambLight.r*mul, ambLight.g*mul, ambLight.b*mul, ambLight.a);
 		}
 	//START LIGHT
 	for (Light l : ((ArrayList<Light>) lights.clone())) {
-		float xf = (float) ((l.x+(Math.floor((cam.getXOff()-1)/(float) gw)*gw))*xmul)+1;
-		float yf = (float) ((l.y+(Math.floor((cam.getYOff()-1)/(float) gh)*gh))*ymul)+1;
+		float xf = (float) ((l.x+(Math.floor((cam.getXOff()-jsx)/(float) gw)*gw))*xmul)-jsx;
+		float yf = (float) ((l.y+(Math.floor((cam.getYOff()-jsy)/(float) gh)*gh))*ymul)-jsy;
 		int xs = (int) Math.round(xf);
 		int ys = (int) Math.round(yf);
 		int dists = (int) (l.dist*xmul);

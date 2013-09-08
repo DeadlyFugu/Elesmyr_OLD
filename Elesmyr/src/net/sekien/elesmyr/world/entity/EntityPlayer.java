@@ -192,7 +192,7 @@ public void receiveMessageExt(Message msg, MessageEndPoint server) {
 					                                                                 new HBTInt("x", dx),
 					                                                                 new HBTInt("y", dy),
 					                                                                 ietag
-			}));
+			}), server);
 			pdat.removeItem(msg.getData().getInt("i", 0), region, receiverName);
 		}
 	} else if (msg.getName().equals("craftItem")) {

@@ -40,12 +40,16 @@ public EntityEnemy() {
 }
 
 @Override
-public void initSERV() {
-	health = inst_dat.getInt("health", 0);
-	if (health==0) {
-		health = Integer.parseInt(inst_dat.getString("extd", "0"));
-		inst_dat.deleteTag("extd");
-		inst_dat.addTag(new HBTInt("health", health));
+public void initSERV(GameServer server, Region region) {
+	health = inst_dat.getInt("health", -1);
+	if (health==-1) {
+		if (inst_dat.hasTag("extd")) {
+			health = Integer.parseInt(inst_dat.getString("extd", "0"));
+			inst_dat.deleteTag("extd");
+			inst_dat.addTag(new HBTInt("health", health));
+		} else {
+			health = maxHealth;
+		}
 	}
 }
 

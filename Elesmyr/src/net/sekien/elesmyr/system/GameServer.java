@@ -238,7 +238,7 @@ public void changePlayerRegion(String data, int x, int y, Connection connection,
 			r.connections.remove(connection);
 		}
 	}
-	world.touchRegion(data); //Load region if unloaded
+	world.touchRegion(data, this); //Load region if unloaded
 	world.getRegion(data).connections.add(connection); //Add the connection to the region
 	//String rEntD=world.getRegion(data).getEntityString(); //Get the region's entity string
 	MessageSystem.sendClient(null, connection, new Message("CLIENT.setRegion", new HBTCompound("p", new HBTTag[]{new HBTString("region", data)})), false);
@@ -251,7 +251,7 @@ public void changePlayerRegion(String data, int x, int y, Connection connection,
 			                                                                                            new HBTInt("x", x),
 			                                                                                            new HBTInt("y", y),
 			                                                                                            new HBTString("uname", players.get(connection))
-	})); //Add a player entity
+	}), this); //Add a player entity
 	if (entid==-1) { //Shouldn't happen
 		MessageSystem.sendClient(null, connection, new Message("CLIENT.error", HBTTools.msgString("msg", "addEntityServer returned -1")), false);
 		return;

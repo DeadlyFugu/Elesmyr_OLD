@@ -130,7 +130,6 @@ public static void receiveMessageClient() {
 }
 
 public static void initialise(GameClient client, boolean server, InetAddress connect, Save save) throws Exception {
-	Log.info("msgsys", "initialise called");
 	if (SERVER)
 		startServer(save);
 	if (CLIENT)
@@ -139,7 +138,6 @@ public static void initialise(GameClient client, boolean server, InetAddress con
 	//MessageSystem.server=server; //Set in startServer(Save);
 	if (CLIENT && SERVER && Globals.get("allowFL", true)) {
 		fastLink = true;
-		Log.info("Fastlink established");
 	} else {
 		fastLink = false;
 	}
@@ -152,7 +150,6 @@ public static void initialise(GameClient client, boolean server, InetAddress con
 public static void startClient(InetAddress address) throws IOException {
 	netClient = new Client();
 	netClient.start();
-	Log.info("connect called");
 	netClient.connect(5000, address, 37020, 37021);
 }
 

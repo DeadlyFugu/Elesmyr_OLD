@@ -13,6 +13,7 @@ import net.sekien.elesmyr.msgsys.MessageEndPoint;
 import net.sekien.elesmyr.msgsys.MessageSystem;
 import net.sekien.elesmyr.player.Camera;
 import net.sekien.elesmyr.system.GameClient;
+import net.sekien.elesmyr.system.GameServer;
 import net.sekien.elesmyr.util.FileHandler;
 import net.sekien.elesmyr.world.Region;
 import net.sekien.hbt.HBTCompound;
@@ -29,7 +30,7 @@ public void init(GameContainer gc, MessageEndPoint receiver)
 }
 
 @Override
-public void initSERV() {
+public void initSERV(GameServer server, Region region) {
 	dh = new DialogueHandler("test");
 }
 

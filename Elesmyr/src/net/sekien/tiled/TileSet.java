@@ -125,7 +125,8 @@ public TileSet(TiledMap map, Element element, boolean loadImage)
 		/*imageref = map.getTilesLocation()+"/"+ref;
 		Image image = new Image(map.getTilesLocation()+"/"+ref, false,
 				                       Image.FILTER_NEAREST, trans);*/
-		Image image = FileHandler.getImage("region."+(ref.split("\\.", 2)[0]));
+		String[] parts = ref.split("/");
+		Image image = FileHandler.getImage("region.tile."+(parts[parts.length-1].split("\\.", 2)[0]));
 		setTileSetImage(image);
 	}
 
