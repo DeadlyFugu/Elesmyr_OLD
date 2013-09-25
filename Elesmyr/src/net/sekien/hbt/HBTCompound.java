@@ -75,7 +75,7 @@ private HBTCompound getCompoundTouch(String name) {
 	try {return (HBTCompound) getTag(name);} catch (ClassCastException e) {
 		Log.warn("tag:"+name, e);
 		return (HBTCompound) addTagPass(new HBTCompound(name));
-	} catch (HBTCompound.TagNotFoundException e) {return (HBTCompound) addTagPass(new HBTCompound(name));}
+	} catch (TagNotFoundException e) {return (HBTCompound) addTagPass(new HBTCompound(name));}
 }
 
 public HBTTag getTag(String name) {
@@ -103,70 +103,70 @@ public HBTCompound getCompound(String name) {
 	try {return (HBTCompound) getTag(name);} catch (ClassCastException e) {
 		Log.warn("tag:"+name, e);
 		return new HBTCompound(name);
-	} catch (HBTCompound.TagNotFoundException e) {return new HBTCompound(name);}
+	} catch (TagNotFoundException e) {return new HBTCompound(name);}
 }
 
 public byte getByte(String name, byte def) {
 	try {return ((HBTByte) getTag(name)).getData();} catch (ClassCastException e) {
 		Log.warn("tag:"+name, e);
 		return def;
-	} catch (HBTCompound.TagNotFoundException e) {return def;}
+	} catch (TagNotFoundException e) {return def;}
 }
 
 public short getShort(String name, short def) {
 	try {return ((HBTShort) getTag(name)).getData();} catch (ClassCastException e) {
 		Log.warn("tag:"+name, e);
 		return def;
-	} catch (HBTCompound.TagNotFoundException e) {return def;}
+	} catch (TagNotFoundException e) {return def;}
 }
 
 public int getInt(String name, int def) {
 	try {return ((HBTInt) getTag(name)).getData();} catch (ClassCastException e) {
 		Log.warn("tag:"+name, e);
 		return def;
-	} catch (HBTCompound.TagNotFoundException e) {return def;}
+	} catch (TagNotFoundException e) {return def;}
 }
 
 public long getLong(String name, long def) {
 	try {return ((HBTLong) getTag(name)).getData();} catch (ClassCastException e) {
 		Log.warn("tag:"+name, e);
 		return def;
-	} catch (HBTCompound.TagNotFoundException e) {return def;}
+	} catch (TagNotFoundException e) {return def;}
 }
 
 public float getFloat(String name, float def) {
 	try {return ((HBTFloat) getTag(name)).getData();} catch (ClassCastException e) {
 		Log.warn("tag:"+name, e);
 		return def;
-	} catch (HBTCompound.TagNotFoundException e) {return def;}
+	} catch (TagNotFoundException e) {return def;}
 }
 
 public double getDouble(String name, double def) {
 	try {return ((HBTDouble) getTag(name)).getData();} catch (ClassCastException e) {
 		Log.warn("tag:"+name, e);
 		return def;
-	} catch (HBTCompound.TagNotFoundException e) {return def;}
+	} catch (TagNotFoundException e) {return def;}
 }
 
 public String getString(String name, String def) {
 	try {return ((HBTString) getTag(name)).getData();} catch (ClassCastException e) {
 		Log.warn("tag:"+name, e);
 		return def;
-	} catch (HBTCompound.TagNotFoundException e) {return def;}
+	} catch (TagNotFoundException e) {return def;}
 }
 
 public byte[] getByteArray(String name, byte[] def) {
 	try {return ((HBTByteArray) getTag(name)).getData();} catch (ClassCastException e) {
 		Log.warn("tag:"+name, e);
 		return def;
-	} catch (HBTCompound.TagNotFoundException e) {return def;}
+	} catch (TagNotFoundException e) {return def;}
 }
 
 public HBTFlag getFlag(String name, String def) {
 	try {return (HBTFlag) getTag(name);} catch (ClassCastException e) {
 		Log.warn("tag:"+name, e);
 		return new HBTFlag(name, def);
-	} catch (HBTCompound.TagNotFoundException e) {return new HBTFlag(name, def);}
+	} catch (TagNotFoundException e) {return new HBTFlag(name, def);}
 }
 
 public List<HBTTag> getData() {
@@ -215,9 +215,4 @@ public HBTTag deepClone() {
 	return clone;
 }
 
-public class TagNotFoundException extends RuntimeException {
-	public TagNotFoundException(String name) {
-		super(name);
-	}
-}
 }

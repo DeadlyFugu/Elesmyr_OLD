@@ -8,7 +8,7 @@ package net.sekien.elesmyr.msgsys;
 
 import com.esotericsoftware.minlog.Log;
 import net.sekien.elesmyr.system.Main;
-import net.sekien.hbt.HBTCompound;
+import net.sekien.hbt.TagNotFoundException;
 
 import java.io.IOException;
 import java.net.*;
@@ -116,7 +116,7 @@ private void createListenerThread(final Connection connection) {
 			while (running) {
 				try {
 					received(connection, connection.readMsg());
-				} catch (HBTCompound.TagNotFoundException e) {
+				} catch (TagNotFoundException e) {
 					Log.error("server", "Badly formed message received.");
 					e.printStackTrace();
 				} catch (NullPointerException npe) {

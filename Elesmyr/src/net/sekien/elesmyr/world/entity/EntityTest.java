@@ -27,12 +27,15 @@ public void onHit() {Log.info("test.onht");}
 public void onInteract() {Log.info("test.oninter");}*/
 
 public void onInitClient() throws SlickException {
-	System.out.println("init_CLIENT");
 	sprite = FileHandler.getImage("ent.worktable");
 }
 
 public void onInteract() {
 	server.addEntity("EnemyMushroom", x, y, HBTAX.getTags("health:5", "ent"));
 	moveFree = !moveFree;
+}
+
+public void onHit() {
+	server.removeEntity(this);
 }
 }

@@ -6,10 +6,7 @@
 
 package net.sekien.elesmyr.msgsys;
 
-import net.sekien.hbt.HBTCompound;
-import net.sekien.hbt.HBTInputStream;
-import net.sekien.hbt.HBTOutputStream;
-import net.sekien.hbt.HBTString;
+import net.sekien.hbt.*;
 
 import java.io.IOException;
 import java.net.Socket;
@@ -63,7 +60,7 @@ void sendUDP(Message msg) throws IOException {
 	sendTCP(msg);
 }
 
-Message readMsg() throws IOException, HBTCompound.TagNotFoundException {
+Message readMsg() throws IOException, TagNotFoundException {
 	HBTCompound msgc = (HBTCompound) in.read();
 	Message msg = new Message(((HBTString) msgc.getTag("t")).getData()+"."+
 			                          ((HBTString) msgc.getTag("n")).getData(),

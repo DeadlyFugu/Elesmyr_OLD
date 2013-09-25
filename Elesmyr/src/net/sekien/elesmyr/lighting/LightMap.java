@@ -126,8 +126,8 @@ public void update(Region r, Camera cam, float time) {
 		}
 	//START LIGHT
 	for (Light l : ((ArrayList<Light>) lights.clone())) {
-		float xf = (float) ((l.x+(Math.floor((cam.getXOff()-jsx)/(float) gw)*gw))*xmul)-jsx;
-		float yf = (float) ((l.y+(Math.floor((cam.getYOff()-jsy)/(float) gh)*gh))*ymul)-jsy;
+		float xf = (float) ((32+l.x+(Math.floor((cam.getXOff()-jsx)/(float) gw)*gw))*xmul)-jsx;
+		float yf = (float) ((32+l.y+(Math.floor((cam.getYOff()-jsy)/(float) gh)*gh))*ymul)-jsy;
 		int xs = (int) Math.round(xf);
 		int ys = (int) Math.round(yf);
 		int dists = (int) (l.dist*xmul);

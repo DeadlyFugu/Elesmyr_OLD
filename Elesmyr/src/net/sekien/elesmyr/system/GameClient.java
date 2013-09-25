@@ -231,7 +231,8 @@ public void render(net.sekien.pepper.Renderer renderer) throws SlickException {
 							"Time raw: "+time+"\n"+
 							"Time norm: "+(int) ((time/60)%12)+":"+(int) (time%60)+"\n"+
 							"FPS: "+gc.getFPS()+"\n"+
-							"Ents: "+player.region.entities.size();
+							"Ents: "+player.region.entities.size()+"\n"+
+							MessageSystem.netstat;
 			long total = 0;
 			for (Map.Entry entry : Profiler.getTimes().entrySet()) {
 				debugText += "\n"+entry.getKey()+": "+TimeUnit.MILLISECONDS.convert((Long) entry.getValue(), TimeUnit.NANOSECONDS)+"ms";

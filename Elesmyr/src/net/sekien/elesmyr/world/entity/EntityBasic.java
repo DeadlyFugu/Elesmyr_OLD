@@ -6,15 +6,17 @@
 
 package net.sekien.elesmyr.world.entity;
 
+import com.esotericsoftware.minlog.Log;
 import net.sekien.elesmyr.msgsys.Message;
 import net.sekien.elesmyr.msgsys.MessageEndPoint;
 import net.sekien.elesmyr.player.Camera;
 import net.sekien.elesmyr.system.GameClient;
 import net.sekien.elesmyr.system.GameServer;
-import net.sekien.elesmyr.util.ClientUtil;
-import net.sekien.elesmyr.util.ServerUtil;
+import net.sekien.elesmyr.util.*;
 import net.sekien.elesmyr.world.Region;
 import org.newdawn.slick.*;
+
+import java.util.HashMap;
 
 /**
  * Created with IntelliJ IDEA. User: matt Date: 20/07/13 Time: 5:21 PM To change this template use File | Settings |
@@ -26,6 +28,9 @@ protected Image sprite;
 protected ClientUtil client;
 protected ServerUtil server;
 protected RemoteServerUtil remote;
+protected EntityHBT hbt;
+protected Graphics g;
+protected Camera cam;
 
 public EntityBasic() {
 	super();
@@ -41,7 +46,31 @@ public void onUpdateServer() {}
 
 public void onUpdateClient() {}
 
-public void onRender() {if (sprite!=null) sprite.draw(xs, ys);}
+public void onRender() {if (sprite!=null) sprite.draw(xs, ys, decode(hbt.getString("color", "white")));}
+
+private static HashMap<String, Color> colTable;
+
+static {
+	colTable = new HashMap<String, Color>();
+	colTable.put("white", Color.white);
+	colTable.put("black", Color.black);
+	colTable.put("red", Color.red);
+	colTable.put("green", Color.green);
+	colTable.put("blue", Color.blue);
+	colTable.put("purple", new Color(0xFF, 0x00, 0xFF));
+	colTable.put("yellow", Color.yellow);
+	colTable.put("aqua", Color.cyan);
+	colTable.put("cyan", Color.cyan);
+}
+
+private Color decode(String string) {
+	if (string.charAt(0)=='#')
+		return Color.decode(string);
+	else {
+		Color col = colTable.get(string.toLowerCase());
+		return col==null?Color.white:col;
+	}
+}
 
 public void onDestroyServer() {}
 
@@ -51,10 +80,11 @@ public void onHit() {}
 
 public void onInteract() {}
 
-public void onMessage(Message msg, MessageEndPoint receiver) {}
+public void onMessage(Message msg, MessageEndPoint receiver) {Log.warn("EntityBasic missed message "+msg);}
 
 protected void initSERV(GameServer server, Region region) {
-	this.server = new ServerUtil(server, region);
+	this.server = new ServerUtil(server, region, this);
+	hbt = new EntityHBTServer(inst_dat, region, this);
 	onInitServer();
 }
 
@@ -65,6 +95,7 @@ public void init(GameContainer gc, MessageEndPoint receiver)
 	remote = new RemoteServerUtil(region, this);
 	if (!inited) {
 		inited = true;
+		hbt = new EntityHBTClient();
 		onInitClient();
 	}
 }
@@ -76,12 +107,17 @@ public void render(GameContainer gc, Graphics g, Camera cam, GameClient receiver
 	}
 	g.pushTransform();
 	g.translate(cam.getXOff(), cam.getYOff());
+	this.g = g;
+	this.cam = cam;
 	onRender();
+	this.g = null;
+	this.cam = null;
 	g.popTransform();
 }
 
 @Override
 public void update(Region region, GameServer receiver) {
+	((EntityHBTServer) hbt).update(getReceiverName());
 	onUpdateServer();
 }
 
@@ -103,6 +139,11 @@ public void clientUpdate(GameContainer gc, GameClient receiver) {
 }
 
 @Override public void receiveMessageExt(Message msg, MessageEndPoint receiver) {
-	onMessage(msg, receiver);
+	if (((EntityHBTClient) hbt).onReceive(msg)) {} else onMessage(msg, receiver);
+}
+
+protected void setCollision(int x, int y, int w, int h) {
+	cx1 = x; cy1 = y;
+	cx2 = x+w; cy2 = y+h;
 }
 }

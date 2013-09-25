@@ -8,11 +8,9 @@ package net.sekien.elesmyr.ui;
 
 import net.sekien.elesmyr.Element;
 import net.sekien.elesmyr.msgsys.MessageEndPoint;
-import net.sekien.elesmyr.msgsys.MessageSystem;
 import net.sekien.elesmyr.player.Camera;
 import net.sekien.elesmyr.system.FontRenderer;
 import net.sekien.elesmyr.system.GameClient;
-import net.sekien.elesmyr.system.Globals;
 import net.sekien.elesmyr.system.Main;
 import net.sekien.elesmyr.util.FileHandler;
 import net.sekien.elesmyr.world.entity.Entity;
@@ -131,11 +129,11 @@ private void drawElement(int x, int y, Element element) {
 
 private static String getTopString() {
 	//FontRenderer.drawString(0, 0, "#LotE |"+Main.version+": "+(CLIENT?"|$bar.client| ":"")+(SERVER?"|$bar.server| ":"")+(MessageSystem.fastLink?"|$bar.fastlink| ":""), g);
-	return "#$bar.title| |"+Main.version+":"+
+	return "#$bar.title| |"+Main.version/*+":"+
 			       (MessageSystem.CLIENT?" |$bar.client|":"")+
 			       (MessageSystem.SERVER?" |$bar.server|":"")+
 			       (MessageSystem.fastLink?" |$bar.fastlink|":"")+
-			       (Globals.get("debug", false)?" |$menu.debug|":"");
+			       (Globals.get("debug", false)?" |$menu.debug|":"")*/;
 }
 
 @Override

@@ -58,7 +58,7 @@ private static void parse(String instr) {
 			} else {
 				error("Not a compound.");
 			}
-		} catch (HBTCompound.TagNotFoundException e) {
+		} catch (TagNotFoundException e) {
 			error("Can not find tag '"+e.getLocalizedMessage()+"'.");
 		}
 	} else if (func.equals("ls")) {
@@ -126,7 +126,7 @@ private static void parse(String instr) {
 				child = str;
 			}
 			parent.deleteTag(child);
-		} catch (HBTCompound.TagNotFoundException e) {
+		} catch (TagNotFoundException e) {
 			error("Can not find tag '"+e.getLocalizedMessage()+"'.");
 		} catch (ClassCastException e) {
 			error("Can not find tag '"+e.getLocalizedMessage()+"'.");
@@ -159,7 +159,7 @@ private static HBTTag resolveArgPathTag(String arg) {
 		else if (arg.equals(".")) return root;
 		else if (arg.startsWith(".")) return root.getTag(arg.substring(1));
 		else return getCurrentTag().getTag(arg);
-	} catch (HBTCompound.TagNotFoundException e) {
+	} catch (TagNotFoundException e) {
 		error("Can not find tag '"+e.getLocalizedMessage()+"'.");
 		return null;
 	}
@@ -171,7 +171,7 @@ private static HBTCompound resolveArgPath(String arg) {
 		else if (arg.equals(".")) return root;
 		else if (arg.startsWith(".")) return (HBTCompound) root.getTag(arg.substring(1));
 		else return (HBTCompound) getCurrentTag().getTag(arg);
-	} catch (HBTCompound.TagNotFoundException e) {
+	} catch (TagNotFoundException e) {
 		error("Can not find tag '"+e.getLocalizedMessage()+"'.");
 		return null;
 	} catch (ClassCastException e) {

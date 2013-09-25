@@ -34,7 +34,12 @@ private static Server netServer;
 public static boolean fastLink = false;
 private static int fastlinkedID;
 
+private static int si, so, ci, co;
+private static long sec_timer;
+public static String netstat = "";
+
 public static void sendServer(MessageReceiver sender, Message msg, boolean udp) {
+	co++;
 	if (sender!=null)
 		msg.setSender(sender.getReceiverName());
 	if (fastLink && netServer.getConnections().size() > 0) {
@@ -47,6 +52,7 @@ public static void sendServer(MessageReceiver sender, Message msg, boolean udp) 
 }
 
 public static void sendClient(MessageReceiver sender, int connection, Message msg, boolean udp) {
+	so++;
 	if (sender!=null)
 		msg.setSender(sender.getReceiverName());
 	if (fastLink && connection==fastlinkedID)
@@ -88,6 +94,7 @@ public static void receiveClient(Message msg) {
 }
 
 public static void receiveMessageServer() {
+	si += serverMsgQueue.size();
 	for (Message msg : serverMsgQueue) {
 		try {
 			if (Globals.get("printAllMsg", false) || Globals.get("printMsg", false) && !msg.getName().equals("move") && !msg.getName().equals("pickupAt") && !msg.getName().equals("time"))
@@ -112,6 +119,7 @@ public static void receiveMessageServer() {
 }
 
 public static void receiveMessageClient() {
+	ci += clientMsgQueue.size();
 	while (!clientMsgQueue.isEmpty()) {
 		Message msg = clientMsgQueue.poll();
 		if (Globals.get("printAllMsg", false) || Globals.get("printMsg", false) && !msg.getName().equals("move") && !msg.getName().equals("pickupAt") && !msg.getName().equals("time"))
@@ -126,6 +134,18 @@ public static void receiveMessageClient() {
 			Log.error("Exception caught receiving a message.\n_MSG:\n"+msg+"\n");
 			Log.error("_EXCEPTION:", e);
 		}
+	}
+	if (System.currentTimeMillis() > sec_timer+1000) {
+		sec_timer = System.currentTimeMillis();
+		if (server!=null) {
+			netstat =
+					"sin  "+si+"\n"+
+							"sout "+so+"\n";
+		} else {netstat = "";}
+		netstat +=
+				"cin  "+ci+"\n"+
+						"cout "+co+"\n";
+		si = so = ci = co = 0;
 	}
 }
 

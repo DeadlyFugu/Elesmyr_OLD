@@ -24,6 +24,14 @@ protected Random airand = new Random();
 	constantUpdate = true;
 }
 
+protected int getDirection() {
+	if (xmove==1) return 3;
+	if (xmove==-1) return 0;
+	if (ymove==1) return 1;
+	if (ymove==-1) return 2;
+	return 3;
+}
+
 @Override public void onUpdateServer() {
 	if (moveFree) {
 		if (region.aiPlaceFreeRect(x+xmove-10, y-4, x+xmove+10, y+4))

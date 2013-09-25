@@ -24,6 +24,8 @@ private static final String[] VALUES = {
 		                                       "AIR",
 		                                       "VOID"
 };
+public static final HBTFlag TRUE = new HBTFlag("", (byte) 0);
+public static final HBTFlag FALSE = new HBTFlag("", (byte) 1);
 private byte data;
 
 public HBTFlag(String name, byte data) {

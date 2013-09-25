@@ -11,7 +11,7 @@ import net.sekien.elesmyr.Profiler;
 import net.sekien.elesmyr.ScriptRunner;
 import net.sekien.elesmyr.util.FileHandler;
 import net.sekien.elesmyr.util.HashmapLoader;
-import net.sekien.hbt.HBTCompound;
+import net.sekien.hbt.TagNotFoundException;
 import net.sekien.pepper.StateManager;
 import org.lwjgl.opengl.Display;
 import org.newdawn.slick.*;
@@ -42,7 +42,7 @@ public static float INTERNAL_ASPECT = (4/3f);
 public static int INTERNAL_RESY = 480; //Internal resolution y
 public static int INTERNAL_RESX = (int) (INTERNAL_RESY*INTERNAL_ASPECT); //Internal resolution x
 
-public static final String verNum = "0.2.7";
+public static final String verNum = "0.3.0";
 public static final String verRelease = "PRE-ALPHA";
 public static final String version = "$version.prealpha| "+verNum; //0.0.1 = DEC 16
 
@@ -51,7 +51,7 @@ private static GameContainer gc;
 private int prev_res = 0;
 
 public Main() {
-	super("Elesmyr "+verRelease+" "+verNum);
+	super("Tales of a Star Child: Elesmyr "+verRelease+" "+verNum);
 
 	/*this.addState(new IntroState(INTROSTATE));
 	this.addState(new MainMenuState(MENUSTATE));
@@ -68,7 +68,7 @@ public Main() {
 }
 
 public static void main(String[] args) throws SlickException {
-	Log.info("Elesmyr "+verRelease+" "+verNum);
+	Log.info("Tales of a Star Child: Elesmyr "+verRelease+" "+verNum);
 
 	Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
 		public void uncaughtException(Thread t, Throwable e) {
@@ -94,7 +94,7 @@ public static void main(String[] args) throws SlickException {
 	try {
 		//HBTOutputStream os = new HBTOutputStream(new FileOutputStream("save/TestOut2.hbtc"),true);
 		FileHandler.readData();
-	} catch (HBTCompound.TagNotFoundException e) {
+	} catch (TagNotFoundException e) {
 		e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
 	} catch (IOException e) {
 		e.printStackTrace();
@@ -108,6 +108,7 @@ public static void main(String[] args) throws SlickException {
 	MainMenuState.disy[3] = app.getScreenHeight();
 
 	app.setResizable(true);
+	app.setUpdateOnlyWhenVisible(true);
 
 	if (Globals.containsKey("resdm")) {
 		int dm = Integer.parseInt(Globals.get("resdm", "0"));
