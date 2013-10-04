@@ -12,9 +12,7 @@ import net.sekien.elesmyr.Save;
 import net.sekien.elesmyr.msgsys.Message;
 import net.sekien.elesmyr.msgsys.MessageEndPoint;
 import net.sekien.elesmyr.msgsys.MessageSystem;
-import net.sekien.elesmyr.system.GameClient;
-import net.sekien.elesmyr.system.GameServer;
-import net.sekien.elesmyr.system.Globals;
+import net.sekien.elesmyr.system.*;
 import net.sekien.elesmyr.system.Input;
 import net.sekien.elesmyr.util.PointSensor;
 import net.sekien.elesmyr.world.Region;
@@ -185,8 +183,10 @@ public void clientUpdate(GameContainer gc, GameClient receiver) {
 				y += snkspd;
 		}
 
-		if (Input.isKeyPressed(gc, "atk"))
+		if (Input.isKeyPressed(gc, "atk")) {
+			AudioMan.playSound("atk_sword"+(int) (Math.random()*3.999));
 			MessageSystem.sendServer(this, new Message(regionName+".hitAt", HBTTools.position(x+xm*16, y+ym*16)), true);
+		}
 
 		if (Input.isKeyPressed(gc, "int")) {
 			int colInfront = region.map.getTileId((int) (x+xm*16)/32, (int) (y+ym*16)/32, region.mapColLayer);
@@ -307,7 +307,8 @@ public void receiveMessage(Message msg, MessageEndPoint receiver) {
 		regionName = msg.getData().getString("region", "error");
 		gs.cam.x = x = msg.getData().getInt("x", 0);
 		gs.cam.y = y = msg.getData().getInt("y", 0);
-		msg.reply("SERVER.getRegion", msg.getData(), this);
+		//msg.reply("SERVER.getRegion", msg.getData(), this);
+		MessageSystem.sendServer(this, new Message("SERVER.getRegion", msg.getData()), false);
 	} else if (name.equals("setID")) {
 		this.entid = msg.getData().getInt("id", -1);
 	} else if (name.equals("setPDAT")) {

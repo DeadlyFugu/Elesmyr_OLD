@@ -220,4 +220,22 @@ public static List<Connection> getConnections() {
 public static void setFastlink(Connection connection) {
 	MessageSystem.fastlinkedID = connection.getID();
 }
+
+public static void removeConnection(Connection connection) {
+	netServer.getConnections().remove(connection);
+}
+
+public static void removeConnection(int connection) {
+	Connection found = null;
+	for (Connection c : netServer.getConnections()) {
+		if (c.getID()==connection) {
+			found = c;
+		}
+	}
+	if (found!=null) {
+		netServer.getConnections().remove(found);
+	} else {
+		Log.warn("Could not remove connection "+connection+" because it doesn't exist");
+	}
+}
 }

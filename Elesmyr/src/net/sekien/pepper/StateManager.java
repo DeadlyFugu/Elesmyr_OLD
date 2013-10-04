@@ -8,12 +8,10 @@ package net.sekien.pepper;
 
 import com.jhlabs.image.AbstractBufferedImageOp;
 import com.jhlabs.image.GaussianFilter;
-import net.sekien.elesmyr.system.FontRenderer;
-import net.sekien.elesmyr.system.GameClient;
-import net.sekien.elesmyr.system.Globals;
-import net.sekien.elesmyr.system.Main;
+import net.sekien.elesmyr.system.*;
 import net.sekien.elesmyr.util.FileHandler;
 import org.newdawn.slick.*;
+import org.newdawn.slick.Input;
 import org.newdawn.slick.gui.*;
 import org.newdawn.slick.opengl.*;
 import org.newdawn.slick.util.*;
@@ -63,6 +61,8 @@ public static void init(GameContainer gc) {
 		alphabg = FileHandler.getImage("ui.alphabg");
 		load_img = FileHandler.getImage("ui.loading");
 	} catch (Exception e) {}
+
+	AudioMan.setMusic("uimnu_00");
 
 	textField = new TextField(gc, FontRenderer.getFont(), 0, 16, 530, 16);
 	textField.setBorderColor(null);

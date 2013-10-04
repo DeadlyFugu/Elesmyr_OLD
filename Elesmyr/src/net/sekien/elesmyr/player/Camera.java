@@ -6,6 +6,7 @@
 
 package net.sekien.elesmyr.player;
 
+import net.sekien.elesmyr.system.Globals;
 import net.sekien.elesmyr.system.Main;
 import net.sekien.elesmyr.world.Region;
 import net.sekien.tiled.TiledMapPlus;
@@ -23,17 +24,20 @@ public Camera(int x, int y) {
 public void update(PlayerClient player) {
 	tx = (player.x);
 	ty = (player.y);
-	if (tx < Main.INTERNAL_RESX/2)
-		tx = Main.INTERNAL_RESX/2;
-	if (ty < Main.INTERNAL_RESY/2)
-		ty = Main.INTERNAL_RESY/2;
-	Region pr = player.getRegion();
-	if (pr!=null) {
-		TiledMapPlus map = pr.map;
-		if (tx > map.getWidth()*32-Main.INTERNAL_RESX/2)
-			tx = map.getWidth()*32-Main.INTERNAL_RESX/2;
-		if (ty > map.getHeight()*32-Main.INTERNAL_RESY/2)
-			ty = map.getHeight()*32-Main.INTERNAL_RESY/2;
+
+	if (Globals.get("cambound", true)) {
+		if (tx < Main.INTERNAL_RESX/2)
+			tx = Main.INTERNAL_RESX/2;
+		if (ty < Main.INTERNAL_RESY/2)
+			ty = Main.INTERNAL_RESY/2;
+		Region pr = player.getRegion();
+		if (pr!=null) {
+			TiledMapPlus map = pr.map;
+			if (tx > map.getWidth()*32-Main.INTERNAL_RESX/2)
+				tx = map.getWidth()*32-Main.INTERNAL_RESX/2;
+			if (ty > map.getHeight()*32-Main.INTERNAL_RESY/2)
+				ty = map.getHeight()*32-Main.INTERNAL_RESY/2;
+		}
 	}
 
 	x += (tx-x)/10;

@@ -135,7 +135,7 @@ private void draw(float xd, float yd, int x, int y, int px, int py, float spx, f
 		}
 	}
 	if (PlayerClient.BIGSIZE) {
-		spr.getSprite(tx, ty).draw(((int) xd+cam.getXOff())+(flip?32:-32), ((int) yd+cam.getYOff())-78, (flip?-64:64), 96);
+		spr.getSprite(tx, ty).draw(((int) xd+cam.getXOff())+(flip?24:-24), ((int) yd+cam.getYOff())-59, (flip?-48:48), 72); //59 was 78; 72 was 96
 	} else {
 		spr.getSprite(tx, ty).draw(((int) xd+cam.getXOff())+(flip?16:-16), ((int) yd+cam.getYOff())-39, (flip?-32:32), 48);
 	}

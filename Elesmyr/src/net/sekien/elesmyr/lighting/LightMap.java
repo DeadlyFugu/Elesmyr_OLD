@@ -7,6 +7,7 @@
 package net.sekien.elesmyr.lighting;
 
 import net.sekien.elesmyr.player.Camera;
+import net.sekien.elesmyr.system.Globals;
 import net.sekien.elesmyr.system.Main;
 import net.sekien.elesmyr.world.Region;
 import org.lwjgl.BufferUtils;
@@ -108,26 +109,48 @@ public void update(Region r, Camera cam, float time) {
 	ambLight.a += (ambLightT.a-ambLight.a)/30f;
 	//ambLight = ambLightT;
 
+	//used to jump the lights when crossing the 0 boundary
 	int jsx = cam.getXOff() > 0?0:1;
 	int jsy = cam.getYOff() > 0?0:1;
 
+	//also used to jump the lights when crossing the 0 boundary
+	int jslx = cam.getXOff() > 0?-1:1;
+	int jsly = cam.getYOff() > 0?-1:1;
+
+	boolean edgeFade = Globals.get("edgefade", false);
 	for (int y = 0; y < resy; y++)
 		for (int x = 0; x < resx; x++) {
 			//setCol(col,x,y,0,0,0,0); //day;
 			//setCol(col,x,y,0.4f,0.2f,0.1f,0.5f); //sunset
 			//setCol(col,x,y,0.02f,0.02f,0.05f,0.995f); //night
-			//float mul = Math.min(1, Math.max(0,Math.min(1, (x+cam.getXOff())/256f)+Math.min(1, (y+cam.getYOff())/256f)))
-			/*float xtf = (float) (Math.floor((cam.getXOff()-jsx)/(float) gw)*gw);
-			float ytf = (float) (Math.floor((cam.getYOff()-jsy)/(float) gh)*gh);
-			float mul = (1-Math.max(0,Math.min(1,(((-jsx+x)*gw-xtf)+jsx)/96f)))+
-					    (1-Math.max(0,Math.min(1,(((-jsy+y)*gh-ytf)+jsy)/96f)));*/
-			int mul = 1;
-			setCol(col, x, y, ambLight.r*mul, ambLight.g*mul, ambLight.b*mul, ambLight.a);
+			//float mul = Math.min(1, Math.max(0,Math.min(1, (x+cam.getXOff())/256f)+Math.min(1, (y+cam.getYOff())/256f)));
+			float mul;
+			if (edgeFade) {
+				//in-world x and y of cam origin
+				float xtf = (float) (Math.floor((cam.getXOff()-jsx)/(float) gw)*gw);
+				float ytf = (float) (Math.floor((cam.getYOff()-jsy)/(float) gh)*gh);
+
+				//region size
+				float rw = 0, rh = 0;
+				if (r!=null && r.map!=null) {
+					rw = r.map.getWidth()*32;
+					rh = r.map.getHeight()*32;
+				}
+				System.out.println("rh = "+rh);
+				mul = Math.max(0, 1-((1-Math.max(0, Math.min(1, (((-jsx+x)*gw-xtf)+jsx)/256f)))+
+						                     (1-Math.max(0, Math.min(1, (((-jsy+y)*gh-ytf)+jsy)/256f)))+
+						                     (1-Math.max(0, Math.min(1, (rw-((-jsx+x)*gw-xtf)+jsx)/256f)))+
+						                     (1-Math.max(0, Math.min(1, (rh-((-jsy+y)*gh-ytf)+jsy)/256f)))
+				));
+			} else {
+				mul = 1;
+			}
+			setCol(col, x, y, ambLight.r*mul, ambLight.g*mul, ambLight.b*mul, 1-((1-ambLight.a)*mul));
 		}
 	//START LIGHT
 	for (Light l : ((ArrayList<Light>) lights.clone())) {
-		float xf = (float) ((32+l.x+(Math.floor((cam.getXOff()-jsx)/(float) gw)*gw))*xmul)-jsx;
-		float yf = (float) ((32+l.y+(Math.floor((cam.getYOff()-jsy)/(float) gh)*gh))*ymul)-jsy;
+		float xf = (float) ((jslx*gw+32+l.x+(Math.floor((cam.getXOff()-jsx)/(float) gw)*gw))*xmul)-jsx;
+		float yf = (float) ((jsly*gh+32+l.y+(Math.floor((cam.getYOff()-jsy)/(float) gh)*gh))*ymul)-jsy;
 		int xs = (int) Math.round(xf);
 		int ys = (int) Math.round(yf);
 		int dists = (int) (l.dist*xmul);

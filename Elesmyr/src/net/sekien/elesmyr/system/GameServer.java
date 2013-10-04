@@ -209,13 +209,15 @@ public boolean receiveMessage(Message msg) {
 				return false;
 			}
 			save.putPlayer(players.get(connection), playerEnt.get(players.get(connection)), world);
-			world.receiveMessage(new Message(playerEnt.get(players.get(connection)).split("\\.", 2)[0]+".killSERV",
-					                                HBTTools.msgString("ent", playerEnt.get(players.get(connection)).split("\\.", 2)[1])), this);
 			for (Region r : world.regions.values()) {
 				r.connections.remove(connection);
+				System.out.println("r.connections = "+r.connections);
 			}
+			world.receiveMessage(new Message(playerEnt.get(players.get(connection)).split("\\.", 2)[0]+".killSERV",
+					                                HBTTools.msgString("ent", playerEnt.get(players.get(connection)).split("\\.", 2)[1])), this);
 			playerEnt.remove(players.get(connection));
 			players.remove(connection);
+			MessageSystem.removeConnection(connection);
 		} else if (name.equals("chat")) {
 			sendChat(players.get(connection)+": "+msg.getData().getString("msg", "ERROR: Badly formatted chat message"));
 		} else if (name.equals("setTime")) {
@@ -336,5 +338,22 @@ public boolean isServer() {
 
 public void broadcastKill() {
 	MessageSystem.sendClient(null, getConnections(), new Message("CLIENT.error", HBTTools.msgString("msg", "Server has been closed.")), false);
+}
+
+public void lostConnection(int connection) {
+	if (players.get(connection)==null || playerEnt.get(players.get(connection))==null) {
+		Log.warn("lostConnection on disconnected connection "+connection);
+		return;
+	}
+	sendChat("SERVER: "+players.get(connection)+" lost connection.");
+	save.putPlayer(players.get(connection), playerEnt.get(players.get(connection)), world);
+	world.receiveMessage(new Message(playerEnt.get(players.get(connection)).split("\\.", 2)[0]+".killSERV",
+			                                HBTTools.msgString("ent", playerEnt.get(players.get(connection)).split("\\.", 2)[1])), this);
+	for (Region r : world.regions.values()) {
+		r.connections.remove(connection);
+	}
+	playerEnt.remove(players.get(connection));
+	players.remove(connection);
+	MessageSystem.removeConnection(connection);
 }
 }

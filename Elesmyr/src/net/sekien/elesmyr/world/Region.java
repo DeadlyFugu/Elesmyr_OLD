@@ -150,7 +150,7 @@ public void update(Region region, GameServer receiver) {
 	for (Entity e : entities.values()) {
 		e.update(this, receiver);
 		if ((e instanceof EntityPlayer) || (sendEntities==1 && e.constantUpdate)) {
-			MessageSystem.sendClient(this, (ArrayList<Connection>) connections.clone(), new Message(name+"."+e.id+".move", HBTTools.position(e.x, e.y)), true);
+			MessageSystem.sendClient(this, connections, new Message(name+"."+e.id+".move", HBTTools.position(e.x, e.y)), true);
 		}
 	}
 }

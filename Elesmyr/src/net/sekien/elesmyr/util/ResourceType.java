@@ -12,7 +12,9 @@ public enum ResourceType {
 	HBT("hbtx", "hbt", "hbtc"),
 	PLAIN("", "txt"),
 	LIGHTMAP("lm"),
-	MAP("tmx");
+	MAP("tmx"),
+	SFX("wav"),
+	MUSIC("ogg");
 private String[] exts;
 
 private ResourceType(String... exts) {

@@ -139,7 +139,7 @@ public void clientUpdate(GameContainer gc, GameClient receiver) {
 }
 
 @Override public void receiveMessageExt(Message msg, MessageEndPoint receiver) {
-	if (((EntityHBTClient) hbt).onReceive(msg)) {} else onMessage(msg, receiver);
+	if (((EntityHBTClient) hbt).onReceive(msg)) {} else onMessage(msg, receiver); //TODO: NPE
 }
 
 protected void setCollision(int x, int y, int w, int h) {

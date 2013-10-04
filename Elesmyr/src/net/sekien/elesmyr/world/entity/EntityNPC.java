@@ -44,7 +44,7 @@ public void onUpdateClient() {
 	super.onUpdateClient();
 	if (anim!=null) {
 		anim.setPos(x, y, xs, ys);
-		anim.setDirection(hbt.getByte("_dir"));
+		anim.setDirection(hbt.getByte("_dir", (byte) 0));
 	}
 }
 

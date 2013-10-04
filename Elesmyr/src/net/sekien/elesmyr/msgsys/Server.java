@@ -35,7 +35,7 @@ public void sendUDP(int connection, Message msg) {
 			connections.get(connection).sendUDP(msg);
 		}
 	} catch (IndexOutOfBoundsException be) {
-		Log.warn("Tried to send a message to disconnected connection "+connection);
+		MessageSystem.server.lostConnection(connection);
 	} catch (Exception e) {
 		if (running) Main.handleError(e);
 	}
@@ -48,6 +48,7 @@ public void sendTCP(int connection, Message msg) {
 		}
 	} catch (IndexOutOfBoundsException be) {
 		Log.warn("Tried to send a message to disconnected connection "+connection);
+		MessageSystem.server.lostConnection(connection);
 	} catch (Exception e) {
 		if (running) Main.handleError(e);
 	}

@@ -138,10 +138,8 @@ public TileSet(TiledMap map, Element element, boolean loadImage)
 		id += firstGID;
 		Properties tileProps = new Properties();
 
-		Element propsElement = (Element) tileElement.getElementsByTagName(
-				                                                                 "properties").item(0);
-		NodeList tilePropertiesList = propsElement
-				                              .getElementsByTagName("property");
+		Element propsElement = (Element) tileElement.getElementsByTagName("properties").item(0);
+		NodeList tilePropertiesList = propsElement.getElementsByTagName("property");
 		for (int p = 0; p < tilePropertiesList.getLength(); p++) {
 			Element propElement = (Element) tilePropertiesList.item(p);
 
@@ -156,8 +154,7 @@ public TileSet(TiledMap map, Element element, boolean loadImage)
 
 	Properties tileProps = new Properties();
 
-	Element propsElement = (Element) element.getElementsByTagName(
-			                                                             "properties").item(0);
+	Element propsElement = (Element) element.getElementsByTagName("properties").item(0);
 	if (propsElement!=null) {
 		NodeList properties = propsElement.getElementsByTagName("property");
 		for (int p = 0; p < properties.getLength(); p++) {
