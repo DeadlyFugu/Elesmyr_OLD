@@ -13,17 +13,27 @@ import net.sekien.elesmyr.system.Globals;
  * File Templates.
  */
 public class GlobalsSetNode extends MultiChoiceButtonNode {
-private String setting;
-private String[] inOptions;
+	private String setting;
+	private String[] inOptions;
 
-@Override
-protected void onSelect(int sel) {
-	Globals.set(setting, inOptions[sel]);
-}
+	@Override
+	protected void onSelect(int sel) {
+		Globals.set(setting, inOptions[sel]);
+		Globals.save();
 
-public GlobalsSetNode(String name, String message, String setting, String[] dispOptions, String[] inOptions) {
-	super(name, message, dispOptions);
-	this.setting = setting;
-	this.inOptions = inOptions;
-}
+	}
+
+	public GlobalsSetNode(String name, String message, String setting, String[] dispOptions, String[] inOptions) {
+		super(name, message, dispOptions);
+		this.setting = setting;
+		this.inOptions = inOptions;
+		int index = 0;
+		for (String option : inOptions) {
+			if (option.equals(Globals.get(setting, null))) {
+				sel = index;
+			}
+			index++;
+		}
+		selectOnChange = true;
+	}
 }

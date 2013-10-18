@@ -13,15 +13,16 @@ import net.sekien.elesmyr.system.Globals;
  * File Templates.
  */
 public class GlobalsTextNode extends TextNode {
-private String setting;
+	private String setting;
 
-public GlobalsTextNode(String name, String message, String setting) {
-	super(name, message);
-	this.setting = setting;
-}
+	public GlobalsTextNode(String name, String message, String setting) {
+		super(name, message);
+		this.setting = setting;
+	}
 
-@Override
-protected void onSelect() {
-	Globals.set(setting, StateManager.getTextBoxText(this));
-}
+	@Override
+	protected void onSelect() {
+		Globals.set(setting, StateManager.getTextBoxText(this));
+		Globals.save();
+	}
 }
