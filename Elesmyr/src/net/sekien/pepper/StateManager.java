@@ -298,8 +298,10 @@ public class StateManager {
 						synchronized (bgLock) {
 							try {
 								BufferedImage src = ImageIO.read(file);
-								AbstractBufferedImageOp filter = new GaussianFilter(8);
-								filtered = filter.filter(src, null);
+								if (src != null) {
+									AbstractBufferedImageOp filter = new GaussianFilter(8);
+									filtered = filter.filter(src, null);
+								}
 							} catch (IOException e) {
 								e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
 							}
