@@ -14,6 +14,7 @@ package net.sekien.elesmyr.ui;
 
 import net.sekien.elesmyr.msgsys.MessageEndPoint;
 import net.sekien.elesmyr.player.Camera;
+import net.sekien.elesmyr.system.FontRenderer;
 import net.sekien.elesmyr.system.GameClient;
 import net.sekien.elesmyr.system.Main;
 import net.sekien.elesmyr.util.FileHandler;
@@ -36,7 +37,7 @@ public class DMSGUI implements UserInterface {
 
 	@Override public void init(GameContainer gc, MessageEndPoint receiver) throws SlickException {
 		inited = true;
-		msg = FileHandler.getImage("ui.msg");
+		msg = FileHandler.getImage("ui.hud.msg");
 		displayMessage("Loaded!", null);
 		displayMessage("Obtained Gold Sword!", "item.swordgold");
 		displayMessage("Obtained Egg!", "item.egg");
@@ -45,21 +46,19 @@ public class DMSGUI implements UserInterface {
 
 	@Override public void render(Renderer renderer, Camera cam, GameClient receiver) throws SlickException {
 		int i = 0;
+        Graphics g = renderer.g;
+        if(msgBuffer.size()>0) {
+            msg.draw(Main.INTERNAL_RESX-360, 0);
+        }
 		for (DMessage dmsg : msgBuffer) {
 			float anim_enter = Math.min(20, 200-dmsg.getTime())/20f;
 			float anim_leave = Math.min(20, dmsg.getTime())/20f;
 			Color alpha = new Color(1, 1, 1, anim_leave);
 
-			int yoffset = (int) (i+(anim_enter-1)*msg.getHeight());
-			renderer.pushPos(Main.INTERNAL_RESX-msg.getWidth(), yoffset);
-			msg.draw(0, 0, alpha);
-			if (dmsg.hasImage()) {
-				dmsg.getImage().draw(8, 8, alpha);
-				renderer.text(48, 8, dmsg.getText(), alpha);
-			} else {
-				renderer.text(8, 8, dmsg.getText(), alpha);
-			}
-			i = yoffset+msg.getHeight();
+			int yoffset = (int) (i+(anim_enter-1));
+			renderer.pushPos(Main.INTERNAL_RESX-256, yoffset);
+            FontRenderer.drawStringFlat(248-FontRenderer.getStringWidth(dmsg.getText()), 8, dmsg.getText(), alpha,g);
+			i = yoffset+20;
 			renderer.popPos();
 		}
 	}
