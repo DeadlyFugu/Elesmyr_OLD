@@ -160,7 +160,7 @@ public class DevMode implements UserInterface {
 				mouseDragging = false;
 			}
 
-			if (input.isKeyDown(Input.KEY_RETURN)) writeActiveElement(receiver);
+			if (input.isKeyDown(Input.KEY_RETURN) && activeElement != null) writeActiveElement(receiver);
 
 			if (input.isMousePressed(Input.MOUSE_LEFT_BUTTON)) {
 				if (activeElement != null) {
