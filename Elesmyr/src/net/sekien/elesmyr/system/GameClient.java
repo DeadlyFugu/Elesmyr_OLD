@@ -424,6 +424,8 @@ public class GameClient implements MessageEndPoint {
 					ui.addFirst(nui);
 				else
 					Log.warn("CLIENT: Could not open UI "+msg.getData().getString("ui", "error"));
+			} else if (name.equals("dmsg")) {
+				DMSGUI.displayMessage(msg.getData().getString("msg", "ERROR: msg attribute missing"), msg.getData().getString("img", "item.null"));
 			} else if (name.equals("book")) {
 				if (ui.peekFirst() instanceof BookUI) {
 					((BookUI) ui.peekFirst()).addPage(msg.getData().getString("page", "ERROR: Badly formed message."));

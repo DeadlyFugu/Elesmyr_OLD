@@ -15,52 +15,58 @@ import net.sekien.hbt.HBTCompound;
 import org.newdawn.slick.*;
 
 public class Item {
-public Image spr;
-public String name;
-protected HBTCompound extd;
+	public Image spr;
+	public String name;
+	protected HBTCompound extd;
+	private String imageString;
 
-public Item ctor(String name, String img, HBTCompound extd) {
-	this.name = name;
-	this.extd = extd;
-	try {
-		spr = FileHandler.getImage("item."+img);
-	} catch (SlickException e) {}
-	return this;
-}
+	public Item ctor(String name, String img, HBTCompound extd) {
+		this.name = name;
+		this.extd = extd;
+		imageString = "item."+img;
+		try {
+			spr = FileHandler.getImage("item."+img);
+		} catch (SlickException e) {}
+		return this;
+	}
 
-@Override
-public String toString() {
-	return name+","+this.getClass().getSimpleName()+","+extd;
-}
+	@Override
+	public String toString() {
+		return name+","+this.getClass().getSimpleName()+","+extd;
+	}
 
-public String getType() {
-	return "Misc";
-}
+	public String getType() {
+		return "Misc";
+	}
 
-public boolean canEquip() {
-	return false;
-}
+	public boolean canEquip() {
+		return false;
+	}
 
-public boolean onUse(GameServer reciever, EntityPlayer player, InventoryEntry entry) {
-	return false;
-}
+	public boolean onUse(GameServer reciever, EntityPlayer player, InventoryEntry entry) {
+		return false;
+	}
 
-/** Returns this. Used for scripting purposes */
-public Item toItem() {
-	return this;
-}
+	/** Returns this. Used for scripting purposes */
+	public Item toItem() {
+		return this;
+	}
 
-public Element getElement() { return Element.NEUTRAL; }
+	public Element getElement() { return Element.NEUTRAL; }
 
-public String getName(InventoryEntry entry) {
-	return name;
-}
+	public String getName(InventoryEntry entry) {
+		return name;
+	}
 
-public boolean stickyDrops() {
-	return false;
-}
+	public boolean stickyDrops() {
+		return false;
+	}
 
-public boolean stackable() {
-	return true;
-}
+	public boolean stackable() {
+		return true;
+	}
+
+	public String getImageString() {
+		return imageString;
+	}
 }

@@ -40,7 +40,7 @@ public class EntityPlayer extends Entity {
 	private boolean flip;
 	private Light torchLight;
 	public boolean isUser = false;
-	private Connection connection;
+	public Connection connection;
 	public PlayerData pdat;
 
 	public EntityPlayer() {
@@ -155,7 +155,7 @@ public class EntityPlayer extends Entity {
 			this.cy = msg.getData().getInt("y", 0);
 			this.isUser = true;
 		} else if (msg.getName().equals("putItem")) {
-			pdat.put(ItemFactory.getItem(msg.getData().getString("n", "Null")), msg.getData(), region, receiverName); //TODO: proper extd
+			pdat.put(ItemFactory.getItem(msg.getData().getString("n", "Null")), msg.getData(), region, receiverName, this); //TODO: proper extd
 		} else if (msg.getName().equals("equip")) {
 			pdat.setEquipped(pdat.inventory.get(msg.getData().getInt("i", 0)), region, receiverName);
 		} else if (msg.getName().equals("use")) {
@@ -197,7 +197,7 @@ public class EntityPlayer extends Entity {
 				pdat.removeItem(msg.getData().getInt("i", 0), region, receiverName);
 			}
 		} else if (msg.getName().equals("craftItem")) {
-			CraftUI.getRecipe(msg.getData().getInt("i", 0)).addToPDAT(pdat, region, receiverName);
+			CraftUI.getRecipe(msg.getData().getInt("i", 0)).addToPDAT(pdat, region, receiverName, this);
 		} else if (msg.getName().equals("setPDAT")) {
 			if (pdat == null)
 				pdat = new PlayerData(getName(), msg.getConnection());
@@ -261,7 +261,7 @@ public class EntityPlayer extends Entity {
 	 * @return true if successful
 	 */
 	public boolean putItem(Item item, HBTCompound extd) {
-		return pdat.put(item, extd, region, receiverName);
+		return pdat.put(item, extd, region, receiverName, this);
 	}
 
 	public void setPDat(HBTCompound data) {
