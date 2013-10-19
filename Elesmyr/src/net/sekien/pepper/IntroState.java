@@ -18,6 +18,8 @@ public class IntroState extends Node {
     private boolean skipintro = Globals.get ("skipIntro", false);
     private Image sekien;
     private Image game;
+    private Image particles;
+    private Image particles2;
     int time = 0;
 
     public IntroState(String name) {
@@ -25,6 +27,8 @@ public class IntroState extends Node {
         try {
             sekien = FileHandler.getImage("menu.intro1"); //Sekien
             game = FileHandler.getImage("menu.intro2"); //Elesmyr
+            particles = FileHandler.getImage("menu.introParticles"); //particles
+            particles2 = FileHandler.getImage("menu.introParticlesAlt"); //particles
         } catch (SlickException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
@@ -44,12 +48,17 @@ public class IntroState extends Node {
         bh = sekien.getHeight()/2;
         bx = (w-bw)/2;
         by = (h-bh)/2;
+
         renderer.fillRect(Color.black, bx, by, bw, bh);
         if (time < stepTime*0.5) {
             sekien.setAlpha(time/(stepTime*0.5f));
+            particles.setAlpha(time/(stepTime*0.5f));
+            particles2.setAlpha(time/(stepTime*0.5f));
             sekien.draw(bx, by, bw, bh);
         } else if (time < stepTime*2.5f) {
             sekien.setAlpha(1);
+            particles.setAlpha(1);
+            particles2.setAlpha(1);
             sekien.draw(bx, by, bw, bh);
         } else if (time < stepTime*3f) {
             sekien.draw(bx, by, bw, bh);
@@ -60,11 +69,15 @@ public class IntroState extends Node {
             game.draw(bx, by, bw, bh);
         } else if (time < stepTime*5.5f) {
             game.setAlpha(1-((time-stepTime*5f)/(stepTime*0.5f)));
+            particles.setAlpha(1-((time-stepTime*5f)/(stepTime*0.5f)));
+            particles2.setAlpha(1-((time-stepTime*5f)/(stepTime*0.5f)));
             game.draw(bx, by, bw, bh);
         } else {
             StateManager.forcePop();
             StateManager.setStateInitial("Main");
         }
+        particles.draw(bx, (time-stepTime*2.5f)/(stepTime*0.1f), bw, bh);
+        particles2.draw(bx, (time-stepTime*2.5f)/(stepTime*0.4f), bw, bh);
         if (Globals.get("debug", false)) renderer.text(0, 16, Float.toString((float) Math.floor((time/stepTime)*10)/10));
     }
 
