@@ -22,6 +22,7 @@ import java.util.HashMap;
  */
 public class FontRenderer {
     private static SpriteSheetFont bpfont;
+    private static SpriteSheetFont flatFont;
     private static UnicodeFont jpfont = null;
     private static UnicodeFont bookfont = null;
     private static SpriteSheetFont pixelfont = null;
@@ -58,6 +59,7 @@ public class FontRenderer {
 
     public static void initialise(GameContainer gc) throws SlickException {
         bpfont = new SpriteSheetFont(new SpriteSheet(new org.newdawn.slick.Image(FileHandler.parse("font.font", ResourceType.FONT), Image.FILTER_NEAREST), 9, 16), ' ');
+        flatFont = new SpriteSheetFont(new SpriteSheet(new org.newdawn.slick.Image(FileHandler.parse("font.flatfont", ResourceType.FONT), Image.FILTER_NEAREST), 9, 16), ' ');
         hudfont = new SpriteSheetFont(new SpriteSheet(new org.newdawn.slick.Image(FileHandler.parse("font.hudfont", ResourceType.FONT), Image.FILTER_NEAREST), 13, 16), ' ');
         pixelfont = new SpriteSheetFont(new SpriteSheet(new org.newdawn.slick.Image(FileHandler.parse("font.pixelfont", ResourceType.FONT), Image.FILTER_NEAREST), 6, 7), '0');
         i18n_backup = HashmapLoader.readHashmap(FileHandler.parse("lang.EN_US", ResourceType.PLAIN));
@@ -129,9 +131,15 @@ public class FontRenderer {
     public static void drawStringPixel(int x, int y, String str, Color col, Graphics g) {
         pixelfont.drawString(x, y, str, col);
     }
+    public static void drawStringFlat(int x, int y, String str, Color col, Graphics g) {
+        flatFont.drawString(x, y, str, col);
+    }
 
     public static int getPixelWidth(String text) {
         return pixelfont.getWidth(text);
+    }
+    public static int getStringWidth(String text) {
+        return flatFont.getWidth(text);
     }
     public static void drawStringBook(int x, int y, String str, Graphics g) {
         String parts[] = str.split(" ");
