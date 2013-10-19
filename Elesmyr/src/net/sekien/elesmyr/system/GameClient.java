@@ -75,6 +75,7 @@ public class GameClient implements MessageEndPoint {
 	private World world;
 	public Camera cam;
 	public LightMap lm;
+	public DMSGUI dmsgui;
 
 	public float time = -20; //in-game time in minutes
 	private float servtime = -20; //time according to server
@@ -114,6 +115,8 @@ public class GameClient implements MessageEndPoint {
 		HUDUI hud = new HUDUI();
 		hud.init(gc, this);
 		ui.addFirst(hud);
+		dmsgui = new DMSGUI();
+		dmsgui.init(gc, this);
 		world = new World();
 		player = new PlayerClient(this, world);
 		player.init(gc, this);
@@ -207,6 +210,8 @@ public class GameClient implements MessageEndPoint {
 				textField.render(gc, g);
 				textField.setFocus(true);
 			}
+
+			dmsgui.render(renderer, cam, this);
 		} else {
 			g.setColor(Color.black);
 			g.fillRect(0, 0, Main.INTERNAL_RESX, Main.INTERNAL_RESY);
@@ -359,6 +364,7 @@ public class GameClient implements MessageEndPoint {
 				if (!blocked || !uii.blockUpdates())
 					uii.update(gc, this);
 			}
+			dmsgui.update(gc, this);
 			for (ChatMessage cm : chat)
 				cm.update();
 			world.clientUpdate(gc, this);
