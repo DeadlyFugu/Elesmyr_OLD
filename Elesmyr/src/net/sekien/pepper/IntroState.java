@@ -82,8 +82,8 @@ public class IntroState extends Node {
 			StateManager.setStateInitial("Main");
 			net.sekien.elesmyr.system.Renderer.init(renderer.gc);
 		}
-		particles.draw(bx, (time-stepTime*2.5f)/(stepTime*0.1f), bw, bh);
-		particles2.draw(bx, (time-stepTime*2.5f)/(stepTime*0.4f), bw, bh);
+		particles.draw(bx, (time-stepTime*2.5f)/(stepTime*0.05f), bw, bh);
+		particles2.draw(bx, (time-stepTime*2.5f)/(stepTime*0.1f), bw, bh);
 		if (Globals.get("debug", false))
 			renderer.text(0, 16, Float.toString((float) Math.floor((time/stepTime)*10)/10));
 	}
