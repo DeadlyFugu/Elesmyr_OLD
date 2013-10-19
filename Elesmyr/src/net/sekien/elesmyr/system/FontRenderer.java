@@ -22,7 +22,8 @@ import java.util.HashMap;
 public class FontRenderer {
 	private static SpriteSheetFont bpfont;
 	private static SpriteSheetFont flatFont;
-	private static UnicodeFont jpfont = null;
+	//private static UnicodeFont jpfont = null;
+	private static HashMap<Color, UnicodeFont> jpfonts = new HashMap<Color, UnicodeFont>();
 	private static UnicodeFont bookfont = null;
 	private static SpriteSheetFont pixelfont = null;
 	private static Language lang = Language.EN_US;
@@ -43,17 +44,26 @@ public class FontRenderer {
 	public static void reset(GameContainer gc) throws SlickException {
 		lang = newlang;
 		i18n_lang = HashmapLoader.readHashmap(FileHandler.parse("lang."+lang.name(), ResourceType.PLAIN));
-		if (jpfont == null && lang == Language.JP) {
-			String fontPath = FileHandler.parse("font.jp", ResourceType.FONT);
-			UnicodeFont uFont = new UnicodeFont(fontPath, 32, false, false);
-			uFont.addAsciiGlyphs();
-			uFont.addGlyphs('ぁ', 'ヿ'); //Hiragana + Katakana
-			//uFont.addGlyphs('一','龥'); //Kanji
-			uFont.getEffects().add(new ColorEffect(java.awt.Color.WHITE));
-			uFont.loadGlyphs();
-			jpfont = uFont;
-		}
 		((AppGameContainer) gc).setTitle(resolveI18n("bar.title")+" "+resolveI18n(Main.version));
+	}
+
+	private static UnicodeFont getJpFont(Color color) {
+		if (!jpfonts.containsKey(color)) {
+			String fontPath = FileHandler.parse("font.jp", ResourceType.FONT);
+			try {
+				UnicodeFont uFont = new UnicodeFont(fontPath, 32, false, false);
+				//uFont.addAsciiGlyphs();
+				//uFont.addGlyphs('ぁ', 'ヿ'); //Hiragana + Katakana
+				//uFont.addGlyphs('一','龥'); //Kanji
+				uFont.getEffects().add(new ColorEffect(new java.awt.Color(color.r, color.g, color.b, color.a)));
+				uFont.loadGlyphs();
+				jpfonts.put(color, uFont);
+			} catch (SlickException e) {
+				e.printStackTrace();
+				System.exit(1);
+			}
+		}
+		return jpfonts.get(color);
 	}
 
 	public static Language getLang() {
@@ -87,7 +97,7 @@ public class FontRenderer {
 			s = resolveI18n(s.substring(1));
 		switch (lang) {
 			case JP:
-				return jpfont.getWidth(s)/2;
+				return getJpFont(Color.white).getWidth(s)/2;
 			default:
 				return bpfont.getWidth(s);
 		}
@@ -98,15 +108,15 @@ public class FontRenderer {
 			str = resolveI18n(str.substring(1));
 		switch (lang) {
 			case JP:
-				jpfont.addGlyphs(str);
-				//				try {
-				//					jpfont.loadGlyphs();
-				//				} catch (SlickException e) {
-				//					e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-				//				}
+				getJpFont(Color.white).addGlyphs(str);
+				try {
+					getJpFont(Color.white).loadGlyphs();
+				} catch (SlickException e) {
+					e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+				}
 				g.pushTransform();
 				g.scale(0.5f, 0.5f);
-				jpfont.drawString(x*2, y*2, str);
+				getJpFont(Color.white).drawString(x*2, y*2, str);
 				g.popTransform();
 				break;
 			default:
@@ -116,17 +126,23 @@ public class FontRenderer {
 	}
 
 	public static void drawString(int x, int y, String str, Color col, Graphics g) {
-		//        switch (lang) {
-		//            /*case JP:
-		//                g.pushTransform();
-		//                g.scale(0.5f,0.5f);
-		//                jpfont.drawString(x*2,y*2,str);
-		//                g.popTransform(); break;*/
-		//            default:
-		//                bpfont.drawString(x, y, str, col);
-		//                break;
-		//        }
-		bpfont.drawString(x, y, str, col);
+		if (str.startsWith("#"))
+			str = resolveI18n(str.substring(1));
+		switch (lang) {
+			case JP:
+				g.pushTransform();
+				g.scale(0.5f, 0.5f);
+				try {
+					getJpFont(col).loadGlyphs();
+				} catch (SlickException e) {
+					e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+				}
+				getJpFont(col).drawString(x*2, y*2, str);
+				g.popTransform(); break;
+			default:
+				bpfont.drawString(x, y, str, col);
+				break;
+		}
 	}
 
 	public static void drawStringHud(int x, int y, String str, Color col, Graphics g) {
