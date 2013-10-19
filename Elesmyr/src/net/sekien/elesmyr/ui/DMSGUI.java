@@ -39,7 +39,7 @@ public class DMSGUI implements UserInterface {
 	@Override public void init(GameContainer gc, MessageEndPoint receiver) throws SlickException {
 		inited = true;
 		msg = FileHandler.getImage("ui.hud.msg");
-		displayMessage("Loaded!", null);
+		displayMessage("#error.close", null);
 		displayMessage("Obtained Gold Sword!", "item.swordgold");
 		displayMessage("Obtained Egg!", "item.egg");
 		displayMessage("Msg3!", null);

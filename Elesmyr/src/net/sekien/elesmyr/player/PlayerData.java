@@ -90,7 +90,7 @@ public class PlayerData {
 			}
 			updated(r, ent);
 			MessageSystem.sendClient(ep, ep.connection, new Message("CLIENT.dmsg", new HBTCompound("p", new HBTTag[]{
-			                                                                                                        new HBTString("msg", "Obtained "+item.getName(ie)),
+			                                                                                                        new HBTString("msg", "#Obtained |$item."+item.getName(ie)),
 			                                                                                                        new HBTString("img", item.getImageString()),
 			})), true);
 			return true; //Return false if inv is full so item wasn't put
