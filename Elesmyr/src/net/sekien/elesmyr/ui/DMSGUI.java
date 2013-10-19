@@ -55,7 +55,7 @@ public class DMSGUI implements UserInterface {
 			float anim_leave = Math.min(20, dmsg.getTime())/20f;
 			Color alpha = new Color(1, 1, 1, anim_leave);
 
-			int yoffset = (int) (i+(anim_enter-1));
+			int yoffset = (int) (i+(anim_enter-1)*20);
 			renderer.pushPos(Main.INTERNAL_RESX-256, yoffset);
             FontRenderer.drawStringFlat(248-FontRenderer.getStringWidth(dmsg.getText()), 8, dmsg.getText(), alpha,g);
 			i = yoffset+20;
