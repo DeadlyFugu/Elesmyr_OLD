@@ -28,6 +28,7 @@ public class DMSGUI implements UserInterface {
 	private boolean inited = false;
 	private static LinkedList<DMessage> msgBuffer;
 	private Image msg;
+	private int msg_bg_timer = 0;
 
 	@Override public boolean inited() { return inited; }
 
@@ -46,10 +47,15 @@ public class DMSGUI implements UserInterface {
 
 	@Override public void render(Renderer renderer, Camera cam, GameClient receiver) throws SlickException {
 		int i = 0;
-        Graphics g = renderer.g;
-        if(msgBuffer.size()>0) {
-            msg.draw(Main.INTERNAL_RESX-360, 0);
-        }
+		Graphics g = renderer.g;
+		if (msgBuffer.size() > 0) {
+			if (msg_bg_timer < 20) msg_bg_timer++;
+		} else {
+			if (msg_bg_timer > 0) msg_bg_timer--;
+		}
+		if (msg_bg_timer > 0) {
+			msg.draw(Main.INTERNAL_RESX-360, 0, new Color(1, 1, 1, msg_bg_timer/20f));
+		}
 		for (DMessage dmsg : msgBuffer) {
 			float anim_enter = Math.min(20, 200-dmsg.getTime())/20f;
 			float anim_leave = Math.min(20, dmsg.getTime())/20f;
@@ -57,7 +63,7 @@ public class DMSGUI implements UserInterface {
 
 			int yoffset = (int) (i+(anim_enter-1)*20);
 			renderer.pushPos(Main.INTERNAL_RESX-256, yoffset);
-            FontRenderer.drawStringFlat(248-FontRenderer.getStringWidth(dmsg.getText()), 8, dmsg.getText(), alpha,g);
+			FontRenderer.drawStringFlat(248-FontRenderer.getStringWidth(dmsg.getText()), 8, dmsg.getText(), alpha, g);
 			i = yoffset+20;
 			renderer.popPos();
 		}

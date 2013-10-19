@@ -90,15 +90,17 @@ public class CraftUI implements UserInterface {
 				boolean matched = false;
 				String[] parts = parseIng(s);
 				for (InventoryEntry ie : pdat.inventory) {
-					if (ie.getItem().name.equals(parts[1]) && ie.getExtd().equals(parts[2]) && ie.getCount() >= Integer.parseInt(parts[0])) {
+					if (ie.getItem().name.equals(parts[1]) && /*ie.getExtd().equals(parts[2]) &&*/ ie.getCount() >= Integer.parseInt(parts[0])) {
 						matched = true;
 						for (int i = 0; i < Integer.parseInt(parts[0]); i++)
 							pdat.removeItem(pdat.inventory.indexOf(ie), r, ent);
 						break;
 					}
 				}
-				if (!matched)
+				if (!matched) {
+					System.out.println("ERROR: Necessary ingredients missing");
 					return;
+				}
 			}
 			pdat.put(ItemFactory.getItem(result), new HBTCompound("iextd"), r, ent, ep);
 		}

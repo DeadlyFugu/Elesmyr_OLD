@@ -16,25 +16,27 @@ import org.newdawn.slick.geom.*;
  */
 public class PointSensor {
 
-public static boolean update(TiledMapPlus map, int x, int y) {
-	try {
-		map.getObjectGroup("col");
-	} catch (NullPointerException npe) {
-		return false;
-	}
-	for (MapObject obj : map.getObjectGroup("col").getObjects()) {
-		if (obj.objectType==MapObject.ObjectType.RECTANGLE || obj.objectType==MapObject.ObjectType.POLYGON) {
-			Shape shape;
-			if (obj.objectType==MapObject.ObjectType.POLYGON) {
-				shape = obj.points.transform(Transform.createTranslateTransform(obj.x, obj.y));
-			} else {
-				shape = new Rectangle(obj.x, obj.y, obj.width, obj.height);
-			}
-			if (shape.contains(x, y)) {
-				return true;
+	public static boolean update(TiledMapPlus map, int x, int y) {
+		System.out.println("map.getObjectGroups() = "+map.getObjectGroups());
+		try {
+			map.getObjectGroup("col");
+		} catch (NullPointerException npe) {
+			System.err.println("col group missing");
+			return false;
+		}
+		for (MapObject obj : map.getObjectGroup("col").getObjects()) {
+			if (obj.objectType == MapObject.ObjectType.RECTANGLE || obj.objectType == MapObject.ObjectType.POLYGON) {
+				Shape shape;
+				if (obj.objectType == MapObject.ObjectType.POLYGON) {
+					shape = obj.points.transform(Transform.createTranslateTransform(obj.x, obj.y));
+				} else {
+					shape = new Rectangle(obj.x, obj.y, obj.width, obj.height);
+				}
+				if (shape.contains(x, y)) {
+					return true;
+				}
 			}
 		}
+		return false;
 	}
-	return false;
-}
 }
