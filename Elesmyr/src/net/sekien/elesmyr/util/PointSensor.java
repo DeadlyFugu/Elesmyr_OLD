@@ -17,11 +17,9 @@ import org.newdawn.slick.geom.*;
 public class PointSensor {
 
 	public static boolean update(TiledMapPlus map, int x, int y) {
-		System.out.println("map.getObjectGroups() = "+map.getObjectGroups());
 		try {
 			map.getObjectGroup("col");
 		} catch (NullPointerException npe) {
-			System.err.println("col group missing");
 			return false;
 		}
 		for (MapObject obj : map.getObjectGroup("col").getObjects()) {
