@@ -99,11 +99,11 @@ public class FontRenderer {
 		switch (lang) {
 			case JP:
 				jpfont.addGlyphs(str);
-				try {
-					jpfont.loadGlyphs();
-				} catch (SlickException e) {
-					e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-				}
+				//				try {
+				//					jpfont.loadGlyphs();
+				//				} catch (SlickException e) {
+				//					e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+				//				}
 				g.pushTransform();
 				g.scale(0.5f, 0.5f);
 				jpfont.drawString(x*2, y*2, str);
@@ -148,6 +148,8 @@ public class FontRenderer {
 	}
 
 	public static int getStringWidth(String text) {
+		if (text.startsWith("#"))
+			text = resolveI18n(text.substring(1));
 		return flatFont.getWidth(text);
 	}
 
