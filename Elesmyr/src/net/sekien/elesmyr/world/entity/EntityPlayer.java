@@ -283,4 +283,8 @@ public class EntityPlayer extends Entity {
 	public InventoryEntry getEquipped() {
 		return pdat.getEquipped();
 	}
+
+	public void gainExp(int exp) {
+		pdat.addExp(exp, this);
+	}
 }

@@ -77,6 +77,8 @@ public class HUDUI implements UserInterface {
 			EntityPlayer ep = nearplayers.get(0);
 			FontRenderer.drawStringHud(dx+246, dy+27, ep.getName(), ep.getElement().color(), g);
 
+			FontRenderer.drawString(dx, dy, "Level: "+ep.pdat.getLevel()+" Exp: "+ep.pdat.getExp()+"/"+ep.pdat.getExpToNextLevel(), g);
+
 			for (int i = 1; i <= 5; i++) {
 				if (ep.pdat.getSlot(i) != null) {
 					if (ep.pdat.getEquipped() == ep.pdat.getSlot(i)) {

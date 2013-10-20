@@ -33,6 +33,8 @@ public class PlayerData {
 	private InventoryEntry equipped;
 	private boolean updated = false;
 	private InventoryEntry slot1, slot2, slot3, slot4, slot5;
+	private int exp = 0;
+	private int level = 0;
 
 	public void markUpdate() {
 		updated = true;
@@ -123,6 +125,8 @@ public class PlayerData {
 		ret.addTag(new HBTInt("slot3", inventory.indexOf(slot3)));
 		ret.addTag(new HBTInt("slot4", inventory.indexOf(slot4)));
 		ret.addTag(new HBTInt("slot5", inventory.indexOf(slot5)));
+		ret.addTag(new HBTInt("exp", exp));
+		ret.addTag(new HBTInt("level", level));
 		HBTCompound inv = new HBTCompound("inv");
 		for (InventoryEntry ie : inventory) {
 			HBTTag itag = ie.toHBT();
@@ -161,6 +165,8 @@ public class PlayerData {
 			slot4 = inventory.get(((HBTCompound) tag).getInt("slot4", -1));
 		if (((HBTCompound) tag).getInt("slot5", -1) != -1)
 			slot5 = inventory.get(((HBTCompound) tag).getInt("slot5", -1));
+		exp = ((HBTCompound) tag).getInt("exp", 0);
+		level = ((HBTCompound) tag).getInt("level", 0);
 	}
 
 	public String getName() {
@@ -212,5 +218,34 @@ public class PlayerData {
 			default: System.err.println("invalid slot id "+n+" passed to PlayerData.setSlot()");
 		}
 		updated(r, ent);
+	}
+
+	public int getLevel() {
+		return level;
+	}
+
+	public int getExp() {
+		return exp;
+	}
+
+	public void addExp(int amount, EntityPlayer ep) {
+		exp += amount;
+		while (exp > getExpToNextLevel()) {
+			exp -= getExpToNextLevel();
+			level++;
+			MessageSystem.sendClient(ep, ep.connection, new Message("CLIENT.dmsg", new HBTCompound("p", new HBTTag[]{
+			                                                                                                        new HBTString("msg", "Level Up!")
+			})), false);
+		}
+	}
+
+	public int getExpToNextLevel() {
+		return (int) (Math.pow(level, 3)-Math.pow(level, 2)+(10*level));
+	}
+
+	static {
+		for (int i = 0; i < 100; i++) {
+			System.out.println("Level "+i+": "+(int) (((Math.pow(i, 3))-(Math.pow(i, 2))+(10*i))/4));
+		}
 	}
 }

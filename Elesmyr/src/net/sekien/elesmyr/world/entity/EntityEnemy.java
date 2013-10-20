@@ -139,6 +139,9 @@ public class EntityEnemy extends Entity {
 		if (health <= 0) {
 			this.drop(region);
 			region.receiveMessage(new Message(region.name+".killSERV", HBTTools.msgString("ent", ""+this.id)), receiver); //TODO: Merge all killSEV:<this> into one method in Entity
+			if (entity instanceof EntityPlayer) {
+				((EntityPlayer) entity).gainExp(getExp());
+			}
 		} else {
 			MessageSystem.sendClient(this, region.connections, new Message(this.getReceiverName()+".setHealth", HBTTools.msgInt("health", health)), false);
 		}
@@ -152,5 +155,9 @@ public class EntityEnemy extends Entity {
 		} else {
 			Log.warn("ENTITY: Ignored message "+msg.toString());
 		}
+	}
+
+	public int getExp() {
+		return 5;
 	}
 }
