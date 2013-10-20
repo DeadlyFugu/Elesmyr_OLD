@@ -32,6 +32,7 @@ public class PlayerData {
 	public Element affinity = Element.NEUTRAL;
 	private InventoryEntry equipped;
 	private boolean updated = false;
+	private InventoryEntry slot1, slot2, slot3, slot4, slot5;
 
 	public void markUpdate() {
 		updated = true;
@@ -117,6 +118,11 @@ public class PlayerData {
 		ret.addTag(new HBTInt("magickaMax", magickaMax));
 		ret.addTag(new HBTFlag("affinity", affinity.toString()));
 		ret.addTag(new HBTInt("equip", inventory.indexOf(equipped)));
+		ret.addTag(new HBTInt("slot1", inventory.indexOf(slot1)));
+		ret.addTag(new HBTInt("slot2", inventory.indexOf(slot2)));
+		ret.addTag(new HBTInt("slot3", inventory.indexOf(slot3)));
+		ret.addTag(new HBTInt("slot4", inventory.indexOf(slot4)));
+		ret.addTag(new HBTInt("slot5", inventory.indexOf(slot5)));
 		HBTCompound inv = new HBTCompound("inv");
 		for (InventoryEntry ie : inventory) {
 			HBTTag itag = ie.toHBT();
@@ -145,6 +151,16 @@ public class PlayerData {
 		}
 		if (((HBTCompound) tag).getInt("equip", -1) != -1)
 			equipped = inventory.get(((HBTCompound) tag).getInt("equip", -1));
+		if (((HBTCompound) tag).getInt("slot1", -1) != -1)
+			slot1 = inventory.get(((HBTCompound) tag).getInt("slot1", -1));
+		if (((HBTCompound) tag).getInt("slot2", -1) != -1)
+			slot2 = inventory.get(((HBTCompound) tag).getInt("slot2", -1));
+		if (((HBTCompound) tag).getInt("slot3", -1) != -1)
+			slot3 = inventory.get(((HBTCompound) tag).getInt("slot3", -1));
+		if (((HBTCompound) tag).getInt("slot4", -1) != -1)
+			slot4 = inventory.get(((HBTCompound) tag).getInt("slot4", -1));
+		if (((HBTCompound) tag).getInt("slot5", -1) != -1)
+			slot5 = inventory.get(((HBTCompound) tag).getInt("slot5", -1));
 	}
 
 	public String getName() {
@@ -157,6 +173,21 @@ public class PlayerData {
 		return equipped;
 	}
 
+	public InventoryEntry getSlot(int n) {
+		InventoryEntry slotItem;
+		switch (n) {
+			case 1: slotItem = slot1; break;
+			case 2: slotItem = slot2; break;
+			case 3: slotItem = slot3; break;
+			case 4: slotItem = slot4; break;
+			case 5: slotItem = slot5; break;
+			default: System.err.println("invalid slot id "+n+" passed to PlayerData.getSlot()"); return null;
+		}
+		if (!inventory.contains(slotItem))
+			slotItem = null;
+		return slotItem;
+	}
+
 	public void setEquipped(InventoryEntry equipped, Region r, String ent) {
 		if (inventory.contains(equipped))
 			this.equipped = equipped;
@@ -166,6 +197,19 @@ public class PlayerData {
 	public void removeItem(int pos, Region r, String ent) {
 		if (inventory.get(pos).downCount()) {
 			inventory.remove(pos);
+		}
+		updated(r, ent);
+	}
+
+	public void setSlot(int n, InventoryEntry equipped, Region r, String ent) {
+		System.out.println("n = "+n);
+		switch (n) {
+			case 1: slot1 = equipped; break;
+			case 2: slot2 = equipped; break;
+			case 3: slot3 = equipped; break;
+			case 4: slot4 = equipped; break;
+			case 5: slot5 = equipped; break;
+			default: System.err.println("invalid slot id "+n+" passed to PlayerData.setSlot()");
 		}
 		updated(r, ent);
 	}

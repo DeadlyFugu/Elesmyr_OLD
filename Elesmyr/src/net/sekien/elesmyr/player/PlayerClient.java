@@ -18,10 +18,7 @@ import net.sekien.elesmyr.world.Region;
 import net.sekien.elesmyr.world.World;
 import net.sekien.elesmyr.world.entity.Entity;
 import net.sekien.elesmyr.world.entity.EntityPlayer;
-import net.sekien.hbt.HBTCompound;
-import net.sekien.hbt.HBTInt;
-import net.sekien.hbt.HBTString;
-import net.sekien.hbt.HBTTools;
+import net.sekien.hbt.*;
 import net.sekien.pepper.StateManager;
 import org.newdawn.slick.*;
 
@@ -187,6 +184,17 @@ public class PlayerClient implements GameElement {
 			if (GameInput.isKeyPressed(gc, "atk")) {
 				AudioMan.playSound("atk_sword"+(int) (Math.random()*3.999));
 				MessageSystem.sendServer(this, new Message(regionName+".hitAt", HBTTools.position(x+xm*16, y+ym*16)), true);
+			}
+
+			for (int i = 1; i <= 5; i++) {
+				if (in.isKeyPressed(Input.KEY_1+i-1)) {
+					String entrname = region.entities.get(entid).getReceiverName();
+					MessageSystem.sendServer(this, new Message(entrname+".setSlot", new HBTCompound("p", new HBTTag[]{
+					                                                                                                 new HBTInt("n", i),
+					                                                                                                 new HBTInt("x", x+xm*16),
+					                                                                                                 new HBTInt("y", y+ym*16)
+					})), true);
+				}
 			}
 
 			if (GameInput.isKeyPressed(gc, "int")) {

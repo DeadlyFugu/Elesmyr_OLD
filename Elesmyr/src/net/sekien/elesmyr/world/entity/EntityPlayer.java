@@ -158,6 +158,10 @@ public class EntityPlayer extends Entity {
 			pdat.put(ItemFactory.getItem(msg.getData().getString("n", "Null")), msg.getData(), region, receiverName, this); //TODO: proper extd
 		} else if (msg.getName().equals("equip")) {
 			pdat.setEquipped(pdat.inventory.get(msg.getData().getInt("i", 0)), region, receiverName);
+		} else if (msg.getName().equals("slotn")) {
+			pdat.setSlot(msg.getData().getInt("n", -1), pdat.inventory.get(msg.getData().getInt("i", 0)), region, receiverName);
+		} else if (msg.getName().equals("setSlot")) {
+			pdat.setEquipped(pdat.getSlot(msg.getData().getInt("n", -1)), region, receiverName);
 		} else if (msg.getName().equals("use")) {
 			InventoryEntry ie = pdat.inventory.get(msg.getData().getInt("i", 0));
 			if (ie != null)
