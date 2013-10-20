@@ -53,7 +53,7 @@ public class HUDUI implements UserInterface {
 		greenglow = FileHandler.getImage("ui.hud.greenglow");
 		blueglow = FileHandler.getImage("ui.hud.blueglow");
 		bars = FileHandler.getImage("ui.hud.bars");
-		slotSel = FileHandler.getImage("ui.slot_sel");
+		slotSel = FileHandler.getImage("ui.hud.slot_sel");
 	}
 
 	@Override
@@ -80,7 +80,7 @@ public class HUDUI implements UserInterface {
 			for (int i = 1; i <= 5; i++) {
 				if (ep.pdat.getSlot(i) != null) {
 					if (ep.pdat.getEquipped() == ep.pdat.getSlot(i)) {
-						slotSel.draw(dx+6+(47*(i-1)), dy+11);
+						slotSel.draw(dx+5+(47*(i-1)), dy+11, ep.getElement().color());
 					}
 					ep.pdat.getSlot(i).getItem().spr.draw(dx+14+(47*(i-1)), dy+19);
 				}
