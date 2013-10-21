@@ -82,7 +82,7 @@ public class DevMode implements UserInterface {
 		targets.get("NEW").getList(null, null).addTag(new HBTByteArray("r2", new byte[]{0, 54, 75, 44, 3, 45, 32, 6, 56, 54, 3, 64, 36, 46}));
 		targets.put("DEVMODE", new StoredListTarget());
 		targets.put("DATA", new ReadOnlyTarget(FileHandler.getData()));
-		targets.put("ENT", new ServerEntTarget("clearing_thing"));
+		targets.put("ENT", new ServerEntTarget());
 		targets.put("PDAT", new ServerSideTarget(((GameClient) receiver).player.getRegionName()+"."+((GameClient) receiver).player.entid, "pdat_GET", "pdat_SET"));
 		//targets.put("ENT",new ServerEntTarget());
 		openCompounds = new ArrayList<String>();

@@ -85,6 +85,9 @@ public class DMSGUI implements UserInterface {
 
 	public static void displayMessage(String text, String image) {
 		msgBuffer.addFirst(new DMessage(text, image));
+		if (msgBuffer.size() > 20) {
+			msgBuffer.removeLast();
+		}
 	}
 
 	private static class DMessage {

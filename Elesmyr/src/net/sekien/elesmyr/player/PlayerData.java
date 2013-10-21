@@ -230,6 +230,9 @@ public class PlayerData {
 
 	public void addExp(int amount, EntityPlayer ep) {
 		exp += amount;
+		MessageSystem.sendClient(ep, ep.connection, new Message("CLIENT.dmsg", new HBTCompound("p", new HBTTag[]{
+		                                                                                                        new HBTString("msg", "Gained "+amount+" XP")
+		})), false);
 		while (exp > getExpToNextLevel()) {
 			exp -= getExpToNextLevel();
 			level++;
@@ -241,11 +244,5 @@ public class PlayerData {
 
 	public int getExpToNextLevel() {
 		return (int) (Math.pow(level, 3)-Math.pow(level, 2)+(10*level));
-	}
-
-	static {
-		for (int i = 0; i < 100; i++) {
-			System.out.println("Level "+i+": "+(int) (((Math.pow(i, 3))-(Math.pow(i, 2))+(10*i))/4));
-		}
 	}
 }

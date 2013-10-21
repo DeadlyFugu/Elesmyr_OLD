@@ -22,67 +22,58 @@ import net.sekien.hbt.HBTTag;
  */
 public class ServerEntTarget implements DevModeTarget, MessageReceiver {
 
-private HBTCompound cached = new HBTCompound("DMRcache");
+	private HBTCompound cached = new HBTCompound("DMRcache");
 
-private String target, get, set;
+	private String get, set;
 
-private boolean registered = false;
+	private boolean registered = false;
 
-public ServerEntTarget(String target) {
-	this(target, "_hbt", "_hbtSET");
-}
+	public ServerEntTarget() {
+		this("_hbt", "_hbtSET");
+	}
 
-public ServerEntTarget(String target, String get, String set) {
-	this.target = target;
-	this.get = get;
-	this.set = set;
-}
+	public ServerEntTarget(String get, String set) {
+		this.get = get;
+		this.set = set;
+	}
 
-public void setTarget(String target) {
-	this.target = target;
-}
+	@Override
+	public void set(HBTCompound list, String subTarget, GameClient client) {
+		MessageSystem.sendServer(this, new Message(client.player.region+"."+subTarget+
+		                                           "."+set, list), false);
+		cached = (HBTCompound) list.deepClone();
+	}
 
-@Override
-public void set(HBTCompound list, String subTarget, GameClient client) {
-	MessageSystem.sendServer(this, new Message(target+"."+subTarget+
-			                                           "."+set, list), false);
-	cached = (HBTCompound) list.deepClone();
-}
+	@Override
+	public HBTCompound getList(GameClient client, String subTarget) {
+		if (!registered)
+			MessageSystem.registerReceiverClient(this);
+		MessageSystem.sendServer(this, new Message(client.player.region+"."+subTarget+"."+get, new HBTCompound("p", new HBTTag[]{new HBTString("receiver", this.getReceiverName()), new HBTFlag("full", "TRUE")})), false);
+		return cached;
+	}
 
-@Override
-public HBTCompound getList(GameClient client, String subTarget) {
-	if (!registered)
-		MessageSystem.registerReceiverClient(this);
-	MessageSystem.sendServer(this, new Message(target+"."+subTarget+"."+get, new HBTCompound("p", new HBTTag[]{new HBTString("receiver", this.getReceiverName()), new HBTFlag("full", "TRUE")})), false);
-	return cached;
-}
-
-@Override
-public void receiveMessage(Message msg, MessageEndPoint receiver) {
-	if (msg.getName().equals("hbtResponse")) {
-		//Swap cached's contents with the responses.
-		cached.getData().clear();
-		for (HBTTag tag : msg.getData()) {
-			cached.addTag(tag);
+	@Override
+	public void receiveMessage(Message msg, MessageEndPoint receiver) {
+		if (msg.getName().equals("hbtResponse")) {
+			//Swap cached's contents with the responses.
+			cached.getData().clear();
+			for (HBTTag tag : msg.getData()) {
+				cached.addTag(tag);
+			}
 		}
 	}
-}
 
-@Override
-public String getReceiverName() {
-	return "_DMR"+Integer.toHexString(this.hashCode());
-}
+	@Override
+	public String getReceiverName() {
+		return "_DMR"+Integer.toHexString(this.hashCode());
+	}
 
-@Override
-public void fromHBT(HBTCompound tag) {
-}
+	@Override
+	public void fromHBT(HBTCompound tag) {
+	}
 
-@Override
-public HBTCompound toHBT(boolean msg) {
-	return null;
-}
-
-protected String getTarget() {
-	return target;
-}
+	@Override
+	public HBTCompound toHBT(boolean msg) {
+		return null;
+	}
 }

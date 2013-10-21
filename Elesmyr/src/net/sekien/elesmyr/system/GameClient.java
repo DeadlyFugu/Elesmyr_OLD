@@ -22,10 +22,7 @@ import net.sekien.elesmyr.world.Region;
 import net.sekien.elesmyr.world.World;
 import net.sekien.elesmyr.world.entity.Entity;
 import net.sekien.elesmyr.world.item.ItemFactory;
-import net.sekien.hbt.HBTCompound;
-import net.sekien.hbt.HBTInt;
-import net.sekien.hbt.HBTString;
-import net.sekien.hbt.HBTTools;
+import net.sekien.hbt.*;
 import net.sekien.pepper.StateManager;
 import net.sekien.tiled.MapObject;
 import org.newdawn.slick.*;
@@ -315,7 +312,7 @@ public class GameClient implements MessageEndPoint {
 					if (textField.getText().startsWith("<") //TODO: Remove - Deprecated by DevMode and useless due to msgsys using HBT.
 					    && textField.getText().contains(":")
 					    && textField.getText().split(":", 2)[0].contains(".")) {
-						MessageSystem.sendServer(null, new Message(textField.getText().split(":", 2)[0].substring(1), textField.getText().split(":", 2)[1]), false);
+						MessageSystem.sendServer(null, new Message(textField.getText().split(":", 2)[0].substring(1), HBTAX.getTags(textField.getText().split(":", 2)[1], "p")), false);
 					} else if (textField.getText().startsWith("/")) {
 						//chatInitVar=ScriptRunner.run(textField.getText().substring(1), "ccmd", this,chatInitVar+" CLIENT=true SERVER=false").substring(1);
 						chatso.call("call", new Object[]{textField.getText().substring(1), this});
