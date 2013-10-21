@@ -42,8 +42,8 @@ public class DMSGUI implements UserInterface {
 		displayMessage("#error.close", null);
 		displayMessage("Obtained Gold Sword!", "item.swordgold");
 		displayMessage("Obtained Egg!", "item.egg");
-		displayMessage("Msg3!", null);
-	}
+        displayMessage("Msg3!", null);
+    }
 
 	@Override public void render(Renderer renderer, Camera cam, GameClient receiver) throws SlickException {
 		int i = 0;
@@ -63,7 +63,7 @@ public class DMSGUI implements UserInterface {
 
 			int yoffset = (int) (i+(anim_enter-1)*20);
 			renderer.pushPos(Main.INTERNAL_RESX-256, yoffset);
-			FontRenderer.drawStringFlat(248-FontRenderer.getStringWidth(dmsg.getText()), 8, dmsg.getText(), alpha, g);
+			FontRenderer.drawString(248-FontRenderer.getStringWidth(dmsg.getText()), 8, dmsg.getText(), alpha, g);
 			i = yoffset+20;
 			renderer.popPos();
 		}
