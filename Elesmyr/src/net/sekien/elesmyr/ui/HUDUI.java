@@ -90,32 +90,38 @@ public class HUDUI implements UserInterface {
 
 			//render bars
 			for (int i = 0; i < 3; i++) {
-				barbg.draw(Main.INTERNAL_RESX-115, dy+13+i*16, 104, 10);
+				barbg.draw(Main.INTERNAL_RESX-117, dy+13+i*16);
 			}
 
-			int StartX = Main.INTERNAL_RESX-113;
+			int StartX = Main.INTERNAL_RESX-115;
 			int StartY = dy+15;
-			int health = (int) (((float) ep.pdat.health/ep.pdat.healthMax)*100);
-			int magicka = (int) (((float) ep.pdat.magicka/ep.pdat.magickaMax)*100);
-			int stamina = (int) (((float) ep.pdat.stamina/ep.pdat.staminaMax)*100);
+			float healthDif = ((float) ep.pdat.health/ep.pdat.healthMax);
+			float magickaDif = ((float) ep.pdat.magicka/ep.pdat.magickaMax);
+			float staminaDif = ((float) ep.pdat.stamina/ep.pdat.staminaMax);
+			int healthPercent = (int) (healthDif*100);
+			int magickaPercent = (int) (magickaDif*100);
+			int staminaPercent = (int) (staminaDif*100);
+			int health = (int) (healthDif*102);
+			int magicka = (int) (magickaDif*102);
+			int stamina = (int) (staminaDif*102);
 
-			FontRenderer.drawStringPixel(Main.INTERNAL_RESX-126-FontRenderer.getPixelWidth(String.valueOf(health)+":"), dy+14, String.valueOf(health)+":", new Color(0xdd4632), g);
-			FontRenderer.drawStringPixel(Main.INTERNAL_RESX-126-FontRenderer.getPixelWidth(String.valueOf(stamina)+":"), dy+30, String.valueOf(stamina)+":", new Color(0x80e24a), g);
-			FontRenderer.drawStringPixel(Main.INTERNAL_RESX-126-FontRenderer.getPixelWidth(String.valueOf(magicka)+":"), dy+46, String.valueOf(magicka)+":", new Color(0x5aa3ee), g);
+			FontRenderer.drawStringPixel(Main.INTERNAL_RESX-126-FontRenderer.getPixelWidth(String.valueOf(healthPercent)+":"), dy+14, String.valueOf(healthPercent)+":", new Color(0xdd4632), g);
+			FontRenderer.drawStringPixel(Main.INTERNAL_RESX-126-FontRenderer.getPixelWidth(String.valueOf(staminaPercent)+":"), dy+30, String.valueOf(staminaPercent)+":", new Color(0x80e24a), g);
+			FontRenderer.drawStringPixel(Main.INTERNAL_RESX-126-FontRenderer.getPixelWidth(String.valueOf(magickaPercent)+":"), dy+46, String.valueOf(magickaPercent)+":", new Color(0x5aa3ee), g);
 
-			if (health == 100) {
+			if (healthPercent == 100) {
 				redglow.draw(Main.INTERNAL_RESX-118, dy+10, 110, 16);
 			}
-			if (stamina == 100) {
+			if (staminaPercent == 100) {
 				greenglow.draw(Main.INTERNAL_RESX-118, dy+26, 110, 16);
 			}
-			if (magicka == 100) {
+			if (magickaPercent == 100) {
 				blueglow.draw(Main.INTERNAL_RESX-118, dy+42, 110, 16);
 			}
 
-			int healthmid = health-4;
-			int staminamid = stamina-4;
-			int magickamid = magicka-4;
+			int healthmid = health-2;
+			int staminamid = stamina-2;
+			int magickamid = magicka-2;
 
 			bars.startUse();
 
