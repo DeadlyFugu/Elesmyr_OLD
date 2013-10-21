@@ -46,6 +46,7 @@ public class IntroState extends Node {
 		h = ires;
 		if (skipintro) {
 			time = 10*(int) stepTime;
+            net.sekien.elesmyr.system.Renderer.init(renderer.gc);
 		}
 
 		float bx, by, bw, bh;
